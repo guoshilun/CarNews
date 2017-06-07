@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="@dimen/title_bar_height"
     android:background="@color/colorPrimary"
     android:orientation="vertical">
 
@@ -11,25 +11,27 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
     <ImageButton
         android:id="@+id/btn_right"
         android:layout_width="30dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/top_tab_padding"
         android:background="@android:color/transparent"
-        android:scaleType="fitXY" android:layout_margin="@dimen/top_tab_padding"
-        android:src="@mipmap/user_icon"
         android:cropToPadding="false"
-        android:elevation="0dp" />
+        android:elevation="0dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/user_icon"
+        android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/title"
+    <TextView
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="@android:color/transparent"
-        android:scaleType="center"
-        android:src="@mipmap/car_title_logo" />
+        android:text="@string/user_setting"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/title_text_size_18" />
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.ogaclejapan.lib_smarttablelayout;
+package com.jmgzs.lib.view.roundedimage;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.ogaclejapan.lib_smarttablelayout.test", appContext.getPackageName());
+        assertEquals("com.jmgzs.lib.view.roundedimage.test", appContext.getPackageName());
     }
 }

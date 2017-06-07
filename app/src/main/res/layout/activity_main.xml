@@ -9,7 +9,7 @@
     <include
         layout="@layout/layout_title"
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="@dimen/title_bar_height" />
 
     <com.ogaclejapan.smarttablelayout.SmartTabLayout
         android:id="@+id/pager_tab"

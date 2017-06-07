@@ -1,5 +1,6 @@
 package com.jmgzs.carnews.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
@@ -8,6 +9,7 @@ import android.view.View;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.HomeAdapter;
 import com.jmgzs.carnews.base.BaseActivity;
+import com.jmgzs.carnews.ui.tab.HomeTabProvider;
 import com.ogaclejapan.smarttablelayout.SmartTabLayout;
 
 public class MainActivity extends BaseActivity {
@@ -23,7 +25,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
+        getView(R.id.btn_right).setOnClickListener(this);
         vPager = getView(R.id.main_pager);
         adapter = new HomeAdapter(getSupportFragmentManager());
         vPager.setAdapter(adapter);
@@ -80,5 +82,15 @@ public class MainActivity extends BaseActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()){
+            case R.id.btn_right:
+startActivity(new Intent(this,UserSettingActivity.class));
+        break;
+        default:break;}
     }
 }

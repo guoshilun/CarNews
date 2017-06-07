@@ -1,4 +1,4 @@
-package com.jmgzs.carnews.ui;
+package com.jmgzs.carnews.ui.tab;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;

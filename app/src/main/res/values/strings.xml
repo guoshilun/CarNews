@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CarNews</string>
+    <string name="user_setting">个人设置</string>
 </resources>

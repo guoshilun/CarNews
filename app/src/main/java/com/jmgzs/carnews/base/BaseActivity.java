@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.jmgzs.carnews.R;
+
 /**
  * Created by mac on 17/6/5.
  * Description:
