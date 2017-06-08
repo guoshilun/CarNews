@@ -31,4 +31,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile project(':lib_smarttablelayout')
     compile project(':lib_roundedimage')
+    compile 'cn.finalteam:okhttpfinal:2.0.7'
 }
