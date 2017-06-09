@@ -18,7 +18,15 @@ public abstract class BaseComparableJsonFilter<T extends Number> extends BaseCom
         super(parent);
     }
 
-    protected void filterMinValue(JsonElement annotation, Field field, Object data) throws JsonElement.JsonNotInvalidException {
+    protected void filterMinValue(JsonElement annotation, Field field, Object data, Object target) throws JsonElement.JsonNotInvalidException {
+        if (data == null){
+            try {
+                field.setAccessible(true);
+                data = field.get(target);
+            } catch (IllegalAccessException e) {
+                throw new JsonElement.JsonNotInvalidException("Min Comparable cannot access to field error of \"" + field.getName() + "\" !");
+            }
+        }
         if (!(data instanceof Comparable)) {
             throw new JsonElement.JsonNotInvalidException(field.getName() + " cannot be null!");
         }
@@ -47,7 +55,15 @@ public abstract class BaseComparableJsonFilter<T extends Number> extends BaseCom
         }
     }
 
-    protected void filterMaxValue(JsonElement annotation, Field field, Object data) throws JsonElement.JsonNotInvalidException {
+    protected void filterMaxValue(JsonElement annotation, Field field, Object data, Object target) throws JsonElement.JsonNotInvalidException {
+        if (data == null){
+            try {
+                field.setAccessible(true);
+                data = field.get(target);
+            } catch (IllegalAccessException e) {
+                throw new JsonElement.JsonNotInvalidException("Max Comparable cannot access to field error of \"" + field.getName() + "\" !");
+            }
+        }
         if (!(data instanceof Comparable)) {
             throw new JsonElement.JsonNotInvalidException(field.getName() + " cannot be null!");
         }
@@ -98,8 +114,9 @@ public abstract class BaseComparableJsonFilter<T extends Number> extends BaseCom
 
     @Override
     public void filter(JsonElement annotation, Field field, Object data, Object target) throws JsonElement.JsonNotInvalidException {
+
         super.filter(annotation, field, data, target);
-        filterMinValue(annotation, field, data);
-        filterMaxValue(annotation, field, data);
+        filterMinValue(annotation, field, data, target);
+        filterMaxValue(annotation, field, data, target);
     }
 }

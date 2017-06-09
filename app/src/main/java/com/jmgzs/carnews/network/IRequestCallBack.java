@@ -4,12 +4,13 @@ package com.jmgzs.carnews.network;
  * Created by wxl on 2017/6/7.
  */
 
-public interface IRequestCallBack {
-    void onSuccess(String url, byte[] data);
+public interface IRequestCallBack<T> {
 
-    void onFailure(String url, int errorCode, String msg, byte[] response);
+    Class<T> getType();
+
+    void onSuccess(String url, T data);
+
+    void onFailure(String url, int errorCode, String msg);
 
     void onCancel(String url);
-
-    void onFinish(String url);
 }
