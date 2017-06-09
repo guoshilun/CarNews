@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
-    <TextView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefreshlayout"
         android:layout_width="match_parent"
-    android:text="main fragment"    android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
 
+        <com.jmgzs.carnews.adapter.rcv.RecyclerViewEmptySupport
+            android:id="@+id/recycle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingEnd="@dimen/padding_8dp"
+            android:paddingLeft="@dimen/padding_8dp"
+            android:paddingRight="@dimen/padding_8dp"
+            android:paddingStart="@dimen/padding_8dp" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

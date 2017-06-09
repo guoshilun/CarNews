@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class HomeAdapter extends FragmentPagerAdapter {
 
     private final static int PAGE_COUNT = 6;
-    private final String[] titles = {"推荐","新车","行业","导购","用车","收藏"};
+    private final String[] titles = {"推荐","新车","行业","导购","用车","头条"};
     private MainFragment mainFragment;
 
 

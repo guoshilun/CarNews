@@ -7,13 +7,44 @@ import android.view.View;
 import com.jmgzs.carnews.util.L;
 
 
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
 
 
     @Override
     public void onStart() {
         super.onStart();
         L.setTag(this.getClass().getSimpleName());
+    }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser){
+            onVisible();
+        }else {
+            onInVisible();
+        }
+    }
+
+    protected void onVisible(){
+        lazyLoad();
+    }
+
+    protected void onInVisible(){
+
+    }
+
+    protected abstract void lazyLoad();
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden){
+            //save position
+        }else {
+            //show position
+        }
     }
 
     protected <E extends View> E getView(View rootView, int resViewId) {
@@ -28,6 +59,17 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    protected <E extends View> E getView(int resViewId) {
+        try {
+            if (getView() != null)
+                return (E) getView().findViewById(resViewId);
+            else {
+                throw new NullPointerException("root view is null, can not find view");
+            }
+        } catch (Throwable e) {
+            throw e;
+        }
+    }
 
 //    protected void showLoadingDialog(int msgId) {
 //        showLoadingDialog(getString(msgId));

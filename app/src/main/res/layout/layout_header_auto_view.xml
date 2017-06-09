@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.jmgzs.autoviewpager.AutoScrollViewPager
+        android:id="@+id/auto_pager"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_centerInParent="true"
+        android:src="@mipmap/car_title_logo" />
+
+    <com.jmgzs.autoviewpager.indicator.CircleIndicator
+        android:id="@+id/stl_tab"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@color/colorTransparent"
+        app:ci_background="@color/colorWhite"
+        app:ci_gravity="center"
+        app:ci_margin="5dp"
+        app:ci_mode="solo"
+        app:ci_radius="3dp"
+        app:ci_selected_background="@color/bg_60" />
+
+</FrameLayout>
