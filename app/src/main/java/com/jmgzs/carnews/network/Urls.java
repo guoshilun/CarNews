@@ -6,7 +6,8 @@ package com.jmgzs.carnews.network;
 
 public class Urls {
 
-    public static final String BASE_URL = "http://172.18.12.34:8989/";
+//    public static final String BASE_URL = "http://172.18.12.29:8989/";//Test Url
+//    public static final String BASE_URL = "http://192.168.2.101:8989/";//Test Url
+    public static final String BASE_URL = "http://127.0.0.1:8989/";//Test Url
 
-    public static final String TEST_JSON_URL = "TestJson";
 }
