@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:paddingRight="@dimen/padding_5dp"
+    android:paddingLeft="@dimen/padding_5dp"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/item_image"
+        android:layout_width="90dp"
+        android:layout_height="70dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="@dimen/padding_8dp"
+        android:layout_marginTop="@dimen/padding_8dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/logo" />
+
+    <RelativeLayout
+        android:id="@+id/item_content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_8dp"
+        android:layout_marginTop="@dimen/padding_8dp"
+        android:layout_toLeftOf="@+id/item_image"
+        android:layout_toStartOf="@+id/item_image"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="2"
+            android:text="撒狗粮啊"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/text_20sp" />
+
+
+        <TextView
+            android:id="@+id/item_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_text"
+            android:layout_marginEnd="@dimen/padding_8dp"
+            android:layout_marginRight="@dimen/top_tab_padding"
+            android:text="汽车之家"
+            android:textColor="@color/item_time_505050"
+            android:textSize="@dimen/text_16sp" />
+
+        <TextView
+            android:id="@+id/item_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_text"
+            android:layout_toEndOf="@+id/item_author"
+            android:layout_toRightOf="@+id/item_author"
+            android:text="1分钟前"
+            android:textColor="@color/item_time_505050"
+            android:textSize="@dimen/text_16sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

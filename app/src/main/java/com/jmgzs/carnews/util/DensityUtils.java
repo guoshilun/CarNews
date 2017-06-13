@@ -10,12 +10,11 @@ import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * Created by xj on 15/11/3.
+ * Created by zhaotun on 15/11/3.
  */
 public class DensityUtils {
 
@@ -103,7 +102,7 @@ public class DensityUtils {
      * @param dipValue
      * @return
      */
-    public static int dip2px2(float dipValue) {
+    public static int dip2px(float dipValue) {
         return dip2px(null, dipValue);
     }
 

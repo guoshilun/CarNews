@@ -29,6 +29,7 @@ public class MainActivity extends BaseActivity {
         vPager = getView(R.id.main_pager);
         adapter = new HomeAdapter(getSupportFragmentManager());
         vPager.setAdapter(adapter);
+        vPager.setOffscreenPageLimit(3);
 
         tabProvider = new HomeTabProvider(this);
         SmartTabLayout tab = getView(R.id.pager_tab);
@@ -44,12 +45,12 @@ public class MainActivity extends BaseActivity {
         tab.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (positionOffset > 0) {
-                    tabProvider.getTabItem(position).setTabAlpha(1 - positionOffset);
-                    tabProvider.getTabItem(position + 1).setTabAlpha(positionOffset);
-                } else {
-                    tabProvider.getTabItem(position).setTabAlpha(1 - positionOffset);
-                }
+//                if (positionOffset > 0) {
+//                    tabProvider.getTabItem(position).setTabAlpha(1 - positionOffset);
+//                    tabProvider.getTabItem(position + 1).setTabAlpha(positionOffset);
+//                } else {
+//                    tabProvider.getTabItem(position).setTabAlpha(1 - positionOffset);
+//                }
 
                 float scale = 0.2f;
 //                if (position == 0) {
@@ -76,6 +77,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
                 currentPosition = position;
+                tabProvider.getTabItem(position).setTabAlpha(1);
             }
 
             @Override
