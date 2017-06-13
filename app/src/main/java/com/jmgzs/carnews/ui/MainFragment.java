@@ -23,6 +23,7 @@ import com.jmgzs.carnews.adapter.rcv.SpaceItemDecoration;
 import com.jmgzs.carnews.adapter.rcvbase.OnRCVItemClickListener;
 import com.jmgzs.carnews.base.BaseFragment;
 import com.jmgzs.carnews.bean.NewsDataBean;
+import com.jmgzs.carnews.bean.Photo;
 import com.jmgzs.carnews.util.L;
 
 import java.util.ArrayList;
@@ -163,10 +164,10 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        }
+    }
 
     private void createAdapter() {
-        adapter = new RCVAdapter(getNewsData(page), this);
+        adapter = new RCVAdapter(getContext(), getNewsData(page), this);
         adapter.addHeaderView(headerView);
         recyclerView.setAdapter(adapter);
     }
@@ -175,7 +176,15 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     private List<NewsDataBean> getNewsData(int page) {
         List<NewsDataBean> list = new ArrayList<>();
         for (int i = 0; i + (page - 1) * 20 < page * 20; i++) {
-            list.add(new NewsDataBean("data title " + (i + (page - 1) * 20 + 1)));
+            if (i % 3 == 0) {
+                List<Photo> photos = new ArrayList<>();
+                photos.add(new Photo());
+                photos.add(new Photo());
+                photos.add(new Photo());
+                list.add(new NewsDataBean("三图片", photos));
+            }else {
+                list.add(new NewsDataBean("一张图" + (i + (page - 1) * 20 + 1)));
+            }
         }
         this.page++;
         return list;

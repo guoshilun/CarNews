@@ -111,10 +111,11 @@ public abstract class RCVBaseAdapter<D, T extends BaseHolder> extends RecyclerVi
         } else if (isFooterPosition(position)) {
             return mFooterViewInfoList.get(position - getDataCount() - getHeadersCount()).viewType;
         } else {
-            return super.getItemViewType(position - getHeadersCount());
+            return getViewType(position);
         }
     }
 
+    public abstract int getViewType(int pos);
 
     public boolean removeFooterView(View v) {
         for (int i = 0; i < mFooterViewInfoList.size(); i++) {
@@ -248,6 +249,30 @@ public abstract class RCVBaseAdapter<D, T extends BaseHolder> extends RecyclerVi
             }
         };
     }
+
+    //adv  begin----
+    private final List<FixedViewInfo> mAdvViewInfoList = new ArrayList<>();
+    private static final int BASE_ADV_VIEW_TYPE = -1 << 12;
+
+    public void addAdvView(View view) {
+        if (null == view) {
+            throw new IllegalArgumentException("the view to add must not be null");
+        }
+        final FixedViewInfo info = new FixedViewInfo();
+        info.view = view;
+        info.viewType = BASE_ADV_VIEW_TYPE + mAdvViewInfoList.size();
+        mAdvViewInfoList.add(info);
+        notifyDataSetChanged();
+    }
+
+    public void setAdvVisibility(boolean shouldShow) {
+        for (FixedViewInfo fvi : mAdvViewInfoList) {
+            fvi.view.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
+        }
+        notifyDataSetChanged();
+    }
+
+    //adv end-----
 
     public void setmIsStaggeredGrid(boolean isStaggeredGrid) {
         mIsStaggeredGrid = isStaggeredGrid;
