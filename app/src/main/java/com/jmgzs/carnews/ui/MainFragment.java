@@ -177,7 +177,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
         List<NewsDataBean> list = new ArrayList<>();
         for (int i = 0; i + (page - 1) * 20 < page * 20; i++) {
             if (i % 3 == 0) {
-                List<Photo> photos = new ArrayList<>();
+                ArrayList<Photo> photos = new ArrayList<>();
                 photos.add(new Photo());
                 photos.add(new Photo());
                 photos.add(new Photo());

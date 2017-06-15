@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        debug {
+            keyAlias 'alias_news'
+            keyPassword 'jmgzs123'
+            storeFile file('/Users/mac/AndroidStudioProjects/jmgzs.jks')
+            storePassword 'jmgzs123'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -16,8 +24,13 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug{
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
     }
-    testOptions{
+    testOptions {
         unitTests.returnDefaultValues = true;
     }
 }
@@ -29,28 +42,27 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.8.9'
-    testCompile "org.robolectric:robolectric:3.3.2"
+    testCompile 'org.robolectric:robolectric:3.3.2'
     testCompile 'org.robolectric:shadows-httpclient:3.3.2'
-//    androidTestCompile 'org.mockito:mockito-android:2.8.9'
-//    testCompile 'org.powermock:powermock-api-mockito2:1.7.0RC4'
-//    testCompile 'org.powermock:powermock-module-junit4:1.7.0RC4'
+    //    androidTestCompile 'org.mockito:mockito-android:2.8.9'
+    //    testCompile 'org.powermock:powermock-api-mockito2:1.7.0RC4'
+    //    testCompile 'org.powermock:powermock-module-junit4:1.7.0RC4'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC0'
-
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-// Because RxAndroid releases are few and far between, it is recommended you also
-// explicitly depend on RxJava's latest version for bug fixes and new features.
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava's latest version for bug fixes and new features.
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.squareup.okhttp3:okhttp:3.8.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
-
     compile project(':lib_smarttablelayout')
     compile project(':lib_roundedimage')
     compile project(':lib_autoviewpager')
+    compile project(':lib_swipelistview')
 }

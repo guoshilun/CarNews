@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent" android:background="@color/app_bg"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/layout_title_info"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height" />
+
+
+    <include
+        layout="@layout/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1px" />
+
+    <com.jmgzs.lib.swipelistview.SwipeMenuListView
+        android:id="@+id/swipe_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

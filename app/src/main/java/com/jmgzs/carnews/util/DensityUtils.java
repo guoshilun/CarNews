@@ -58,6 +58,8 @@ public class DensityUtils {
 
     public static void init(Context context) {
         if (mInitialed || context == null) {
+            if (context == null)
+                throw new NullPointerException("density is init or context is null");
             return;
         }
 //        mInitialed = true;
@@ -115,6 +117,7 @@ public class DensityUtils {
      */
     public static int dip2px(Context context, float dipValue) {
         if (SCREEN_DENSITY == 0) {
+
             init(context);
         }
 
@@ -208,7 +211,7 @@ public class DensityUtils {
      * @return
      */
     public static int getStatusBarHeight(Context context) {
-        if (statusBarHeight > 0){
+        if (statusBarHeight > 0) {
             return statusBarHeight;
         }
         Class<?> c = null;
@@ -221,11 +224,11 @@ public class DensityUtils {
             field = c.getField("status_bar_height");
             x = Integer.parseInt(field.get(obj).toString());
             statusBarHeight = context.getResources().getDimensionPixelSize(x);
-            if (statusBarHeight == 0) statusBarHeight = DensityUtils.dip2px(context,25f);
+            if (statusBarHeight == 0) statusBarHeight = DensityUtils.dip2px(context, 25f);
             return statusBarHeight;
         } catch (Exception e) {
             e.printStackTrace();
-            statusBarHeight = DensityUtils.dip2px(context,25f);
+            statusBarHeight = DensityUtils.dip2px(context, 25f);
         }
         return statusBarHeight;
     }

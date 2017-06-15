@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">汽车指南</string>
     <string name="user_setting">个人设置</string>
+    <string name="setting_store">我的收藏</string>
+    <string name="setting_wifi">流量优化</string>
+    <string name="setting_textsize">字体大小</string>
+    <string name="setting_push">新闻推送</string>
+    <string name="setting_cache">清除缓存</string>
+    <string name="setting_update">检查更新</string>
+    <string name="setting_user">免责申明</string>
+
+    <string name="cancel">取消</string>
+    <string name="userinfo_head">选择照片</string>
+    <string name="camera">拍照</string>
+    <string name="album">相册</string>
+
+    <string name="splash_text">阅览最前沿的汽车资讯</string>
 </resources>
