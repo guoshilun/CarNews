@@ -1,32 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/newsInfo_top_bar"
-        layout="@layout/layout_title_info" />
-
+    <!--底部条-->
     <FrameLayout
+        android:id="@+id/newsInfo_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
-        <include
-            android:id="@+id/newsInfo_bottom_bar"
-            layout="@layout/layout_bottom_bar" />
+
+        <include layout="@layout/layout_bottom_bar" />
     </FrameLayout>
 
-
-    <ScrollView
+    <!--联动webview-->
+    <com.jmgzs.carnews.ui.view.ScrollControlFrameLayout
+        android:id="@+id/newsInfo_scf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_above="@id/newsInfo_bottom_bar">
-
-        <WebView
-            android:id="@+id/newsInfo_wv"
+        <LinearLayout
+            android:id="@+id/newsInfo_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@android:color/white">
 
-    </ScrollView>
+            <com.jmgzs.carnews.ui.view.ScrollableWebView
+                android:id="@+id/newsInfo_wv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white" />
+        </LinearLayout>
+    </com.jmgzs.carnews.ui.view.ScrollControlFrameLayout>
+    <!--顶部条-->
+    <LinearLayout
+        android:id="@+id/newsInfo_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/newInfo_status_bar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@android:color/white"/>
+
+        <include layout="@layout/layout_title_info" />
+
+        <include
+            layout="@layout/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1px" />
+    </LinearLayout>
 
 </RelativeLayout>

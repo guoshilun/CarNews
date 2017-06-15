@@ -91,7 +91,7 @@ public class MainActivity extends BaseActivity {
 
         switch (view.getId()){
             case R.id.btn_right:
-startActivity(new Intent(this,UserSettingActivity.class));
+startActivity(new Intent(this,NewsInfoActivity.class));
         break;
         default:break;}
     }

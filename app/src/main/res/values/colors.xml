@@ -8,6 +8,9 @@
     <color name="app_title_selected">#ff0159a1</color>
     <color name="app_bg">#fff0f0f0</color>
     <color name="divider">#ffe0e0e0</color>
+    <color name="info_bar_color">#ffececec</color>
+    <color name="btn_pressed_grey">#ffaaaaaa</color>
+    <color name="grey_shadow">#ffc3c3c3</color>
 
     <color name="item_time_505050">#ff505050</color>
     <color name="bg_60">#99000000</color>

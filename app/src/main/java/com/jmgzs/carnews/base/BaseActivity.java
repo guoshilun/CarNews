@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -26,6 +27,7 @@ import com.jmgzs.carnews.util.L;
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
     protected LinearLayout root;
+    protected View paddingView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,9 +59,20 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         return this.getResources().getColor(R.color.colorPrimary);
     }
 
+    public void setStatusBarColor(int color){
+        if (paddingView != null) {
+            paddingView = new View(this);
+            paddingView.setBackgroundColor(color);
+        }
+    }
+
     protected void addPaddingAboveContentView(){
         int statusBarHeight = DensityUtils.getStatusBarHeight(this);
-        View paddingView = new View(this);
+        if (paddingView == null){
+            paddingView = new View(this);
+        }else{
+            ((ViewGroup)paddingView.getParent()).removeView(paddingView);
+        }
         paddingView.setBackgroundColor(getStatusBarColor());
         L.e("状态栏高度："+statusBarHeight);
         root.addView(paddingView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, statusBarHeight));

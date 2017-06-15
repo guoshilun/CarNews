@@ -4,12 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:orientation="horizontal"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorPrimary"
+    android:gravity="center_vertical">
 
     <ImageView
         android:id="@+id/titleInfo_img_back"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:src="@mipmap/arrow_left"
+        android:padding="10dp"
+        android:clickable="true"
+        android:background="@drawable/bg_trans_to_grey"/>
 
     <TextView
         android:id="@+id/titleInfo_tv_title"
@@ -20,6 +25,10 @@
     <ImageView
         android:id="@+id/titleInfo_img_more"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:src="@mipmap/point"
+        android:padding="10dp"
+        android:clickable="true"
+        android:background="@drawable/bg_trans_to_grey"/>
 
 </LinearLayout>
