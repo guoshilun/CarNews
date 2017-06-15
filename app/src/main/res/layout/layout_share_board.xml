@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/colorWhite">
 
     <GridView
         android:id="@+id/layoutShareBoard_gv_table"
@@ -19,6 +20,8 @@
         android:layout_height="wrap_content"
         android:scaleType="center"
         android:src="@mipmap/arrow_down"
-        android:padding="5dp"/>
+        android:padding="5dp"
+        android:clickable="true"
+        android:background="@drawable/bg_trans_to_black"/>
 
 </LinearLayout>

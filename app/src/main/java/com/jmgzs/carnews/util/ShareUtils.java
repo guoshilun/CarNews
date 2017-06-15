@@ -70,7 +70,9 @@ public class ShareUtils {
                 ShareUtils.shareText(context, platform, text, shareListener);
             }
         });
-        board.show(parent);
+        int[] xy = new int[2];
+        parent.getLocationOnScreen(xy);
+        board.show(parent, xy[0], xy[1]);
     }
 
     public void shareImg(final Activity context, final View parent, final String url, final String title, final String desc, final UMShareListener shareListener){
@@ -80,7 +82,9 @@ public class ShareUtils {
                 ShareUtils.shareImg(context, platform, url, title, desc, shareListener);
             }
         });
-        board.show(parent);
+        int[] xy = new int[2];
+        parent.getLocationOnScreen(xy);
+        board.show(parent, xy[0], xy[1]);
     }
 
     public void shareImg(final Activity context, final View parent, final int picRes, final String title, final String desc, final UMShareListener shareListener){
@@ -90,7 +94,9 @@ public class ShareUtils {
                 ShareUtils.shareImg(context, platform, picRes, title, desc, shareListener);
             }
         });
-        board.show(parent);
+        int[] xy = new int[2];
+        parent.getLocationOnScreen(xy);
+        board.show(parent, xy[0], xy[1]);
     }
 
     public void shareUrl(final Activity context, final View parent, final String url, final String title, final String desc, final int picRes, final UMShareListener shareListener){
@@ -100,7 +106,10 @@ public class ShareUtils {
                 ShareUtils.shareUrl(context, platform, url, title, desc, picRes, shareListener);
             }
         });
-        board.show(parent);
+        int[] xy = new int[2];
+        parent.getLocationOnScreen(xy);
+        L.e("屏幕中的x:"+xy[0]+"\ty:"+xy[1]);
+        board.show(parent, xy[0], xy[1]);
     }
 
 }

@@ -11,9 +11,9 @@
         android:layout_width="50dp"
         android:layout_height="match_parent"
         android:scaleType="center"
-        android:src="@mipmap/arrow_left"
+        android:src="@mipmap/arrow_icon"
         android:clickable="true"
-        android:background="@drawable/bg_trans_to_grey"/>
+        android:background="@drawable/bg_trans_to_white"/>
 
     <TextView
         android:id="@+id/titleInfo_tv_title"
@@ -29,8 +29,8 @@
         android:id="@+id/titleInfo_img_more"
         android:layout_width="50dp"
         android:layout_height="match_parent"
-        android:src="@mipmap/point"
         android:clickable="true"
-        android:background="@drawable/bg_trans_to_grey"/>
+        android:scaleType="center"
+        android:background="@drawable/bg_trans_to_white"/>
 
 </LinearLayout>

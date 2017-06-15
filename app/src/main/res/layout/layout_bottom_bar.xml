@@ -19,12 +19,12 @@
 
         <ImageView
             android:id="@+id/bottomBar_img_home"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:src="@mipmap/arrow_left"
-            android:padding="10dp"
             android:clickable="true"
-            android:background="@drawable/bg_trans_to_grey"/>
+            android:scaleType="center"
+            android:background="@drawable/bg_trans_to_white"/>
 
         <View
             android:layout_width="0dp"
@@ -33,12 +33,12 @@
 
         <ImageView
             android:id="@+id/bottomBar_img_share"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:src="@mipmap/share"
-            android:padding="10dp"
             android:clickable="true"
-            android:background="@drawable/bg_trans_to_grey"/>
+            android:scaleType="center"
+            android:background="@drawable/bg_trans_to_white"/>
     </LinearLayout>
 
 </LinearLayout>

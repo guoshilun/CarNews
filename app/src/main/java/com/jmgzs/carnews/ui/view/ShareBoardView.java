@@ -12,6 +12,7 @@ import android.widget.PopupWindow;
 
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.ShareGridAdapter;
+import com.jmgzs.carnews.util.DensityUtils;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
@@ -29,6 +30,7 @@ public class ShareBoardView {
     private GridView gridView;
     private View btnDismiss;
     private IOnShareItemClickListener listener;
+    private int height;
 
     public ShareBoardView(Activity context, IOnShareItemClickListener listener) {
         this.context = context;
@@ -44,6 +46,8 @@ public class ShareBoardView {
         pop.setAnimationStyle(R.style.pop_up_2_down_anim);
 
         initPopView(view);
+        view.measure(View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenWidthPixels(context),View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenHeightPixels(context), View.MeasureSpec.AT_MOST));
+        height = view.getMeasuredHeight();
     }
 
     private void initPopView(View view){
@@ -57,6 +61,7 @@ public class ShareBoardView {
                 if (listener != null){
                     listener.onItemClick(position, (PlatformConfig.Platform) parent.getItemAtPosition(position));
                 }
+                dismiss();
             }
         });
 
@@ -68,9 +73,15 @@ public class ShareBoardView {
         });
     }
 
-    public void show(View parent) {
+    /**
+     *
+     * @param parent
+     * @param x
+     * @param y pop将会显示在该参数的坐标上方
+     */
+    public void show(View parent, int x, int y) {
         if (pop != null && !pop.isShowing()) {
-            pop.showAtLocation(parent, Gravity.BOTTOM, 0, 0);
+            pop.showAtLocation(parent, Gravity.NO_GRAVITY, x, y - height);
         }
     }
 

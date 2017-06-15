@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--透明至灰色点击效果-->
+    <item android:state_pressed="true" >
+        <shape>
+            <solid android:color="@color/btn_pressed_black" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="@color/colorTransparent" />
+        </shape>
+    </item>
+</selector>

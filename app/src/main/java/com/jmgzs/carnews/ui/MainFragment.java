@@ -157,7 +157,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     }
 
     private void goNewsDetail(int pos) {
-        startActivity(new Intent(getContext(), NewsDetailActivity.class));
+        startActivity(new Intent(getContext(), NewsInfoActivity.class));
 
     }
 
