@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.ListPreloader;
@@ -44,21 +45,25 @@ public class RCVHolder extends BaseHolder<NewsDataBean>{
     private Key signature;
 
 
-    public RCVHolder(ViewGroup parent, @LayoutRes int layout) {
+    public RCVHolder(ViewGroup parent, @LayoutRes int layout,int w ,int h) {
         super(parent, layout);
         image = getView(R.id.item_image);
         image2 = getView(R.id.item_image2);
         image3 = getView(R.id.item_image3);
         title = getView(R.id.item_text);
-        image.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                if (actualSize == null)
-                    actualSize = new int[]{image.getWidth(), image.getHeight()};
-                image.getViewTreeObserver().removeOnPreDrawListener(this);
-                return true;
-            }
-        });
+
+        LinearLayout contentLayout =  getView(R.id.item_images_layout);
+        contentLayout.getLayoutParams().height = h;
+
+//        image.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+//            @Override
+//            public boolean onPreDraw() {
+//                if (actualSize == null)
+//                    actualSize = new int[]{image.getWidth(), image.getHeight()};
+//                image.getViewTreeObserver().removeOnPreDrawListener(this);
+//                return true;
+//            }
+//        });
         request = GlideApp.with(getContext()).asDrawable().centerCrop();
 
     }
@@ -71,20 +76,20 @@ public class RCVHolder extends BaseHolder<NewsDataBean>{
 
 //        signature = new ObjectKey(data);
         request.
-                load(data.getPhoto().get(0).getUrl()).
+                load(data.getImg_list().get(0).getUrl()).
 //                placeholder(R.mipmap.ic_launcher).
 //                error(R.mipmap.ic_launcher).
 //                signature(signature).
 //                diskCacheStrategy(DiskCacheStrategy.ALL).
                 into(image);
-        request.load(data.getPhoto().get(0).getUrl()).into(image2);
-        request.load(data.getPhoto().get(0).getUrl()).into(image3);
+        request.load(data.getImg_list().get(0).getUrl()).into(image2);
+        request.load(data.getImg_list().get(0).getUrl()).into(image3);
     }
 
     private NewsDataBean dataBean;
 
     public List<Photo> getPreloadItems(int position) {
-        return (dataBean.getPhoto());
+        return (dataBean.getImg_list());
     }
 
     public RequestBuilder getPreloadRequestBuilder(Photo item) {

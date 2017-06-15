@@ -14,13 +14,14 @@ import com.ogaclejapan.smarttablelayout.SmartTabLayout;
 
 public class MainActivity extends BaseActivity {
 
-    private HomeTabProvider tabProvider ;
-    private ViewPager vPager ;
-    private int currentPosition =0;
-    private HomeAdapter adapter ;
+    private HomeTabProvider tabProvider;
+    private ViewPager vPager;
+    private int currentPosition = 0;
+    private HomeAdapter adapter;
+
     @Override
     protected int getContent(Bundle savedInstanceState) {
-        return  R.layout.activity_main;
+        return R.layout.activity_main;
     }
 
     @Override
@@ -89,10 +90,12 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btn_right:
-startActivity(new Intent(this,NewsInfoActivity.class));
-        break;
-        default:break;}
+                startActivity(new Intent(this, UserSettingActivity.class));
+                break;
+            default:
+                break;
+        }
     }
 }

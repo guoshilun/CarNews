@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorTransparent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/top_tab_padding"
+        android:layout_marginRight="@dimen/top_tab_padding"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/menu_item_top"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/btn_dialog_top"
+            android:gravity="center"
+            android:text="@string/userinfo_head"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_18sp" />
+
+        <View
+            android:id="@+id/menu_item_divider_top"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/divider" />
+
+        <TextView
+            android:id="@+id/menu_item_middle1"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/btn_dialog_center"
+            android:gravity="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_18sp"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/menu_item_divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/divider"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/menu_item_middle2"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/btn_dialog_center"
+            android:gravity="center"
+            android:text="@string/camera"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_18sp" />
+
+        <View
+            android:id="@+id/menu_item_divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/divider" />
+
+        <TextView
+            android:id="@+id/menu_item_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/btn_dialog_bottom"
+            android:gravity="center"
+            android:text="@string/album"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_18sp" />
+
+
+        <TextView
+            android:id="@+id/menu_cancle"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginBottom="@dimen/top_tab_padding"
+            android:layout_marginTop="@dimen/top_tab_padding"
+            android:background="@drawable/btn_red_corners"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_18sp" />
+    </LinearLayout>
+
+</RelativeLayout>

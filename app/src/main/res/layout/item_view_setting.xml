@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:addStatesFromChildren="true"
+    android:background="@color/colorWhite"
+    android:paddingBottom="@dimen/padding_8dp"
+    android:paddingLeft="@dimen/padding_8dp"
+    android:paddingRight="@dimen/padding_8dp"
+    android:paddingTop="@dimen/padding_8dp">
+
+    <TextView
+        android:id="@+id/setting_item_title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:includeFontPadding="false"
+        android:text="我的收藏"
+        android:textColor="@color/item_time_505050"
+        android:textSize="@dimen/text_16sp" />
+
+    <TextView
+        android:id="@+id/setting_item_tips_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/padding_5dp"
+        android:layout_marginStart="@dimen/padding_5dp"
+        android:layout_toEndOf="@+id/setting_item_title_text"
+        android:layout_toRightOf="@+id/setting_item_title_text"
+        android:includeFontPadding="false"
+        android:text="开启后移动网络不加载图片"
+        android:textSize="@dimen/text_12sp" />
+
+
+    <CheckBox
+        android:id="@+id/setting_item_cbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:button="@drawable/setting_cbox_selector"
+        android:checked="true"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/setting_item_tips2_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/padding_5dp"
+        android:layout_toLeftOf="@+id/setting_item_right_image"
+        android:layout_toStartOf="@+id/setting_item_right_image"
+        android:text="中"
+        android:textColor="@color/item_time_505050"
+        android:textSize="@dimen/text_12sp" />
+
+    <ImageView
+        android:id="@+id/setting_item_right_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/padding_8dp"
+        android:src="@mipmap/arrow_right_icon"
+        android:visibility="visible" />
+</RelativeLayout>
