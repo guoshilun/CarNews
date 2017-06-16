@@ -127,11 +127,7 @@ public class RequestUtilDiffResponseTest {
         ActivityController<MainActivity> activityController = Robolectric.buildActivity(MainActivity.class).create().start();
         final Activity activity = activityController.get();
         activityController.resume();
-        RequestUtil.requestByGetSync(activity, url, false, null, new IRequestCallBack<TestBean>() {
-            @Override
-            public Class<TestBean> getType() {
-                return TestBean.class;
-            }
+        RequestUtil.requestByGetSync(activity, url, false, null, TestBean.class, new IRequestCallBack<TestBean>() {
 
             @Override
             public void onSuccess(final String url, final TestBean data) {
@@ -158,11 +154,7 @@ public class RequestUtilDiffResponseTest {
         ActivityController<MainActivity> activityController = Robolectric.buildActivity(MainActivity.class).create().start();
         final Activity activity = activityController.get();
         activityController.resume();
-        RequestUtil.requestByPostSync(activity, url, false, "test body", new IRequestCallBack<TestBean>() {
-            @Override
-            public Class<TestBean> getType() {
-                return TestBean.class;
-            }
+        RequestUtil.requestByPostSync(activity, url, false, "test body", TestBean.class, new IRequestCallBack<TestBean>() {
 
             @Override
             public void onSuccess(final String url, final TestBean data) {

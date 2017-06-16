@@ -6,8 +6,6 @@ package com.jmgzs.carnews.network;
 
 public interface IRequestCallBack<T> {
 
-    Class<T> getType();
-
     void onSuccess(String url, T data);
 
     void onFailure(String url, int errorCode, String msg);

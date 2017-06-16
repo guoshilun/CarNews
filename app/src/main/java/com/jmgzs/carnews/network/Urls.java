@@ -6,7 +6,7 @@ package com.jmgzs.carnews.network;
 
 public class Urls {
 
-    //    public static final String BASE_URL = "http://172.18.12.29:8989/";//Test Url
+//    public static final String BASE_URL = "http://172.18.12.29:8989/";//Test Url
 //    public static final String BASE_URL = "http://192.168.2.101:8989/";//Test Url
     public static final String BASE_URL = "http://10.16.80.50:9321/";//Test Url
 //    public static final String URL_NEWS = BASE_URL + "news_info/api/news_pinterest/?type_key=1&start_key=%1$s&channel_id=%2$s";

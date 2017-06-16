@@ -3,6 +3,7 @@ package com.jmgzs.carnews.ui;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -11,7 +12,11 @@ import android.widget.Toast;
 
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.BaseActivity;
+import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.js.JsBridge;
+import com.jmgzs.carnews.network.IRequestCallBack;
+import com.jmgzs.carnews.network.RequestUtil;
+import com.jmgzs.carnews.network.Urls;
 import com.jmgzs.carnews.ui.view.ScrollControlFrameLayout;
 import com.jmgzs.carnews.ui.view.ScrollableWebView;
 import com.jmgzs.carnews.ui.view.TitleBarScrollController;
@@ -44,10 +49,17 @@ public class NewsInfoActivity extends BaseActivity{
     private UMShareListener mShareListener;
     private ShareUtils shareUtils;
 
-    private String mUrl, mTitle, mDesc;
+    private String newsId, downloadUrl;
+    public static final String INTENT_AID = "aid";
 
     @Override
     protected void initView() {
+        Intent intent = getIntent();
+        if (intent == null || TextUtils.isEmpty((newsId = intent.getStringExtra(INTENT_AID)))){
+            Toast.makeText(this, "数据异常", Toast.LENGTH_SHORT).show();
+            this.finish();
+            return;
+        }
         top = findViewById(R.id.newsInfo_top_bar);
         statusBar = findViewById(R.id.newInfo_status_bar);
         bottomBar = findViewById(R.id.newsInfo_bottom_bar);
@@ -58,11 +70,7 @@ public class NewsInfoActivity extends BaseActivity{
         initScroll();
         initShare();
 
-        mUrl = "http://img1.gtimg.com/news/pics/hv1/135/102/2216/144121545.jpg";
-        mTitle = "测试标题";
-        mDesc = "测试内容";
-//        mUrl = "http://172.18.12.28:33032/api?template_id=14";
-        wv.loadUrl(mUrl);
+        requestInfo(newsId);
     }
 
     private void initButtons(){
@@ -122,6 +130,27 @@ public class NewsInfoActivity extends BaseActivity{
         scrollControlView.setScrollEndListener(controller);
     }
 
+    private void requestInfo(String newId){
+        String url = Urls.URL_NEWS_INFO;
+        RequestUtil.requestByGetAsy(this, String.format(url, newId), false, NewsDataBean.class, new IRequestCallBack<NewsDataBean>() {
+
+            @Override
+            public void onSuccess(String url, NewsDataBean data) {
+
+            }
+
+            @Override
+            public void onFailure(String url, int errorCode, String msg) {
+
+            }
+
+            @Override
+            public void onCancel(String url) {
+
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -144,7 +173,7 @@ public class NewsInfoActivity extends BaseActivity{
                 break;
             case R.id.bottomBar_img_share://分享
             case R.id.titleInfo_img_more:
-                shareUtils.shareUrl(NewsInfoActivity.this, bottomBar, mUrl, mTitle, mDesc, R.mipmap.car_title_logo, new UMShareListener() {
+                shareUtils.shareUrl(NewsInfoActivity.this, bottomBar, downloadUrl, "", "", R.mipmap.car_title_logo, new UMShareListener() {
                     @Override
                     public void onStart(SHARE_MEDIA share_media) {
 
