@@ -14,11 +14,13 @@ public class NewsDataBean extends BaseInfo {
     private String aid = "";
     private String publish_time = "";
     private String publish_source = "";
-    private String summary = "";
+    private String abstr = "";
+    private String search_key = "";
+
 
     private ArrayList<Photo> img_list;
 
-    public NewsDataBean(){
+    public NewsDataBean() {
         this("");
     }
 
@@ -69,12 +71,20 @@ public class NewsDataBean extends BaseInfo {
         this.publish_source = publish_source;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getAbstr() {
+        return abstr;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setAbstr(String abstr) {
+        this.abstr = abstr;
+    }
+
+    public String getSearch_key() {
+        return search_key;
+    }
+
+    public void setSearch_key(String search_key) {
+        this.search_key = search_key;
     }
 
     public ArrayList<Photo> getImg_list() {

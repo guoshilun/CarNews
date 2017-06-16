@@ -29,10 +29,11 @@ public class MyAppGlideModule extends AppGlideModule {
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
         builder.setMemoryCache(new LruResourceCache(15*1024*1024));
+//        builder.setDiskCache();
     }
 
     @Override
     public void registerComponents(Context context, Registry registry) {
-        registry.append(Photo.class, InputStream.class,new PhotoLoader.Factory());
+        registry.append(String.class, InputStream.class,new PhotoLoader.Factory());
     }
 }

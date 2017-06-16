@@ -141,7 +141,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     cv.put(COLUMN_PUBLISH_TIME, info.getPublish_time());
                     cv.put(COLUMN_SOURCE, info.getPublish_source());
                     cv.put(COLUMN_TITLE, info.getTitle());
-                    cv.put(COLUMN_SUMMARY, info.getSummary());
+                    cv.put(COLUMN_SUMMARY, info.getAbstr());
                     db.insert(TABLE_NEWS, null, cv);
                 }
                 db.setTransactionSuccessful();
@@ -175,7 +175,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 bean.setAid(cr.getString(cr.getColumnIndex(COLUMN_AID)));
                 bean.setPublish_source(cr.getString(cr.getColumnIndex(COLUMN_SOURCE)));
                 bean.setPublish_time(cr.getString(cr.getColumnIndex(COLUMN_PUBLISH_TIME)));
-                bean.setSummary(cr.getString(cr.getColumnIndex(COLUMN_TITLE)));
+                bean.setAbstr(cr.getString(cr.getColumnIndex(COLUMN_TITLE)));
                 bean.setTitle(cr.getString(cr.getColumnIndex(COLUMN_TITLE)));
 
                 String images = cr.getString(cr.getColumnIndex(COLUMN_IMAGES));

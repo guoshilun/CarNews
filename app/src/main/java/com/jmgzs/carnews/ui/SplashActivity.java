@@ -25,6 +25,7 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        overridePendingTransition(0,0);
         imageView = getView(R.id.welcome_view);
 
         Handler h = new Handler();

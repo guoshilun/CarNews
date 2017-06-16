@@ -23,7 +23,11 @@ import com.jmgzs.carnews.adapter.rcv.SpaceItemDecoration;
 import com.jmgzs.carnews.adapter.rcvbase.OnRCVItemClickListener;
 import com.jmgzs.carnews.base.BaseFragment;
 import com.jmgzs.carnews.bean.NewsDataBean;
+import com.jmgzs.carnews.bean.NewsListBean;
 import com.jmgzs.carnews.bean.Photo;
+import com.jmgzs.carnews.network.IRequestCallBack;
+import com.jmgzs.carnews.network.RequestUtil;
+import com.jmgzs.carnews.network.Urls;
 import com.jmgzs.carnews.util.L;
 
 import java.util.ArrayList;
@@ -48,6 +52,9 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     private int lastVisibleItem = 0;
     private int page = 1;
     private boolean isPrepared = false;
+    private ArrayList<NewsDataBean> list;
+    private ArrayList<NewsDataBean> headerList ;
+
 
     @Nullable
     @Override
@@ -88,9 +95,13 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (RecyclerView.SCROLL_STATE_IDLE == newState && lastVisibleItem + 1 == adapter.getItemCount()) {
-                    //add more
-                    adapter.appendList(getNewsData(page));
+                if (RecyclerView.SCROLL_STATE_IDLE == newState){
+                        if( adapter!=null&&lastVisibleItem + 1 == adapter.getItemCount()) {
+                            //add more
+                            adapter.appendList(getNewsData(page));
+                        }else {
+                            //刷新
+                        }
                 }
             }
 
@@ -144,8 +155,36 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     protected void lazyLoad() {
         //load data
         if (getUserVisibleHint() && isPrepared) {
-            createHeaderAdapter();
-            createAdapter();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            RequestUtil.requestByGetAsy(getContext(), Urls.getUrlNews("0","100"), true, new IRequestCallBack<NewsListBean>() {
+                @Override
+                public Class getType() {
+                    return NewsListBean.class;
+                }
+
+                @Override
+                public void onSuccess(String url, NewsListBean data) {
+                    L.e("news:"+data.toString());
+                    createHeaderAdapter();
+                    createAdapter();
+                }
+
+                @Override
+                public void onFailure(String url, int errorCode, String msg) {
+
+                }
+
+                @Override
+                public void onCancel(String url) {
+
+                }
+            });
+
+            }
+        }).start();
         }
     }
 
@@ -157,7 +196,9 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     }
 
     private void goNewsDetail(int pos) {
-        startActivity(new Intent(getContext(), NewsInfoActivity.class));
+        Intent in = new Intent(getContext(), NewsInfoActivity.class);
+        in.putExtra("aid","527");
+        startActivity(in);
 
     }
 
