@@ -135,36 +135,36 @@ public class RetrofitRequestManager {
         return retrofit;
     }
 
-    public <T> void get(Context context, boolean useCache, boolean isSync, IRxRequest request, IRequestCallBack<T> callback) {
+    public <T> void get(Context context, boolean useCache, boolean isSync, IRxRequest request, final Class<T> responseType, IRequestCallBack<T> callback) {
         String url = request.getUrl();
         if (useCache) {
             String cache = ConfigCache.getUrlCache(context, url);
             if (!TextUtils.isEmpty(cache)) {
-                parseData(true, cache, request, callback);
+                parseData(true, cache, request, responseType, callback);
                 return;
             }
         }
-        requestNetwork(true, context, useCache, isSync, request, callback);
+        requestNetwork(true, context, useCache, isSync, request, responseType, callback);
     }
 
 
-    public <T> void post(Context context, boolean useCache, boolean isSync, IRxRequest request, IRequestCallBack<T> callback) {
+    public <T> void post(Context context, boolean useCache, boolean isSync, IRxRequest request, Class<T> responseType, IRequestCallBack<T> callback) {
         String url = request.getUrl();
         if (useCache) {
             String cache = ConfigCache.getUrlCache(context, url);
             if (!TextUtils.isEmpty(cache)) {
-                parseData(false, cache, request, callback);
+                parseData(false, cache, request, responseType, callback);
                 return;
             }
         }
-        requestNetwork(false, context, useCache, isSync, request, callback);
+        requestNetwork(false, context, useCache, isSync, request, responseType, callback);
     }
-    public <T> void requestNetwork(final boolean isGet, final Context context, final boolean saveCache, final IRxRequest request, final IRequestCallBack<T> callback) {
-        requestNetwork(isGet, context, saveCache, false, request, callback);
+    public <T> void requestNetwork(final boolean isGet, final Context context, final boolean saveCache, final IRxRequest request, final Class<T> responseType, final IRequestCallBack<T> callback) {
+        requestNetwork(isGet, context, saveCache, false, request, responseType, callback);
     }
 
 
-    public <T> void requestNetwork(final boolean isGet, final Context context, final boolean saveCache, final boolean isSync, final IRxRequest request, final IRequestCallBack<T> callback) {
+    public <T> void requestNetwork(final boolean isGet, final Context context, final boolean saveCache, final boolean isSync, final IRxRequest request,final Class<T> responseType, final IRequestCallBack<T> callback) {
         IHttpRequest httpRequest = getRetrofit().create(IHttpRequest.class);
         Observable<ResponseBody> observable;
         if (isGet){
@@ -173,7 +173,7 @@ public class RetrofitRequestManager {
             observable = httpRequest.post(request.getUrl(), RequestBody.create(MediaType.parse("application/json"), request.getBody() == null ? "" : request.getBody()), request.getHeaders() == null ? new HashMap<String, String>() : request.getHeaders());
         }
         L.e("请求的URL："+request.getUrl());
-        final String requestType = isGet ? "Get" : "Post";
+        final String httpType = isGet ? "Get" : "Post";
         if (isSync){
             observable
                     .subscribeOn(ImmediateThinScheduler.INSTANCE)
@@ -189,9 +189,9 @@ public class RetrofitRequestManager {
                     public void accept(@NonNull ResponseBody data) throws Exception {
                         String url = request.getUrl();
                         String json = data.string();
-                        L.e(requestType + " url:" + url + " 返回的数据：" + json);
+                        L.e(httpType + " url:" + url + " 返回的数据：" + json);
                         //解析json数据
-                        if (parseData(isGet, json, request, callback)) {
+                        if (parseData(isGet, json, request, responseType, callback)) {
                             if (saveCache) {
                                 ConfigCache.setUrlCache(context, url, json);
                             }
@@ -201,7 +201,7 @@ public class RetrofitRequestManager {
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(@NonNull Throwable throwable) throws Exception {
-                        L.e(requestType + " Error：" + throwable, throwable);
+                        L.e(httpType + " Error：" + throwable, throwable);
                         if (callback != null) {
                             int errorCode;
                             String msg;
@@ -218,24 +218,24 @@ public class RetrofitRequestManager {
                                 errorCode = NetworkErrorCode.ERROR_CODE_UNKNOWN.getCode();
                                 msg = NetworkErrorCode.ERROR_CODE_UNKNOWN.getMsg();
                             }
-                            L.e(requestType + " ErrorCode：" + errorCode + " Message:" + msg);
+                            L.e(httpType + " ErrorCode：" + errorCode + " Message:" + msg);
                             callback.onFailure(request.getUrl(), errorCode, msg);
                         }
                     }
                 }, new Action() {
                     @Override
                     public void run() throws Exception {
-                        L.e(requestType + " Completed！");
+                        L.e(httpType + " Completed！");
                     }
                 }, new Consumer<Disposable>() {
                     @Override
                     public void accept(@NonNull Disposable disposable) throws Exception {
-                        L.e(requestType + " disposed！");
+                        L.e(httpType + " disposed！");
                     }
                 });
     }
 
-    private <T> boolean parseData(boolean isGet, String data, final IRxRequest request, final IRequestCallBack<T> callback) {
+    private <T> boolean parseData(boolean isGet, String data, final IRxRequest request, final Class<T> responseType, final IRequestCallBack<T> callback) {
         if (callback == null) {
             return false;
         }
@@ -249,7 +249,7 @@ public class RetrofitRequestManager {
                 //解析返回的数据
                 JSONObject dataObj = json.getJSONObject("data");
                 Gson gson = new GsonBuilder().registerTypeAdapterFactory(new JsonFilterAdapterFactory()).create();
-                T result = gson.fromJson(dataObj.toString(), callback.getType());
+                T result = gson.fromJson(dataObj.toString(), responseType);
                 callback.onSuccess(request.getUrl(), result);
                 return true;
             }else{
