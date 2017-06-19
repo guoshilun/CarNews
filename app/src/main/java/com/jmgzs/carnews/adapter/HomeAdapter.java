@@ -8,16 +8,20 @@ import android.view.ViewGroup;
 import com.jmgzs.carnews.ui.MainFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import static android.R.attr.fragment;
 
 public class HomeAdapter extends FragmentPagerAdapter {
 
     private final static int PAGE_COUNT = 6;
-    private final String[] titles = {"推荐","新车","行业","导购","用车","头条"};
-    private MainFragment mainFragment;
+    private final String[] titles = {"推荐", "新车", "行业", "导购", "用车", "头条"};
+    private HashMap<String, Fragment> map;
 
 
     public HomeAdapter(FragmentManager fm) {
         super(fm);
+        map = new HashMap<>();
     }
 
     @Override
@@ -27,19 +31,20 @@ public class HomeAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-//        switch (position) {
-//            default:
-//                if (null == mainFragment)
-                    mainFragment = new MainFragment();
-                return mainFragment;
-//        }
+        Fragment fragment = map.get(titles[position]);
+        if (fragment == null) {
+            Fragment mainFragment = new MainFragment();
+            map.put(titles[position], mainFragment);
+            fragment = mainFragment ;
+        }
+        return fragment;
     }
 
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        Fragment fragment =  (Fragment) super.instantiateItem(container, position);
-        return fragment;
+        Fragment f = (Fragment) super.instantiateItem(container, position);
+        return f;
     }
 
     @Override

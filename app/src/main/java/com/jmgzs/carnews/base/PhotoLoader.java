@@ -18,13 +18,13 @@ import java.io.InputStream;
  * Description:
  */
 
-public class PhotoLoader extends BaseGlideUrlLoader<Photo> {
+public class PhotoLoader extends BaseGlideUrlLoader<String> {
 
-    public static class Factory implements ModelLoaderFactory<Photo, InputStream> {
-        private final ModelCache<Photo, GlideUrl> modelCache = new ModelCache<>(500);
+    public static class Factory implements ModelLoaderFactory<String, InputStream> {
+        private final ModelCache<String, GlideUrl> modelCache = new ModelCache<>(500);
 
         @Override
-        public ModelLoader<Photo, InputStream> build(MultiModelLoaderFactory multiFactory) {
+        public ModelLoader<String, InputStream> build(MultiModelLoaderFactory multiFactory) {
             return new PhotoLoader(multiFactory.build(GlideUrl.class, InputStream.class), modelCache);
         }
 
@@ -34,17 +34,17 @@ public class PhotoLoader extends BaseGlideUrlLoader<Photo> {
         }
     }
 
-    public PhotoLoader(ModelLoader<GlideUrl, InputStream> urlLoader, ModelCache<Photo, GlideUrl> cache) {
+    public PhotoLoader(ModelLoader<GlideUrl, InputStream> urlLoader, ModelCache<String, GlideUrl> cache) {
         super(urlLoader, cache);
     }
 
     @Override
-    protected String getUrl(Photo photo, int width, int height, Options options) {
-        return photo.getUrl();
+    protected String getUrl(String photo, int width, int height, Options options) {
+        return photo;
     }
 
     @Override
-    public boolean handles(Photo photo) {
+    public boolean handles(String photo) {
         return true;
     }
 }

@@ -12,8 +12,8 @@ import java.util.Locale;
 
 public class TimeUtils {
 
-
-    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+    public static final String F = "yyyy-MM-dd HH:mm:ss";
+    public static final SimpleDateFormat sdf = new SimpleDateFormat(F, Locale.CHINA);
 
     private TimeUtils() {
 
@@ -32,6 +32,7 @@ public class TimeUtils {
     public static String getTimeFromDateString(String dateStr) {
         if (isNull(dateStr)) return "";
         try {
+            if (dateStr.length() > F.length()) dateStr = dateStr.substring(0, F.length());
             return getTimeBefore(sdf.parse(dateStr), getHHmm(dateStr));
         } catch (ParseException e) {
             e.printStackTrace();

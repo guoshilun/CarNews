@@ -13,6 +13,8 @@ public class NewsListBean extends BaseInfo {
 
     private StatusBean rsp;
 
+    private int next_key;
+
     public ArrayList<NewsDataBean> getData() {
         return data;
     }

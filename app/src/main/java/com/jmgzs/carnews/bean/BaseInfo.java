@@ -1,5 +1,7 @@
 package com.jmgzs.carnews.bean;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 
 /**
@@ -12,6 +14,7 @@ public class BaseInfo implements Serializable {
 
     @Override
     public String toString() {
-        return super.toString();
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }
