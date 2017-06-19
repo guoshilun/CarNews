@@ -131,7 +131,7 @@ public class NewsInfoActivity extends BaseActivity{
     }
 
     private void requestInfo(String newId){
-        String url = Urls.URL_NEWS_INFO;
+        String url = Urls.URL_INFO;
         RequestUtil.requestByGetAsy(this, String.format(url, newId), false, NewsDataBean.class, new IRequestCallBack<NewsDataBean>() {
 
             @Override

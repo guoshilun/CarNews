@@ -155,15 +155,9 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     protected void lazyLoad() {
         //load data
         if (getUserVisibleHint() && isPrepared) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
 
-            RequestUtil.requestByGetAsy(getContext(), Urls.getUrlNews("0","100"), true, new IRequestCallBack<NewsListBean>() {
-                @Override
-                public Class getType() {
-                    return NewsListBean.class;
-                }
+            RequestUtil.requestByGetAsy(getContext(), Urls.getUrlNews("0","100"), true,NewsListBean.class, new IRequestCallBack<NewsListBean>() {
+
 
                 @Override
                 public void onSuccess(String url, NewsListBean data) {
@@ -182,9 +176,6 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
                 }
             });
-
-            }
-        }).start();
         }
     }
 

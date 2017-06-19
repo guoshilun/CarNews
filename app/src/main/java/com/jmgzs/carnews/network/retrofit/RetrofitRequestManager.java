@@ -180,7 +180,7 @@ public class RetrofitRequestManager {
                     .observeOn(ImmediateThinScheduler.INSTANCE);
         }else{
             observable
-                    .subscribeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread());
         }
         observable
