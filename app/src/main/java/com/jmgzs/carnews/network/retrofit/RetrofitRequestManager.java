@@ -22,12 +22,14 @@ import com.jmgzs.carnews.network.Urls;
 import com.jmgzs.carnews.network.annotation.JsonElement.JsonNotInvalidException;
 import com.jmgzs.carnews.network.annotation.JsonElementHelper;
 import com.jmgzs.carnews.util.L;
+import com.jmgzs.carnews.util.NetworkUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -135,36 +137,20 @@ public class RetrofitRequestManager {
         return retrofit;
     }
 
-    public <T> void get(Context context, boolean useCache, boolean isSync, IRxRequest request, final Class<T> responseType, IRequestCallBack<T> callback) {
-        String url = request.getUrl();
-        if (useCache) {
-            String cache = ConfigCache.getUrlCache(context, url);
-            if (!TextUtils.isEmpty(cache)) {
-                parseData(true, cache, request, responseType, callback);
-                return;
-            }
-        }
-        requestNetwork(true, context, useCache, isSync, request, responseType, callback);
+    public <T> void get(Context context, boolean isSync, IRxRequest request, final Class<T> responseType, IRequestCallBack<T> callback) {
+        requestNetwork(true, context, isSync, request, responseType, callback);
     }
 
 
-    public <T> void post(Context context, boolean useCache, boolean isSync, IRxRequest request, Class<T> responseType, IRequestCallBack<T> callback) {
-        String url = request.getUrl();
-        if (useCache) {
-            String cache = ConfigCache.getUrlCache(context, url);
-            if (!TextUtils.isEmpty(cache)) {
-                parseData(false, cache, request, responseType, callback);
-                return;
-            }
-        }
-        requestNetwork(false, context, useCache, isSync, request, responseType, callback);
+    public <T> void post(Context context, boolean isSync, IRxRequest request, Class<T> responseType, IRequestCallBack<T> callback) {
+        requestNetwork(false, context, isSync, request, responseType, callback);
     }
-    public <T> void requestNetwork(final boolean isGet, final Context context, final boolean saveCache, final IRxRequest request, final Class<T> responseType, final IRequestCallBack<T> callback) {
-        requestNetwork(isGet, context, saveCache, false, request, responseType, callback);
+    public <T> void requestNetwork(final boolean isGet, final Context context, final IRxRequest request, final Class<T> responseType, final IRequestCallBack<T> callback) {
+        requestNetwork(isGet, context, false, request, responseType, callback);
     }
 
 
-    public <T> void requestNetwork(final boolean isGet, final Context context, final boolean saveCache, final boolean isSync, final IRxRequest request,final Class<T> responseType, final IRequestCallBack<T> callback) {
+    public <T> void requestNetwork(final boolean isGet, final Context context, final boolean isSync, final IRxRequest request, final Class<T> responseType, final IRequestCallBack<T> callback) {
         IHttpRequest httpRequest = getRetrofit().create(IHttpRequest.class);
         Observable<ResponseBody> observable;
         if (isGet){
@@ -175,11 +161,11 @@ public class RetrofitRequestManager {
         L.e("请求的URL："+request.getUrl());
         final String httpType = isGet ? "Get" : "Post";
         if (isSync){
-            observable
+            observable = observable
                     .subscribeOn(ImmediateThinScheduler.INSTANCE)
                     .observeOn(ImmediateThinScheduler.INSTANCE);
         }else{
-            observable
+            observable = observable
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());
         }
@@ -191,11 +177,7 @@ public class RetrofitRequestManager {
                         String json = data.string();
                         L.e(httpType + " url:" + url + " 返回的数据：" + json);
                         //解析json数据
-                        if (parseData(isGet, json, request, responseType, callback)) {
-                            if (saveCache) {
-                                ConfigCache.setUrlCache(context, url, json);
-                            }
-                        }
+                        parseData(isGet, json, request, responseType, callback);
                     }
 
                 }, new Consumer<Throwable>() {
@@ -208,7 +190,15 @@ public class RetrofitRequestManager {
                             if (throwable instanceof SocketTimeoutException) {
                                 errorCode = NetworkErrorCode.ERROR_CODE_TIMEOUT.getCode();
                                 msg = NetworkErrorCode.ERROR_CODE_TIMEOUT.getMsg();
-                            } else if (throwable instanceof HttpException){
+                            }else if (throwable instanceof ConnectException){
+                                if (NetworkUtils.hasNetwork(context)){
+                                    errorCode = NetworkErrorCode.ERROR_CODE_SERVER_CONNECT_ERROR.getCode();
+                                    msg = NetworkErrorCode.ERROR_CODE_SERVER_CONNECT_ERROR.getMsg();
+                                }else{
+                                    errorCode = NetworkErrorCode.ERROR_CODE_NO_NETWORK.getCode();
+                                    msg = NetworkErrorCode.ERROR_CODE_NO_NETWORK.getMsg();
+                                }
+                            }else if (throwable instanceof HttpException){
                                 HttpException ex = (HttpException) throwable;
                                 L.e(ex.toString());
                                 errorCode = NetworkErrorCode.ERROR_CODE_SERVER_ERROR.getCode();
@@ -244,16 +234,17 @@ public class RetrofitRequestManager {
             // 解析返回是否正常
             L.e("data:"+data);
             JSONObject json = new JSONObject(data);
-            int code = json.getInt("errorCode");
+            JSONObject rsp = json.getJSONObject("rsp");
+            int code = rsp.getInt("status");
             if (code == 0){
                 //解析返回的数据
-                JSONObject dataObj = json.getJSONObject("data");
+//                JSONObject dataObj = json.getJSONObject("data");
                 Gson gson = new GsonBuilder().registerTypeAdapterFactory(new JsonFilterAdapterFactory()).create();
-                T result = gson.fromJson(dataObj.toString(), responseType);
+                T result = gson.fromJson(data, responseType);
                 callback.onSuccess(request.getUrl(), result);
                 return true;
             }else{
-                String msg = json.getString("message");
+                String msg = json.getString("reason");
                 L.e(requestType + " ErrorCode：" + code + " Message:" + msg);
                 callback.onFailure(request.getUrl(), code, msg);
                 return false;
@@ -346,4 +337,5 @@ class JsonFilterAdapterFactory implements TypeAdapterFactory {
 
         }.nullSafe();
     }
+
 }

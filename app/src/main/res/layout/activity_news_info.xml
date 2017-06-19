@@ -18,8 +18,8 @@
         android:id="@+id/newsInfo_scf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_above="@id/newsInfo_bottom_bar">
+
         <LinearLayout
             android:id="@+id/newsInfo_content"
             android:layout_width="match_parent"
@@ -33,6 +33,13 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/white" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/newsInfo_grey_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="#7f000000"
+            android:visibility="gone"/>
     </com.jmgzs.carnews.ui.view.ScrollControlFrameLayout>
     <!--顶部条-->
     <LinearLayout

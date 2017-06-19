@@ -12,5 +12,5 @@ public class Urls {
 
 
     public static final String URL_NEWS = BASE_URL + "news_info/api/news_Pinterest/?type_key=1&startkey=1&news_num%20=20&channel_id=1";
-    public static final String URL_NEWS_INFO = BASE_URL + "/news_info/api/get_article_detail/?aid=%1$s";
+    public static final String URL_NEWS_INFO = BASE_URL + "news_info/api/get_article_detail/?aid=%1$s";
 }

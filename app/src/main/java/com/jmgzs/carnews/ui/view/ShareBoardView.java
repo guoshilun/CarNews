@@ -30,11 +30,13 @@ public class ShareBoardView {
     private GridView gridView;
     private View btnDismiss;
     private IOnShareItemClickListener listener;
+    private IOnBoardDismissListener boardListener;
     private int height;
 
-    public ShareBoardView(Activity context, IOnShareItemClickListener listener) {
+    public ShareBoardView(Activity context, IOnShareItemClickListener listener, IOnBoardDismissListener boardListener) {
         this.context = context;
         this.listener = listener;
+        this.boardListener =boardListener;
         initPop();
     }
 
@@ -44,6 +46,14 @@ public class ShareBoardView {
         pop.setTouchable(true);
         pop.setOutsideTouchable(true);
         pop.setAnimationStyle(R.style.pop_up_2_down_anim);
+        pop.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                if (boardListener != null){
+                    boardListener.onDismiss(true);
+                }
+            }
+        });
 
         initPopView(view);
         view.measure(View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenWidthPixels(context),View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenHeightPixels(context), View.MeasureSpec.AT_MOST));
@@ -82,6 +92,9 @@ public class ShareBoardView {
     public void show(View parent, int x, int y) {
         if (pop != null && !pop.isShowing()) {
             pop.showAtLocation(parent, Gravity.NO_GRAVITY, x, y - height);
+            if (boardListener != null){
+                boardListener.onDismiss(false);
+            }
         }
     }
 
@@ -93,5 +106,9 @@ public class ShareBoardView {
 
     public interface IOnShareItemClickListener{
         void onItemClick(int position, PlatformConfig.Platform platform);
+    }
+
+    public interface IOnBoardDismissListener{
+        void onDismiss(boolean isDismiss);
     }
 }

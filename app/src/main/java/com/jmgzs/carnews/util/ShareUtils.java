@@ -63,49 +63,49 @@ public class ShareUtils {
                 .share();
     }
 
-    public void shareText(final Activity context, final View parent, final String text, final UMShareListener shareListener){
+    public void shareText(final Activity context, final View parent, final String text, final UMShareListener shareListener, final ShareBoardView.IOnBoardDismissListener boardListener){
         ShareBoardView board = new ShareBoardView(context, new ShareBoardView.IOnShareItemClickListener() {
             @Override
             public void onItemClick(int position, PlatformConfig.Platform platform) {
                 ShareUtils.shareText(context, platform, text, shareListener);
             }
-        });
+        }, boardListener);
         int[] xy = new int[2];
         parent.getLocationOnScreen(xy);
         board.show(parent, xy[0], xy[1]);
     }
 
-    public void shareImg(final Activity context, final View parent, final String url, final String title, final String desc, final UMShareListener shareListener){
+    public void shareImg(final Activity context, final View parent, final String url, final String title, final String desc, final UMShareListener shareListener, final ShareBoardView.IOnBoardDismissListener boardListener){
         ShareBoardView board = new ShareBoardView(context, new ShareBoardView.IOnShareItemClickListener() {
             @Override
             public void onItemClick(int position, PlatformConfig.Platform platform) {
                 ShareUtils.shareImg(context, platform, url, title, desc, shareListener);
             }
-        });
+        }, boardListener);
         int[] xy = new int[2];
         parent.getLocationOnScreen(xy);
         board.show(parent, xy[0], xy[1]);
     }
 
-    public void shareImg(final Activity context, final View parent, final int picRes, final String title, final String desc, final UMShareListener shareListener){
+    public void shareImg(final Activity context, final View parent, final int picRes, final String title, final String desc, final UMShareListener shareListener, final ShareBoardView.IOnBoardDismissListener boardListener){
         ShareBoardView board = new ShareBoardView(context, new ShareBoardView.IOnShareItemClickListener() {
             @Override
             public void onItemClick(int position, PlatformConfig.Platform platform) {
                 ShareUtils.shareImg(context, platform, picRes, title, desc, shareListener);
             }
-        });
+        }, boardListener);
         int[] xy = new int[2];
         parent.getLocationOnScreen(xy);
         board.show(parent, xy[0], xy[1]);
     }
 
-    public void shareUrl(final Activity context, final View parent, final String url, final String title, final String desc, final int picRes, final UMShareListener shareListener){
+    public void shareUrl(final Activity context, final View parent, final String url, final String title, final String desc, final int picRes, final UMShareListener shareListener, final ShareBoardView.IOnBoardDismissListener boardListener){
         ShareBoardView board = new ShareBoardView(context, new ShareBoardView.IOnShareItemClickListener() {
             @Override
             public void onItemClick(int position, PlatformConfig.Platform platform) {
                 ShareUtils.shareUrl(context, platform, url, title, desc, picRes, shareListener);
             }
-        });
+        }, boardListener);
         int[] xy = new int[2];
         parent.getLocationOnScreen(xy);
         L.e("屏幕中的x:"+xy[0]+"\ty:"+xy[1]);

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import com.jmgzs.carnews.network.RequestUtil;
 import com.jmgzs.carnews.network.Urls;
 import com.jmgzs.carnews.ui.view.ScrollControlFrameLayout;
 import com.jmgzs.carnews.ui.view.ScrollableWebView;
+import com.jmgzs.carnews.ui.view.ShareBoardView;
 import com.jmgzs.carnews.ui.view.TitleBarScrollController;
 import com.jmgzs.carnews.util.DensityUtils;
 import com.jmgzs.carnews.util.ShareUtils;
@@ -42,7 +44,8 @@ public class NewsInfoActivity extends BaseActivity{
     private View content;
     private View top, statusBar;
     private View bottomBar;
-    private ImageView btnShare, btnShareTop, btnFavoriate, btnBack;
+    private View contentCover;
+    private ImageView btnShare, btnShareTop, btnFavorite, btnBack;
     private TextView tvTitle;
     private JsBridge js;
 
@@ -63,6 +66,7 @@ public class NewsInfoActivity extends BaseActivity{
         top = findViewById(R.id.newsInfo_top_bar);
         statusBar = findViewById(R.id.newInfo_status_bar);
         bottomBar = findViewById(R.id.newsInfo_bottom_bar);
+        contentCover = findViewById(R.id.newsInfo_grey_cover);
 
         initButtons();
         initTitle();
@@ -75,7 +79,7 @@ public class NewsInfoActivity extends BaseActivity{
 
     private void initButtons(){
         btnShare = (ImageView) findViewById(R.id.bottomBar_img_share);
-        btnFavoriate = (ImageView) findViewById(R.id.bottomBar_img_home);
+        btnFavorite = (ImageView) findViewById(R.id.bottomBar_img_home);
         btnShareTop = (ImageView) findViewById(R.id.titleInfo_img_more);
         btnBack = (ImageView) findViewById(R.id.titleInfo_img_back);
 
@@ -84,8 +88,8 @@ public class NewsInfoActivity extends BaseActivity{
         initOneBtn(btnShareTop, R.mipmap.point);
         btnShare.setImageResource(R.mipmap.share);
         initOneBtn(btnShare, R.mipmap.share);
-        btnFavoriate.setImageResource(R.mipmap.arrow_left);
-        initOneBtn(btnFavoriate, R.mipmap.arrow_left);
+        btnFavorite.setImageResource(R.mipmap.arrow_left);
+        initOneBtn(btnFavorite, R.mipmap.arrow_left);
     }
 
     private void initOneBtn(ImageView btn, int imgRes){
@@ -124,7 +128,7 @@ public class NewsInfoActivity extends BaseActivity{
         top.measure(View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenWidthPixels(this), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenHeightPixels(this), View.MeasureSpec.AT_MOST));
         TitleBarScrollController controller = new TitleBarScrollController(wv);
         wv.setScrollListener(controller);
-        ((LinearLayout.LayoutParams)content.getLayoutParams()).topMargin = top.getMeasuredHeight();
+        ((FrameLayout.LayoutParams)content.getLayoutParams()).topMargin = top.getMeasuredHeight();
         scrollControlView.setAlphaView(top);
         scrollControlView.setScrollView(content);
         scrollControlView.setScrollEndListener(controller);
@@ -132,11 +136,12 @@ public class NewsInfoActivity extends BaseActivity{
 
     private void requestInfo(String newId){
         String url = Urls.URL_NEWS_INFO;
-        RequestUtil.requestByGetAsy(this, String.format(url, newId), false, NewsDataBean.class, new IRequestCallBack<NewsDataBean>() {
+        RequestUtil.requestByGetAsy(this, String.format(url, newId), NewsDataBean.class, new IRequestCallBack<NewsDataBean>() {
 
             @Override
             public void onSuccess(String url, NewsDataBean data) {
-
+                //TODO 加载页面
+                wv.loadUrl("");
             }
 
             @Override
@@ -192,6 +197,15 @@ public class NewsInfoActivity extends BaseActivity{
                     @Override
                     public void onCancel(SHARE_MEDIA share_media) {
                         Toast.makeText(NewsInfoActivity.this, "分享已取消", Toast.LENGTH_SHORT).show();
+                    }
+                }, new ShareBoardView.IOnBoardDismissListener() {
+                    @Override
+                    public void onDismiss(boolean isDismiss) {
+                        if (isDismiss){
+                            contentCover.setVisibility(View.GONE);
+                        }else{
+                            contentCover.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
                 break;

@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.jmgzs.carnews.util.L;
@@ -21,7 +22,7 @@ import com.jmgzs.carnews.util.L;
  * Created by Wxl on 2017/6/13.
  */
 
-public class ScrollControlFrameLayout extends LinearLayout {
+public class ScrollControlFrameLayout extends FrameLayout {
 
     private IScrollEndListener scrollEndListener;
     private float mStartX, mStartY, mX, mY;
