@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 
 import com.jmgzs.carnews.R;
 import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.lib_network.utils.L;
 
 /**
@@ -31,6 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         translucentStatusBar();
+        PushUtil.getPush().activityInit(this);
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         ViewGroup parent = (ViewGroup) findViewById(android.R.id.content);

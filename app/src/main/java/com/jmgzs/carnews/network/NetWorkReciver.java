@@ -5,11 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 
-import com.jmgzs.carnews.util.L;
+import com.jmgzs.lib_network.utils.L;
 
-import static com.jmgzs.carnews.util.NetworkUtils.NETWORN_MOBILE;
-import static com.jmgzs.carnews.util.NetworkUtils.NETWORN_NONE;
-import static com.jmgzs.carnews.util.NetworkUtils.getNetworkState;
+import static com.jmgzs.lib_network.utils.NetworkUtils.NETWORN_MOBILE_2G;
+import static com.jmgzs.lib_network.utils.NetworkUtils.NETWORN_MOBILE_3G;
+import static com.jmgzs.lib_network.utils.NetworkUtils.NETWORN_MOBILE_4G;
+import static com.jmgzs.lib_network.utils.NetworkUtils.NETWORN_NONE;
+import static com.jmgzs.lib_network.utils.NetworkUtils.getNetworkState;
+
 
 /**
  * Created by mac on 17/6/19.
@@ -35,6 +38,10 @@ public class NetWorkReciver extends BroadcastReceiver {
 
     public static boolean isMobile(Context ct) {
         if (ct != null && netState == NETWORN_NONE) netState = getNetworkState(ct);
-        return NETWORN_MOBILE == netState;
+        if (netState == NETWORN_MOBILE_2G || netState == NETWORN_MOBILE_3G || netState == NETWORN_MOBILE_4G){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

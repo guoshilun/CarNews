@@ -21,6 +21,7 @@ import com.jmgzs.carnews.ui.view.ScrollControlFrameLayout;
 import com.jmgzs.carnews.ui.view.ScrollableWebView;
 import com.jmgzs.carnews.ui.view.ShareBoardView;
 import com.jmgzs.carnews.ui.view.TitleBarScrollController;
+import com.jmgzs.carnews.util.ResUtils;
 import com.jmgzs.carnews.util.ShareUtils;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
@@ -143,6 +144,9 @@ public class NewsInfoActivity extends BaseActivity{
 
             @Override
             public void onSuccess(String url, NewsDataBean data) {
+                if (!ResUtils.processResponse(url, data, this)){
+                    return;
+                }
                 //TODO 加载页面
                 wv.loadUrl("");
             }
