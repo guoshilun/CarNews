@@ -6,6 +6,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jmgzs.carnews.bean.NewsDataBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,7 +154,7 @@ public abstract class RCVBaseAdapter<D, T extends BaseHolder> extends RecyclerVi
         info.view = view;
         info.viewType = BASE_HEADER_VIEW_TYPE + mHeaderViewInfoList.size();
         mHeaderViewInfoList.add(info);
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
     public void addFooterView(View view) {
@@ -163,7 +165,7 @@ public abstract class RCVBaseAdapter<D, T extends BaseHolder> extends RecyclerVi
         info.view = view;
         info.viewType = BASE_FOOTER_VIEW_TYPE + mFooterViewInfoList.size();
         mFooterViewInfoList.add(info);
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
     public boolean containsFooterView(View v) {
@@ -360,5 +362,9 @@ public abstract class RCVBaseAdapter<D, T extends BaseHolder> extends RecyclerVi
     public void preposeList(List<D> list) {
         data.addAll(0, list);
         notifyItemRangeChanged(0, list.size());
+    }
+
+    public List<D> getData(){
+        return data;
     }
 }

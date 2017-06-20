@@ -1,6 +1,9 @@
 package com.jmgzs.carnews.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -8,9 +11,17 @@ import android.widget.TextView;
 
 import com.jmgzs.autoviewpager.RecyclingPagerAdapter;
 import com.jmgzs.carnews.R;
+import com.jmgzs.carnews.base.App;
+import com.jmgzs.carnews.base.GlideApp;
+import com.jmgzs.carnews.base.GlideRequest;
 import com.jmgzs.carnews.bean.NewsDataBean;
+import com.jmgzs.carnews.network.NetWorkReciver;
+import com.jmgzs.carnews.util.Const;
+import com.jmgzs.carnews.util.SPBase;
 
 import java.util.ArrayList;
+
+import static android.os.Build.VERSION_CODES.N;
 
 /**
  * Created by mac on 17/6/8.
@@ -24,12 +35,14 @@ public class AutoPagerAdapter extends RecyclingPagerAdapter {
 
     private int size;
     private boolean isInfiniteLoop;
+    private GlideRequest<Drawable> request;
 
     public AutoPagerAdapter(Context context, ArrayList<NewsDataBean> lists) {
         this.mContext = context;
         this.infos = lists;
-        this.size = infos == null || infos.size() == 0 ? 5 : infos.size();
+        this.size = (infos == null || infos.size() == 0 ? 1 : infos.size());
         isInfiniteLoop = false;
+        request = GlideApp.with(context).asDrawable().error(R.mipmap.app_default_middle).centerCrop();
     }
 
     @Override
@@ -59,21 +72,17 @@ public class AutoPagerAdapter extends RecyclingPagerAdapter {
         TextView tvTitle = (TextView) convertView.findViewById(R.id.item_text);
 
         int pos = getPosition(position);
-//        NewsDataBean info = getItem(pos);
-//        if (info == null) {
-//            ivPic.setImageResource(R.mipmap.new_comer_header_bg);
-//        } else {
-//            ivPic.setImageURI(Uri.parse(info.getBanner()));
-//
-//            if (TextUtils.isEmpty(info.getLt_icon())) {
-//                ivIcon.setVisibility(View.GONE);
-//            } else {
-//                ivIcon.setVisibility(View.VISIBLE);
-//                ivIcon.setImageURI(Uri.parse(info.getLt_icon()));
-//            }
-//        }
-//
-//        ivPic.setTag(R.id.tag_position, pos);
+        NewsDataBean info = getItem(pos);
+        if (info == null) {
+            ivPic.setImageResource(R.mipmap.app_default_middle);
+            tvTitle.setText("");
+        } else {
+            tvTitle.setText(info.getTitle());
+            if ((App.isMobile && NetWorkReciver.isMobile(mContext)) ||info.getImg_list().size()==0) {
+                ivPic.setImageResource(R.mipmap.app_default_middle);
+            } else
+                request.load(info.getImg_list().get(0)).into(ivPic);
+        }
         ivPic.setOnClickListener(bannerListener);
 
         return convertView;
@@ -90,5 +99,20 @@ public class AutoPagerAdapter extends RecyclingPagerAdapter {
     public void setInfiniteLoop(boolean isInfiniteLoop) {
         this.isInfiniteLoop = isInfiniteLoop;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
+    public void updateData(ArrayList<NewsDataBean> dataBeen) {
+        infos.clear();
+        infos.addAll(dataBeen);
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<NewsDataBean> getData(){
+        return infos;
     }
 }

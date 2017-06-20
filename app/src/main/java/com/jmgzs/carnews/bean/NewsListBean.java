@@ -30,4 +30,12 @@ public class NewsListBean extends BaseInfo implements IGetRsp {
     public void setRsp(StatusBean rsp) {
         this.rsp = rsp;
     }
+
+    public int getNext_key() {
+        return next_key;
+    }
+
+    public void setNext_key(int next_key) {
+        this.next_key = next_key;
+    }
 }

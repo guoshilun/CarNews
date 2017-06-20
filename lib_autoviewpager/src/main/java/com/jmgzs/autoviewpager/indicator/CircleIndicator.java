@@ -143,10 +143,6 @@ public class CircleIndicator extends View implements ViewPager.OnPageChangeListe
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
                 if (mIndicatorMode != Mode.SOLO) {
-//                    if (viewPager.getAdapter() instanceof VipHeaderAdapter) {
-//                        position = ((VipHeaderAdapter) viewPager.getAdapter()).getPosition(position);
-//                    }
-
                     trigger(position, positionOffset);
                     if (mListener != null) {
                         mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
@@ -157,10 +153,6 @@ public class CircleIndicator extends View implements ViewPager.OnPageChangeListe
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-//                if (viewPager.getAdapter() instanceof VipHeaderAdapter) {
-//                    position = ((VipHeaderAdapter) viewPager.getAdapter()).getPosition(position);
-//                }
-
                 if (mIndicatorMode == Mode.SOLO) {
                     trigger(position, 0);
                 }

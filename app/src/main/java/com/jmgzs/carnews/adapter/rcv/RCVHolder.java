@@ -3,6 +3,7 @@ package com.jmgzs.carnews.adapter.rcv;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -17,20 +18,25 @@ import com.bumptech.glide.signature.MediaStoreSignature;
 import com.bumptech.glide.signature.ObjectKey;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.rcvbase.BaseHolder;
+import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.GlideApp;
 import com.jmgzs.carnews.base.GlideRequest;
 import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.bean.Photo;
+import com.jmgzs.carnews.network.NetWorkReciver;
+import com.jmgzs.carnews.util.TimeUtils;
 
 import java.util.Collections;
 import java.util.List;
+
+import static android.R.attr.author;
 
 /**
  * Created by mac on 17/6/12.
  * Description:
  */
 
-public class RCVHolder extends BaseHolder<NewsDataBean>{
+public class RCVHolder extends BaseHolder<NewsDataBean> {
 //        implements ListPreloader.PreloadModelProvider<Photo>, ListPreloader.PreloadSizeProvider<Photo> {
 
 
@@ -38,66 +44,66 @@ public class RCVHolder extends BaseHolder<NewsDataBean>{
     private ImageView image2;
     private ImageView image3;
     private TextView title;
+    private TextView author;
+    private TextView time;
 
-    private int[] actualSize;
+    //    private int[] actualSize;
+    private LinearLayout contentLayout;
 
     private GlideRequest<Drawable> request;
     private Key signature;
 
 
-    public RCVHolder(ViewGroup parent, @LayoutRes int layout,int w ,int h) {
+    public RCVHolder(ViewGroup parent, @LayoutRes int layout, int w, int h) {
         super(parent, layout);
         image = getView(R.id.item_image);
         image2 = getView(R.id.item_image2);
         image3 = getView(R.id.item_image3);
         title = getView(R.id.item_text);
+        author = getView(R.id.item_author);
+        time = getView(R.id.item_time);
 
-        LinearLayout contentLayout =  getView(R.id.item_images_layout);
+        contentLayout = getView(R.id.item_images_layout);
         contentLayout.getLayoutParams().height = h;
-
-//        image.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-//            @Override
-//            public boolean onPreDraw() {
-//                if (actualSize == null)
-//                    actualSize = new int[]{image.getWidth(), image.getHeight()};
-//                image.getViewTreeObserver().removeOnPreDrawListener(this);
-//                return true;
-//            }
-//        });
-        request = GlideApp.with(getContext()).asDrawable().centerCrop();
+        request = GlideApp.with(getContext()).asDrawable().centerCrop().error(R.mipmap.app_default_middle);
 
     }
 
     @Override
     public void setData(NewsDataBean data) {
         if (data == null) return;
-        this.dataBean = data;
+//        this.dataBean = data;
         title.setText(data.getTitle());
-
-//        signature = new ObjectKey(data);
-        request.
-                load(data.getImg_list().get(0).getUrl()).
-//                placeholder(R.mipmap.ic_launcher).
-//                error(R.mipmap.ic_launcher).
-//                signature(signature).
-//                diskCacheStrategy(DiskCacheStrategy.ALL).
-                into(image);
-        request.load(data.getImg_list().get(0).getUrl()).into(image2);
-        request.load(data.getImg_list().get(0).getUrl()).into(image3);
+        author.setText(data.getPublish_source());
+        time.setText(TimeUtils.getTimeFromDateString(data.getPublish_time()));
+        if (data.getImg_list().size() == 0) {
+            contentLayout.setVisibility(View.GONE);
+        } else {
+            contentLayout.setVisibility(View.VISIBLE);
+            if ((App.isMobile && NetWorkReciver.isMobile(getContext()))|| data.getImg_list().size()==0) {
+                image.setImageResource(R.mipmap.app_default_middle);
+                image2.setImageResource(R.mipmap.app_default_middle);
+                image3.setImageResource(R.mipmap.app_default_middle);
+            } else {
+                request.load(data.getImg_list().get(0)).into(image);
+                request.load(data.getImg_list().get(1)).into(image2);
+                request.load(data.getImg_list().get(2)).into(image3);
+            }
+        }
     }
 
-    private NewsDataBean dataBean;
+//    private NewsDataBean dataBean;
 
-    public List<Photo> getPreloadItems(int position) {
-        return (dataBean.getImg_list());
-    }
-
-    public RequestBuilder getPreloadRequestBuilder(Photo item) {
-        return request.clone().signature(signature).load(item.getUrl());
-    }
-
-    @Nullable
-    public int[] getPreloadSize(Photo item, int adapterPosition, int perItemPosition) {
-        return actualSize;
-    }
+//    public List<String> getPreloadItems(int position) {
+//        return (dataBean.getImg_list());
+//    }
+//
+//    public RequestBuilder getPreloadRequestBuilder(Photo item) {
+//        return request.clone().signature(signature).load(item);
+//    }
+//
+//    @Nullable
+//    public int[] getPreloadSize(Photo item, int adapterPosition, int perItemPosition) {
+//        return actualSize;
+//    }
 }

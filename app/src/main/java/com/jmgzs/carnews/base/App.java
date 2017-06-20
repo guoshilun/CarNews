@@ -20,7 +20,7 @@ import java.util.List;
 public class App extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
-    public static boolean isOpenWifi = false;
+    public static boolean isMobile = false;
     public static boolean isRecptPush = true;
     private static App instance;
 
@@ -67,9 +67,9 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        isOpenWifi = sharedPreferences.getBoolean(Const.SPKey.WIFI,false);
+        isMobile = sharedPreferences.getBoolean(Const.SPKey.WIFI,false);
         isRecptPush = sharedPreferences.getBoolean(Const.SPKey.PUSH,true);
-        L.e("app  sp --:"+key +"-"+ isRecptPush+isOpenWifi);
+        L.e("app  sp --:"+key +"-"+ isRecptPush+isMobile);
     }
 
 }

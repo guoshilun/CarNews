@@ -7,13 +7,19 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.jmgzs.carnews.R;
+import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.BaseActivity;
+import com.jmgzs.carnews.base.GlideApp;
 import com.jmgzs.carnews.ui.dialog.DialogMenu;
 import com.jmgzs.carnews.ui.dialog.IMenuItemClickListerer;
 import com.jmgzs.carnews.ui.view.SettingItemView;
 import com.jmgzs.carnews.util.Const;
+import com.jmgzs.carnews.util.GlideCacheUtil;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
+
+import static com.jmgzs.carnews.util.SPBase.clear;
+import static java.util.ResourceBundle.clearCache;
 
 
 public class UserSettingActivity extends BaseActivity implements SettingItemView.OnCheckChangedListener {
@@ -83,7 +89,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemWifi.setonCheckChangedListener(this);
         itemPush.setonCheckChangedListener(this);
 
-        itemCache.setTextState("0.8MB");
+        itemCache.setTextState(GlideCacheUtil.getInstance().getCacheSize(this));
+//        itemCache.setTextState("0.8MB");
     }
 
     @Override
@@ -94,7 +101,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                 break;
 
             case R.id.user_head:
-                showMenu();
+                showPhotoMenu();
                 break;
             case R.id.setting_store:
                 startActivity(new Intent(this, NewsStoreActivity.class));
@@ -103,10 +110,11 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
 
                 break;
             case R.id.setting_user:
-
+                startActivity(new Intent(this, MianZeActivity.class));
                 break;
             case R.id.setting_cache:
-
+                showCacheMenu();
+//                clearGlideCache();
                 break;
             case R.id.setting_textsize:
 
@@ -130,7 +138,12 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         }
     }
 
-    private void showMenu() {
+    private void clearGlideCache() {
+        GlideCacheUtil.getInstance().clearImageDiskCache(this);
+        itemCache.setTextState("");
+    }
+
+    private void showPhotoMenu() {
         DialogMenu menuDialog = new DialogMenu(this);
         menuDialog.setOnMenuItemClickListener(new IMenuItemClickListerer() {
 
@@ -148,5 +161,29 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
             }
         });
         menuDialog.show();
+    }
+
+    private void showCacheMenu() {
+        DialogMenu menuDialog = new DialogMenu(this);
+        menuDialog.setOnMenuItemClickListener(new IMenuItemClickListerer() {
+
+            @Override
+            public void onMenuItemClick(int position) {
+                switch (position) {
+                    case DialogMenu.MENU_ITEM_TOP:
+                        break;
+                    case DialogMenu.MENU_ITEM_BOTTOM:
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        menuDialog.show();
+        menuDialog.setMenuItemTopText(View.VISIBLE,"删除缓存?");
+        menuDialog.setMenuItemMiddle1Text(View.GONE,null);
+        menuDialog.setMenuItemMiddle2Text(View.GONE,null);
+        menuDialog.setMenuItemBottomText(View.VISIBLE,"确定");
     }
 }

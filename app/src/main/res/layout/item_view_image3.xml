@@ -15,7 +15,7 @@
         android:layout_marginBottom="@dimen/padding_5dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="撒狗粮啊\n赛狗"
+        android:text="汽车之家"
         android:textColor="@color/colorBlack"
         android:textSize="@dimen/text_16sp" />
 
@@ -32,7 +32,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:scaleType="fitXY"
-            android:src="@mipmap/logo" />
+            android:src="@mipmap/app_default_middle" />
 
         <ImageView
             android:id="@+id/item_image2"
@@ -42,7 +42,7 @@
             android:layout_marginRight="@dimen/padding_5dp"
             android:layout_weight="1"
             android:scaleType="fitXY"
-            android:src="@mipmap/logo" />
+            android:src="@mipmap/app_default_middle" />
 
         <ImageView
             android:id="@+id/item_image3"
@@ -50,7 +50,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:scaleType="fitXY"
-            android:src="@mipmap/logo" />
+            android:src="@mipmap/app_default_middle" />
 
     </LinearLayout>
 

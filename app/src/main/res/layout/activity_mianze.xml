@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:addStatesFromChildren="true"
+    android:background="@color/app_bg"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical">
+
+<include layout="@layout/layout_title_info"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/app_bg"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:paddingTop="@dimen/padding_20dp">
+
+
+        <com.jmgzs.lib.view.roundedimage.RoundedImageView
+            android:id="@+id/welcome_bottom_logo"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerInside"
+            android:src="@mipmap/logo"
+            app:riv_border_color="@color/colorWhite"
+            app:riv_border_width="2dp"
+            app:riv_corner_radius="@dimen/top_tab_padding"
+            app:riv_oval="false" />
+
+        <TextView
+            android:id="@+id/welcome_bottom_logo_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/padding_8dp"
+            android:text="@string/splash_text"
+            android:textSize="@dimen/text_12sp" />
+
+    </LinearLayout>
+
+    <TextView android:text="@string/mianze"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:textSize="@dimen/text_16sp"
+        android:autoLink="email"
+        android:textColor="@color/colorBlack"
+        android:layout_height="match_parent" />
+</LinearLayout>
