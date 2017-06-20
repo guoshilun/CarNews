@@ -2,7 +2,7 @@ package com.jmgzs.carnews.js;
 
 import android.webkit.JavascriptInterface;
 
-import com.jmgzs.carnews.util.L;
+import com.jmgzs.lib_network.utils.L;
 
 /**js回调类
  * Created by Wxl on 2017/6/15.

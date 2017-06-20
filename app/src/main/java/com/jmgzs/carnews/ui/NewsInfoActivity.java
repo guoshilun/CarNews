@@ -11,22 +11,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.js.JsBridge;
-import com.jmgzs.carnews.network.IRequestCallBack;
-import com.jmgzs.carnews.network.RequestUtil;
 import com.jmgzs.carnews.network.Urls;
 import com.jmgzs.carnews.ui.view.ScrollControlFrameLayout;
 import com.jmgzs.carnews.ui.view.ScrollableWebView;
 import com.jmgzs.carnews.ui.view.ShareBoardView;
 import com.jmgzs.carnews.ui.view.TitleBarScrollController;
-import com.jmgzs.carnews.util.DensityUtils;
+import com.jmgzs.carnews.util.ResUtils;
 import com.jmgzs.carnews.util.ShareUtils;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.jmgzs.lib_network.network.IRequestCallBack;
+import com.jmgzs.lib_network.network.RequestUtil;
 
 /**新闻详情界面
  * Created by Wxl on 2017/6/12.
@@ -76,6 +77,8 @@ public class NewsInfoActivity extends BaseActivity{
         initShare();
 
         requestInfo(newsId);
+
+//        wv.loadDataWithBaseURL("file:///android_asset/", htmlTemplate, "text/html", "utf-8", null);
     }
 
     private void initButtons(){
@@ -116,6 +119,7 @@ public class NewsInfoActivity extends BaseActivity{
         wv = (ScrollableWebView) findViewById(R.id.newsInfo_wv);
 
         wv.getSettings().setJavaScriptEnabled(true);
+        wv.getSettings().setLoadsImagesAutomatically(true);
         js = new JsBridge();
         wv.addJavascriptInterface(js, "carnews");
     }
@@ -140,6 +144,9 @@ public class NewsInfoActivity extends BaseActivity{
 
             @Override
             public void onSuccess(String url, NewsDataBean data) {
+                if (!ResUtils.processResponse(url, data, this)){
+                    return;
+                }
                 //TODO 加载页面
                 wv.loadUrl("");
             }

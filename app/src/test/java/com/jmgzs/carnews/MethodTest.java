@@ -1,6 +1,6 @@
 package com.jmgzs.carnews;
 
-import com.jmgzs.carnews.util.L;
+import com.jmgzs.lib_network.utils.L;
 import com.jmgzs.carnews.util.TimeUtils;
 
 import org.junit.Test;

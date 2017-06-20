@@ -3,7 +3,9 @@ package com.jmgzs.carnews.network;
 import android.app.Activity;
 
 import com.jmgzs.carnews.BuildConfig;
-import com.jmgzs.carnews.network.annotation.JsonElement;
+import com.jmgzs.lib_network.network.IRequestCallBack;
+import com.jmgzs.lib_network.network.RequestUtil;
+import com.jmgzs.lib_network.network.annotation.JsonElement;
 import com.jmgzs.carnews.ui.MainActivity;
 
 import org.junit.Before;

@@ -14,15 +14,13 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.jmgzs.carnews.network.ConfigCache;
-import com.jmgzs.carnews.network.IRequestCallBack;
-import com.jmgzs.carnews.network.IRxRequest;
-import com.jmgzs.carnews.network.NetworkErrorCode;
 import com.jmgzs.carnews.network.Urls;
-import com.jmgzs.carnews.network.annotation.JsonElement.JsonNotInvalidException;
-import com.jmgzs.carnews.network.annotation.JsonElementHelper;
-import com.jmgzs.carnews.util.L;
-import com.jmgzs.carnews.util.NetworkUtils;
+import com.jmgzs.lib_network.network.IRequestCallBack;
+import com.jmgzs.lib_network.network.IRxRequest;
+import com.jmgzs.lib_network.network.NetworkErrorCode;
+import com.jmgzs.lib_network.network.annotation.JsonElementHelper;
+import com.jmgzs.lib_network.utils.L;
+import com.jmgzs.lib_network.utils.NetworkUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -327,7 +325,7 @@ class JsonFilterAdapterFactory implements TypeAdapterFactory {
                                 }
 //                                L.e("field:"+field+"\tvalue:"+value+"\ttarget:"+obj);
                                 JsonElementHelper.checkJsonValidation(field, value, obj);
-                            } catch (JsonNotInvalidException e) {
+                            } catch (com.jmgzs.lib_network.network.annotation.JsonElement.JsonNotInvalidException e) {
                                 throw new JsonSyntaxException(e);
                             }
                         }

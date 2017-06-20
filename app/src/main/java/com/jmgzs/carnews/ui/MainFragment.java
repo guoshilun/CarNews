@@ -23,11 +23,13 @@ import com.jmgzs.carnews.adapter.rcvbase.OnRCVItemClickListener;
 import com.jmgzs.carnews.base.BaseFragment;
 import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.bean.NewsListBean;
-import com.jmgzs.carnews.network.ConfigCache;
-import com.jmgzs.carnews.network.IRequestCallBack;
-import com.jmgzs.carnews.network.RequestUtil;
+
 import com.jmgzs.carnews.network.Urls;
-import com.jmgzs.carnews.util.L;
+import com.jmgzs.lib_network.network.ConfigCache;
+import com.jmgzs.lib_network.network.IRequestCallBack;
+import com.jmgzs.lib_network.network.RequestUtil;
+import com.jmgzs.lib_network.utils.L;
+
 import com.jmgzs.carnews.util.T;
 
 import java.util.ArrayList;

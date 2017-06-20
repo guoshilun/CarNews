@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Description:
  */
 
-public class NewsListBean extends BaseInfo {
+public class NewsListBean extends BaseInfo implements IGetRsp {
 
     private ArrayList<NewsDataBean> data;
 

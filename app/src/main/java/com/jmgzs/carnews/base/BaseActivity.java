@@ -5,19 +5,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.jmgzs.carnews.R;
-import com.jmgzs.carnews.util.DensityUtils;
-import com.jmgzs.carnews.util.L;
+import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.carnews.push.PushUtil;
+import com.jmgzs.lib_network.utils.L;
 
 /**
  * Created by mac on 17/6/5.
@@ -33,6 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         translucentStatusBar();
+        PushUtil.getPush().activityInit(this);
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         ViewGroup parent = (ViewGroup) findViewById(android.R.id.content);

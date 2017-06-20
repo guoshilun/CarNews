@@ -7,8 +7,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jmgzs.carnews.util.DensityUtils;
-import com.jmgzs.carnews.util.L;
+import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib_network.utils.L;
 
 
 /**
