@@ -11,6 +11,7 @@ import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
+import com.jmgzs.lib_network.utils.L;
 
 /**分享
  * Created by Wxl on 2017/6/15.

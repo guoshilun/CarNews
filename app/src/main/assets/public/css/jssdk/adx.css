@@ -1,0 +1,82 @@
+.axd_container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 999999;
+}
+.axd_container_top {
+    top: 0;
+}
+.axd_container_bottom {
+    bottom: 0;
+}
+.axd_expose {
+    position: absolute;
+    z-index: -999999;
+}
+.axd_container_bg img {
+    /*display: block;*/
+    /*width: 100%;*/
+}
+.axd_cl {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    z-index: 999;
+    text-align: center;
+    /*background-color: blue;
+    color: red;*/
+}
+.axd_ax {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: #fff;
+    font-style: normal;
+    text-shadow: 0 0 2px #000;
+    /*-webkit-transform: scale(.5);*/
+    transform: scale(.5);
+    /*-webkit-transform-origin: 0% 100%;*/
+    transform-origin: 0% 100%;
+}
+
+/*****************GL*****************/
+.axd_container_content {
+    position: relative;
+    margin: 2px;
+}
+.axd_container_content .clearfix {
+    position: relative;
+}
+.brand_logo {
+    /*position: absolute;
+    top: 50%;
+    transform: translateY(-50%);*/
+    margin: 10px 5px 10px 15px;
+}
+.brand_content {
+    margin: 10px auto 10px 5px;
+    /*width: 100%;*/
+    text-align: center;
+}
+.brand_content span {
+    display: block;
+    position: relative;
+}
+.brand_title {
+    font-size: 16px;
+    font-weight: 400;
+    text-align: left;
+}
+.brand_detail {
+    font-size: 12px;
+    text-align: left;
+}
+.brand_desc {
+    display: block;
+    font-size: 12px;
+    text-align: left; 
+}

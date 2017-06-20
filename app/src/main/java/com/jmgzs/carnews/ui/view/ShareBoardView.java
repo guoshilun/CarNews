@@ -12,7 +12,7 @@ import android.widget.PopupWindow;
 
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.ShareGridAdapter;
-import com.jmgzs.carnews.util.DensityUtils;
+import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 

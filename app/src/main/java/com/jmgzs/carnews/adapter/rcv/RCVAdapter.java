@@ -4,12 +4,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.LayoutRes;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.Key;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.rcvbase.BaseHolder;
 import com.jmgzs.carnews.adapter.rcvbase.OnRCVItemClickListener;
@@ -17,8 +15,8 @@ import com.jmgzs.carnews.adapter.rcvbase.RCVBaseAdapter;
 import com.jmgzs.carnews.base.GlideApp;
 import com.jmgzs.carnews.base.GlideRequest;
 import com.jmgzs.carnews.bean.NewsDataBean;
-import com.jmgzs.carnews.util.DensityUtils;
-import com.jmgzs.carnews.util.L;
+import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib_network.utils.L;
 
 import java.util.List;
 

@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 
-import com.jmgzs.carnews.util.L;
+import com.jmgzs.lib_network.utils.L;
 
 
 public abstract class BaseFragment extends Fragment {

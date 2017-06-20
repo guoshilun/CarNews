@@ -1,9 +1,7 @@
 package com.jmgzs.carnews.ui;
 
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
@@ -12,8 +10,8 @@ import com.jmgzs.carnews.adapter.StoreAdapter;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.db.DBHelper;
-import com.jmgzs.carnews.util.DensityUtils;
-import com.jmgzs.carnews.util.L;
+import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib_network.utils.L;
 import com.jmgzs.lib.swipelistview.SwipeMenu;
 import com.jmgzs.lib.swipelistview.SwipeMenuCreator;
 import com.jmgzs.lib.swipelistview.SwipeMenuItem;

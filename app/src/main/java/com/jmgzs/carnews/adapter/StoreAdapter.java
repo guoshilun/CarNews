@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.bean.NewsDataBean;
-import com.jmgzs.carnews.util.DensityUtils;
-import com.jmgzs.carnews.util.L;
+import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib_network.utils.L;
 
 import java.util.ArrayList;
 

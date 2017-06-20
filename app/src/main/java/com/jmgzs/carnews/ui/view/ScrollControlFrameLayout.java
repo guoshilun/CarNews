@@ -10,12 +10,9 @@ import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
-import com.jmgzs.carnews.util.L;
+import com.jmgzs.lib_network.utils.L;
 
 /**
  * 可以控制child滚动帧布局

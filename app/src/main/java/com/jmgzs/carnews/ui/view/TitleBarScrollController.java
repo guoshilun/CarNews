@@ -2,7 +2,7 @@ package com.jmgzs.carnews.ui.view;
 
 import android.webkit.WebView;
 
-import com.jmgzs.carnews.util.L;
+import com.jmgzs.lib_network.utils.L;
 
 /**顶部条手势滚动控制器
  * Created by Wxl on 2017/6/13.

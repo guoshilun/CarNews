@@ -5,9 +5,8 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.webkit.WebView;
-import android.widget.ScrollView;
 
-import com.jmgzs.carnews.util.L;
+import com.jmgzs.lib_network.utils.L;
 
 /**可监听滚动的WebView
  * Created by Wxl on 2017/6/13.

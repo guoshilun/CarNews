@@ -4,11 +4,10 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceActivity;
 
 import com.jmgzs.carnews.util.Const;
-import com.jmgzs.carnews.util.DensityUtils;
-import com.jmgzs.carnews.util.L;
+import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib_network.utils.L;
 import com.jmgzs.carnews.util.SPBase;
 
 import java.util.List;
@@ -32,9 +31,14 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
     @Override
     public void onCreate() {
         super.onCreate();
+        initPush();
         instance = this;
         if (shouldInit())
             init();
+    }
+
+    private void initPush(){
+
     }
 
     private boolean shouldInit() {
