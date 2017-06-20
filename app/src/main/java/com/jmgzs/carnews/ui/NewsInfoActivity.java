@@ -52,13 +52,14 @@ public class NewsInfoActivity extends BaseActivity{
     private UMShareListener mShareListener;
     private ShareUtils shareUtils;
 
-    private String newsId, downloadUrl;
+    private int newsId;
+    private String downloadUrl;
     public static final String INTENT_AID = "aid";
 
     @Override
     protected void initView() {
         Intent intent = getIntent();
-        if (intent == null || TextUtils.isEmpty((newsId = intent.getStringExtra(INTENT_AID)))){
+        if (intent == null || 0 >((newsId = intent.getIntExtra(INTENT_AID,-1)))){
             Toast.makeText(this, "数据异常", Toast.LENGTH_SHORT).show();
             this.finish();
             return;
@@ -134,9 +135,8 @@ public class NewsInfoActivity extends BaseActivity{
         scrollControlView.setScrollEndListener(controller);
     }
 
-    private void requestInfo(String newId){
-        String url = Urls.URL_NEWS_INFO;
-        RequestUtil.requestByGetAsy(this, String.format(url, newId), NewsDataBean.class, new IRequestCallBack<NewsDataBean>() {
+    private void requestInfo(int newId){
+        RequestUtil.requestByGetAsy(this, Urls.getUrlInfo(newId), NewsDataBean.class, new IRequestCallBack<NewsDataBean>() {
 
             @Override
             public void onSuccess(String url, NewsDataBean data) {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="tab_titles">
+        <item>推荐</item>
+        <item>新车</item>
+        <item>行业</item>
+        <item>导购</item>
+        <item>用车</item>
+        <item>头条</item>
+    </array>
+
+    <array name="tab_channels">
+        <item>"100"</item>
+        <item>"200"</item>
+        <item>"300"</item>
+        <item>"400"</item>
+        <item>"500"</item>
+        <item>"600"</item>
+    </array>
+</resources>

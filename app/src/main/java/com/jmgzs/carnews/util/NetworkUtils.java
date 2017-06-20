@@ -34,6 +34,7 @@ public class NetworkUtils {
         return NETWORN_NONE;
     }
 
+
     /**
      * 获得网络连接是否可用
      *

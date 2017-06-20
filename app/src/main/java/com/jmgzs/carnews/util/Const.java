@@ -8,6 +8,9 @@ package com.jmgzs.carnews.util;
 public class Const {
 
     public static class SPKey{
+        /**
+         * true load image only 4G
+         */
         public static final String WIFI = "openWifi";
         public static final String PUSH = "openPush";
     }

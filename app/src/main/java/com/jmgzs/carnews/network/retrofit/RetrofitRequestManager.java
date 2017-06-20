@@ -284,6 +284,7 @@ class JsonFilterAdapterFactory implements TypeAdapterFactory {
             @Override
             public T read(JsonReader in) throws IOException {
                 JsonElement jsonElement = elementTypeAdapter.read(in);
+//                L.e(jsonElement.getClass() +":"+jsonElement.toString());
                 if (jsonElement.isJsonArray()){
                     return delegate.fromJsonTree(jsonElement);
                 }else{
@@ -296,35 +297,35 @@ class JsonFilterAdapterFactory implements TypeAdapterFactory {
                             try {
                                 field.setAccessible(true);
                                 JsonElement item = jo.get(field.getName());
-                                L.e("JsonElement:"+item);
+//                                L.e("JsonElement:"+item);
                                 Object value;
                                 if (item == null){
                                     value = null;
                                 }else if (item.isJsonNull()){
                                     value = null;
-                                    L.e("Null");
+//                                    L.e("Null");
                                 }else if (item.isJsonArray()){
                                     value = item.getAsJsonArray();
-                                    L.e("Array:"+value);
+//                                    L.e("Array:"+value);
                                 }else if (item.isJsonObject()){
                                     value = item.getAsJsonObject();
-                                    L.e("Object:"+value);
+//                                    L.e("Object:"+value);
                                 }else if (item.isJsonPrimitive()){
                                     JsonPrimitive primitive = item.getAsJsonPrimitive();
-                                    L.e("Primitive:"+primitive);
+//                                    L.e("Primitive:"+primitive);
                                     if (primitive.isBoolean()){
                                         value = primitive.getAsBoolean();
                                     }else if (primitive.isString()){
                                         value = primitive.getAsString();
                                     }else {
                                         Number number = primitive.getAsNumber();
-                                        L.e("Number:"+number);
+//                                        L.e("Number:"+number);
                                         value = number.doubleValue();
                                     }
                                 }else{
                                     value = null;
                                 }
-                                L.e("field:"+field+"\tvalue:"+value+"\ttarget:"+obj);
+//                                L.e("field:"+field+"\tvalue:"+value+"\ttarget:"+obj);
                                 JsonElementHelper.checkJsonValidation(field, value, obj);
                             } catch (JsonNotInvalidException e) {
                                 throw new JsonSyntaxException(e);

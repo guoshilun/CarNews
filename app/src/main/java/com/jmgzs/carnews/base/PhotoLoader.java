@@ -1,7 +1,5 @@
 package com.jmgzs.carnews.base;
 
-import android.content.Intent;
-
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.ModelCache;
@@ -9,7 +7,6 @@ import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader;
-import com.jmgzs.carnews.bean.Photo;
 
 import java.io.InputStream;
 

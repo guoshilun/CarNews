@@ -1,27 +1,35 @@
 package com.jmgzs.carnews.adapter;
 
+import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
 
+import com.jmgzs.carnews.R;
+import com.jmgzs.carnews.base.BaseFragment;
 import com.jmgzs.carnews.ui.MainFragment;
+import com.jmgzs.carnews.util.L;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import static android.R.attr.fragment;
 
-public class HomeAdapter extends FragmentPagerAdapter {
+public class HomeAdapter extends FragmentStatePagerAdapter {
 
     private final static int PAGE_COUNT = 6;
-    private final String[] titles = {"推荐", "新车", "行业", "导购", "用车", "头条"};
+    private   String[] titles = null ;
     private HashMap<String, Fragment> map;
 
-
-    public HomeAdapter(FragmentManager fm) {
+    public HomeAdapter(FragmentManager fm, Context ct) {
         super(fm);
         map = new HashMap<>();
+        titles = ct.getResources().getStringArray(R.array.tab_titles);
+        if (null == titles)
+            titles=new String[]{"推荐", "新车", "行业", "导购", "用车", "头条"};
     }
 
     @Override
@@ -33,10 +41,16 @@ public class HomeAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         Fragment fragment = map.get(titles[position]);
         if (fragment == null) {
-            Fragment mainFragment = new MainFragment();
+            MainFragment mainFragment = new MainFragment();
+            Bundle b = new Bundle();
+            b.putInt("templateId",2048);
+            mainFragment.setArguments(b);
             map.put(titles[position], mainFragment);
             fragment = mainFragment ;
+        }else {
+            L.e("重用fragment pos:"+position);
         }
+        ((BaseFragment)fragment).updatePosition(position);
         return fragment;
     }
 
@@ -48,9 +62,16 @@ public class HomeAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public long getItemId(int position) {
-        return super.getItemId(position);
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        super.destroyItem(container, position, object);
+        map.put(titles[position],(Fragment)object);
+        L.e("缓存一个fragment pos:"+position);
     }
+
+//    @Override
+//    public long getItemId(int position) {
+//        return super.getItemId(position);
+//    }
 
     @Override
     public int getItemPosition(Object object) {

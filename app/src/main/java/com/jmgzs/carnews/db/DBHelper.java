@@ -36,7 +36,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE = "create table if not exists " + TABLE_NEWS + "("
             + COLUMN_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_AID + " VARCHAR not null ,"
+            + COLUMN_AID + " integer not null ,"
             + COLUMN_TITLE + " VARCHAR not null,"
             + COLUMN_SUMMARY + " VARCHAR not null,"
             + COLUMN_SOURCE + " varchar not null,"
@@ -172,7 +172,7 @@ public class DBHelper extends SQLiteOpenHelper {
             ArrayList<NewsDataBean> list = new ArrayList<>();
             for (cr.moveToFirst(); !cr.isAfterLast(); cr.moveToNext()) {
                 NewsDataBean bean = new NewsDataBean();
-                bean.setAid(cr.getString(cr.getColumnIndex(COLUMN_AID)));
+                bean.setAid(cr.getInt(cr.getColumnIndex(COLUMN_AID)));
                 bean.setPublish_source(cr.getString(cr.getColumnIndex(COLUMN_SOURCE)));
                 bean.setPublish_time(cr.getString(cr.getColumnIndex(COLUMN_PUBLISH_TIME)));
                 bean.setAbstr(cr.getString(cr.getColumnIndex(COLUMN_TITLE)));

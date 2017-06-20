@@ -11,14 +11,14 @@ import java.util.List;
 public class NewsDataBean extends BaseInfo {
 
     private String title = "Default";
-    private String aid = "";
+    private int aid = 0;
     private String publish_time = "";
     private String publish_source = "";
     private String abstr = "";
-    private String search_key = "";
+    private int search_key = 0;
+    private String content;
 
-
-    private ArrayList<Photo> img_list;
+    private ArrayList<String> img_list;
 
     public NewsDataBean() {
         this("");
@@ -28,14 +28,22 @@ public class NewsDataBean extends BaseInfo {
         this(title, null);
     }
 
-    public NewsDataBean(String title, ArrayList<Photo> photos) {
+    public NewsDataBean(String title, ArrayList<String> photos) {
         this.title = title;
         if (photos == null || photos.size() == 0) {
             photos = new ArrayList<>();
             Photo p = new Photo();
-            photos.add(p);
+            photos.add(p.getUrl());
         }
         this.img_list = photos;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public void setTitle(String title) {
@@ -47,11 +55,11 @@ public class NewsDataBean extends BaseInfo {
     }
 
 
-    public String getAid() {
+    public int getAid() {
         return aid;
     }
 
-    public void setAid(String aid) {
+    public void setAid(int aid) {
         this.aid = aid;
     }
 
@@ -79,19 +87,19 @@ public class NewsDataBean extends BaseInfo {
         this.abstr = abstr;
     }
 
-    public String getSearch_key() {
+    public int getSearch_key() {
         return search_key;
     }
 
-    public void setSearch_key(String search_key) {
+    public void setSearch_key(int search_key) {
         this.search_key = search_key;
     }
 
-    public ArrayList<Photo> getImg_list() {
+    public ArrayList<String> getImg_list() {
         return img_list;
     }
 
-    public void setImg_list(ArrayList<Photo> img_list) {
+    public void setImg_list(ArrayList<String> img_list) {
         this.img_list = img_list;
     }
 }

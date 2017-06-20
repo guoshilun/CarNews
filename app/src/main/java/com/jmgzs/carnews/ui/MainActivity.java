@@ -28,9 +28,9 @@ public class MainActivity extends BaseActivity {
     protected void initView() {
         getView(R.id.btn_right).setOnClickListener(this);
         vPager = getView(R.id.main_pager);
-        adapter = new HomeAdapter(getSupportFragmentManager());
+        adapter = new HomeAdapter(getSupportFragmentManager(),this);
         vPager.setAdapter(adapter);
-        vPager.setOffscreenPageLimit(3);
+        vPager.setOffscreenPageLimit(1);
 
         tabProvider = new HomeTabProvider(this);
         SmartTabLayout tab = getView(R.id.pager_tab);
@@ -52,8 +52,7 @@ public class MainActivity extends BaseActivity {
 //                } else {
 //                    tabProvider.getTabItem(position).setTabAlpha(1 - positionOffset);
 //                }
-
-                float scale = 0.2f;
+//                float scale = 0.2f;
 //                if (position == 0) {
 //                    // move to left
 //                    float scaleLeft = 1 - (positionOffset) * scale;
@@ -66,11 +65,6 @@ public class MainActivity extends BaseActivity {
 //                    right.setScaleX(scaleRight);
 //                    right.setScaleY(scaleRight);
 //                }
-
-                if (position == 1 && positionOffset == 0) {
-                    return;
-                }
-
 //                ivTopLeftIcon.setAlpha(1 - positionOffset);
 //                ivTopLeftIcon.setTranslationX(-ivTopLeftIcon.getWidth() * 2 * positionOffset);
             }
@@ -89,7 +83,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onClick(View view) {
-
         switch (view.getId()) {
             case R.id.btn_right:
                 startActivity(new Intent(this, UserSettingActivity.class));
