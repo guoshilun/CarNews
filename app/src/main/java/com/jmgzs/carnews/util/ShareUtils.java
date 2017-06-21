@@ -22,8 +22,8 @@ public class ShareUtils {
     public static void init(Context context){
         UMShareAPI.get(context);
 
-        PlatformConfig.setWeixin("wxdc1e388c3822c80b", "3baf1193c85774b3fd9d18447d76cab0");
-        PlatformConfig.setQQZone("100424468", "c7394704798a158208a74ab60104f0ba");
+        PlatformConfig.setWeixin("wx9b5cb75750f4ed62", "346b090018f9bcad83ad192b05ae2761");
+        PlatformConfig.setQQZone("101404695", "73a1de5a0018604073da2847a08fda06");
     }
 
     private static void shareText(Activity context,PlatformConfig.Platform platform, String text, UMShareListener shareListener){

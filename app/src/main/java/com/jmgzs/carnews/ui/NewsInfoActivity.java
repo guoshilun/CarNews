@@ -3,13 +3,14 @@ package com.jmgzs.carnews.ui;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
@@ -23,11 +24,12 @@ import com.jmgzs.carnews.ui.view.ShareBoardView;
 import com.jmgzs.carnews.ui.view.TitleBarScrollController;
 import com.jmgzs.carnews.util.ResUtils;
 import com.jmgzs.carnews.util.ShareUtils;
+import com.jmgzs.carnews.util.T;
+import com.jmgzs.lib_network.network.IRequestCallBack;
+import com.jmgzs.lib_network.network.RequestUtil;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.jmgzs.lib_network.network.IRequestCallBack;
-import com.jmgzs.lib_network.network.RequestUtil;
 
 /**新闻详情界面
  * Created by Wxl on 2017/6/12.
@@ -46,7 +48,8 @@ public class NewsInfoActivity extends BaseActivity{
     private View top, statusBar;
     private View bottomBar;
     private View contentCover;
-    private ImageView btnShare, btnShareTop, btnFavorite, btnBack;
+    private ImageView btnShare, btnShareTop, btnBack, imgFav;
+    private ToggleButton tgbtnFav;
     private TextView tvTitle;
     private JsBridge js;
 
@@ -83,7 +86,6 @@ public class NewsInfoActivity extends BaseActivity{
 
     private void initButtons(){
         btnShare = (ImageView) findViewById(R.id.bottomBar_img_share);
-        btnFavorite = (ImageView) findViewById(R.id.bottomBar_img_home);
         btnShareTop = (ImageView) findViewById(R.id.titleInfo_img_more);
         btnBack = (ImageView) findViewById(R.id.titleInfo_img_back);
 
@@ -92,8 +94,28 @@ public class NewsInfoActivity extends BaseActivity{
         initOneBtn(btnShareTop, R.mipmap.point);
         btnShare.setImageResource(R.mipmap.share);
         initOneBtn(btnShare, R.mipmap.share);
-        btnFavorite.setImageResource(R.mipmap.arrow_left);
-        initOneBtn(btnFavorite, R.mipmap.arrow_left);
+
+        initFavBtn();
+    }
+
+    private void initFavBtn(){
+        imgFav = (ImageView) findViewById(R.id.bottomBar_img_home);
+        tgbtnFav = (ToggleButton) findViewById(R.id.bottomBar_tgbtn_home);
+        //TODO 根据收藏与否更新按钮状态
+        tgbtnFav.setChecked(false);
+        imgFav.setImageResource(R.mipmap.fav_1);
+        tgbtnFav.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    T.toastS("收藏成功");
+                    imgFav.setImageResource(R.mipmap.fav_2);
+                }else{
+                    T.toastS("已取消收藏");
+                    imgFav.setImageResource(R.mipmap.fav_1);
+                }
+            }
+        });
     }
 
     private void initOneBtn(ImageView btn, int imgRes){
@@ -181,11 +203,9 @@ public class NewsInfoActivity extends BaseActivity{
             case R.id.titleInfo_img_back://返回
                 this.finish();
                 break;
-            case R.id.bottomBar_img_home://收藏
-                break;
             case R.id.bottomBar_img_share://分享
             case R.id.titleInfo_img_more:
-                shareUtils.shareUrl(NewsInfoActivity.this, bottomBar, downloadUrl, "", "", R.mipmap.car_title_logo, new UMShareListener() {
+                shareUtils.shareUrl(NewsInfoActivity.this, bottomBar, "http://www.baidu.com", "测试", "测试描述", R.mipmap.car_title_logo, new UMShareListener() {
                     @Override
                     public void onStart(SHARE_MEDIA share_media) {
 

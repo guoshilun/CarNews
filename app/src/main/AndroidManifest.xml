@@ -119,6 +119,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+
+        <!--推送 START-->
+        <service android:name="com.jmgzs.carnews.push.YMPushService" />
+        <!--推送 END-->
     </application>
 
 </manifest>
