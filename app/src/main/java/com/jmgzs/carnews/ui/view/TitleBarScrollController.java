@@ -19,7 +19,7 @@ public class TitleBarScrollController implements ScrollableWebView.IWebViewScrol
 
     @Override
     public void onScrollChanged(int x, int y, int xDelta, int yDelta) {
-        L.e("滚动的x:"+x+"\t y:"+y+"\txDelta:"+xDelta+"\tyDelta:"+yDelta+"scrollX:"+wv.getScrollX()+"scrollY:"+wv.getScrollY());
+//        L.e("滚动的x:"+x+"\t y:"+y+"\txDelta:"+xDelta+"\tyDelta:"+yDelta+"scrollX:"+wv.getScrollX()+"scrollY:"+wv.getScrollY());
         if (y <= 0){
             isToTop = true;
         }else{
@@ -29,7 +29,7 @@ public class TitleBarScrollController implements ScrollableWebView.IWebViewScrol
 
     @Override
     public void onOverScrolled(int x, int y, boolean isOverX, boolean isOverY) {
-        L.e("OverScroll的x:"+x+"\t y:"+y+"\tisOverX:"+isOverX+"\tisOverY:"+isOverY);
+//        L.e("OverScroll的x:"+x+"\t y:"+y+"\tisOverX:"+isOverX+"\tisOverY:"+isOverY);
         if (y <= 0){
             isToTop = true;
         }else{
@@ -40,7 +40,7 @@ public class TitleBarScrollController implements ScrollableWebView.IWebViewScrol
     @Override
     public boolean isScrollVerticalEnd(boolean isTop) {
         if (isTop){
-            L.e("是否到顶:"+isToTop);
+//            L.e("是否到顶:"+isToTop);
             return isToTop;
         }else{
             return isToBottom;

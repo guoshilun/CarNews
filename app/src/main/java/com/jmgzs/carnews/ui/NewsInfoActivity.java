@@ -12,10 +12,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.google.gson.Gson;
+import com.jmgsz.lib.adv.AdvRequestUtil;
+import com.jmgsz.lib.adv.bean.AdvRequestBean;
+import com.jmgsz.lib.adv.interfaces.IAdvRequestCallback;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.bean.NewsDataBean;
+import com.jmgzs.carnews.bean.NewsInfoBean;
 import com.jmgzs.carnews.js.JsBridge;
 import com.jmgzs.carnews.network.Urls;
 import com.jmgzs.carnews.ui.view.ScrollControlFrameLayout;
@@ -26,10 +31,16 @@ import com.jmgzs.carnews.util.ResUtils;
 import com.jmgzs.carnews.util.ShareUtils;
 import com.jmgzs.carnews.util.T;
 import com.jmgzs.lib_network.network.IRequestCallBack;
+import com.jmgzs.lib_network.network.NetworkErrorCode;
 import com.jmgzs.lib_network.network.RequestUtil;
+import com.jmgzs.lib_network.utils.FileUtils;
+import com.jmgzs.lib_network.utils.L;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
+
+import java.io.File;
+import java.io.IOException;
 
 /**新闻详情界面
  * Created by Wxl on 2017/6/12.
@@ -141,9 +152,23 @@ public class NewsInfoActivity extends BaseActivity{
         wv = (ScrollableWebView) findViewById(R.id.newsInfo_wv);
 
         wv.getSettings().setJavaScriptEnabled(true);
+        wv.getSettings().setUseWideViewPort(false);
         wv.getSettings().setLoadsImagesAutomatically(true);
-        js = new JsBridge();
+        js = new JsBridge(this, new JsBridge.IJsCallback() {
+            @Override
+            public void close() {
+
+            }
+        });
         wv.addJavascriptInterface(js, "carnews");
+    }
+
+    private void showAdv(String html){
+        wv.loadUrl("javascript:showAdv(\""+html+"\")");
+    }
+
+    private void hideAdv(){
+        wv.loadUrl("javascript:closeAdv()");
     }
 
     private void initScroll(){
@@ -162,20 +187,34 @@ public class NewsInfoActivity extends BaseActivity{
     }
 
     private void requestInfo(int newId){
-        RequestUtil.requestByGetAsy(this, Urls.getUrlInfo(newId), NewsDataBean.class, new IRequestCallBack<NewsDataBean>() {
+        RequestUtil.requestByGetAsy(this, Urls.getUrlInfo(newId), NewsInfoBean.class, new IRequestCallBack<NewsInfoBean>() {
 
             @Override
-            public void onSuccess(String url, NewsDataBean data) {
+            public void onSuccess(String url, NewsInfoBean data) {
                 if (!ResUtils.processResponse(url, data, this)){
                     return;
                 }
+                NewsDataBean info;
+                if (data == null || data.getData() == null || data.getData().size() < 1 || (info = data.getData().get(0)) == null){
+                    onFailure(url, NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getCode(), NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getMsg());
+                    return;
+                }
                 //TODO 加载页面
-                wv.loadUrl("");
+                String content = info.getContent();
+                try {
+                    String html = FileUtils.readTextInputStream(NewsInfoActivity.this.getAssets().open("info"+ File.separator+"info_template.html"));
+                    html = String.format(html, content == null ? "" : content, info.getTitle() == null ? "" : info.getTitle(), info.getPublish_source() == null ? "" : info.getPublish_source(), info.getPublish_time() == null ? "" : info.getPublish_time());
+                    L.e(html);
+                    wv.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "utf-8", null);
+//                    requestAdv();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onFailure(String url, int errorCode, String msg) {
-
+                L.e("详情请求失败");
             }
 
             @Override
@@ -237,5 +276,33 @@ public class NewsInfoActivity extends BaseActivity{
                 });
                 break;
         }
+    }
+
+    private void requestAdv(){
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                String req = "{\"id\":\"ebb7fbcb-01da-4255-8c87-98eedbcd2909\",\"user_agent\":\"Mozilla/5.0 (Linux; U; Android 4.3; zh-cn; R8007 Build/JLS36C) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30\",\"app_site_info\":{\"appsite_id\":\"51e71da6-5b46-4d9f-b94f-9ec6a\",\"categories\":[0],\"app_bundle_name\":\"dongfangtoutiao_test\",\"app_name\":\"\"},\"net_type\":2,\"ad_slot_info\":[{\"sid\": 0,\"height\": 220,\"screen_position\": 1,\"loc_id\": \"bf8a85e6-849e-11e6-8c73-a4dcbef43d46\",\"width\": 156,\"ad_num\": 1,\"html_material\": false}],\"id_info\": {\"mac\": \"d8:55:a3:ce:e4:40\",\"idfa\": \"5b7e9e4f42a6635f\"},\"device_info\": {\"orientation\": 2,\"model\": \"MX5\",\"brand\": \"MEIXU\",\"screen_width\": 1080,\"type\": 2,\"screen_height\": 1920},\"user_ip\": \"58.30.22.0\",\"template_id\": [2044,2001],\"channel_id\": 1001}";
+                AdvRequestUtil.requestAdv(NewsInfoActivity.this, new Gson().fromJson(req, AdvRequestBean.class), new IAdvRequestCallback() {
+                    @Override
+                    public void onGetAdvSuccess(String html) {
+                        showAdv(html);
+                        L.e("广告请求成功");
+                    }
+
+                    @Override
+                    public void onGetAdvFailure() {
+                        showAdv("<p>广告请求失败</p>");
+                        L.e("广告请求失败");
+                    }
+                });
+            }
+        }.start();
+
     }
 }

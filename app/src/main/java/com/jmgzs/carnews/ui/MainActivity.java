@@ -89,22 +89,7 @@ public class MainActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_right:
-//                startActivity(new Intent(this, UserSettingActivity.class));
-                Intent intent = new Intent(this, NewsInfoActivity.class);
-                intent.putExtra("aid", "4");
-                startActivity(intent);
-                String req = "{\"id\":\"ebb7fbcb-01da-4255-8c87-98eedbcd2909\",\"user_agent\":\"Mozilla/5.0 (Linux; U; Android 4.3; zh-cn; R8007 Build/JLS36C) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30\",\"app_site_info\":{\"appsite_id\":\"51e71da6-5b46-4d9f-b94f-9ec6a\",\"categories\":[0],\"app_bundle_name\":\"dongfangtoutiao_test\",\"app_name\":\"\"},\"net_type\":2,\"ad_slot_info\":[{\"sid\": 0,\"height\": 220,\"screen_position\": 1,\"loc_id\": \"bf8a85e6-849e-11e6-8c73-a4dcbef43d46\",\"width\": 156,\"ad_num\": 1,\"html_material\": false}],\"id_info\": {\"mac\": \"d8:55:a3:ce:e4:40\",\"idfa\": \"5b7e9e4f42a6635f\"},\"device_info\": {\"orientation\": 2,\"model\": \"MX5\",\"brand\": \"MEIXU\",\"screen_width\": 1080,\"type\": 2,\"screen_height\": 1920},\"user_ip\": \"58.30.22.0\",\"template_id\": [2044,2001],\"channel_id\": 1001}";
-                AdvRequestUtil.requestAdv(this, new Gson().fromJson(req, AdvRequestBean.class), new IAdvRequestCallback() {
-                    @Override
-                    public void onGetAdvSuccess(String html) {
-
-                    }
-
-                    @Override
-                    public void onGetAdvFailure() {
-
-                    }
-                });
+                startActivity(new Intent(this, UserSettingActivity.class));
                 break;
             default:
                 break;

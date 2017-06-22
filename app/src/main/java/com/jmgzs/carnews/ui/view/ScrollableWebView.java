@@ -48,7 +48,7 @@ public class ScrollableWebView extends WebView {
     @Override
     protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
         super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
-        L.e("OverScroll x :"+scrollX+"\ty:"+scrollY+"\tclampedX:"+clampedX+"\tclampedY:"+clampedY);
+//        L.e("OverScroll x :"+scrollX+"\ty:"+scrollY+"\tclampedX:"+clampedX+"\tclampedY:"+clampedY);
         if (scrollListener != null){
             scrollListener.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
         }
