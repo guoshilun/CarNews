@@ -15,6 +15,7 @@ import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.lib_network.utils.L;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -23,7 +24,7 @@ import java.util.ArrayList;
  */
 
 public class StoreAdapter extends BaseAdapter {
-    private ArrayList<NewsDataBean> dataList;
+    private List<NewsDataBean> dataList;
     private Context ct;
 
     private final static int TYPE0 = 0;//无图
@@ -37,13 +38,10 @@ public class StoreAdapter extends BaseAdapter {
         this.ct = ct;
         this.dataList = dataList;
 
-          imageW = (DensityUtils.SCREEN_WIDTH_PIXELS - DensityUtils.dip2px(ct, (5 * 4))) / 3;
-          imageH = imageW - DensityUtils.dip2px(ct, 20);
+        imageW = (DensityUtils.SCREEN_WIDTH_PIXELS - DensityUtils.dip2px(ct, (5 * 4))) / 3;
+        imageH = imageW - DensityUtils.dip2px(ct, 20);
 
-        this.imageW = imageW;
-        this.imageH = imageH;
-
-        L.e("adapter w="+imageW+",h="+imageH);
+        L.e("adapter w=" + imageW + ",h=" + imageH);
 
     }
 
@@ -67,13 +65,18 @@ public class StoreAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         int type = getItemViewType(i);
         ISetData h;
-        if (type == TYPE0 || type == TYPE2) {
-            view = View.inflate(ct, R.layout.item_view_image3, null);
-            h = new Holder3(view, imageW, imageH);
-        } else {
-            view = View.inflate(ct, R.layout.item_view_image1, null);
-            h = new Holder(view, imageW, imageH);
-        }
+        if (view == null)
+            if (type == TYPE0 || type == TYPE2) {
+                view = View.inflate(ct, R.layout.item_view_image3, null);
+                h = new Holder3(view, imageW, imageH);
+                view.setTag(h);
+            } else {
+                view = View.inflate(ct, R.layout.item_view_image1, null);
+                h = new Holder(view, imageW, imageH);
+                view.setTag(h);
+            }
+        else
+            h = (ISetData) view.getTag();
         h.setData(getItem(i));
         return view;
     }
@@ -113,7 +116,7 @@ public class StoreAdapter extends BaseAdapter {
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) image.getLayoutParams();
             params.width = imageW;
             params.height = imageH;
-            L.e("w="+imageW+",h="+imageH);
+            L.e("w=" + imageW + ",h=" + imageH);
             image.setLayoutParams(params);
         }
 
@@ -154,5 +157,12 @@ public class StoreAdapter extends BaseAdapter {
 //                imagesLayout.setVisibility(View.VISIBLE);
 //            }
         }
+    }
+
+    public void updateData(List<NewsDataBean> data) {
+        if (dataList == null) dataList = new ArrayList<>();
+        else dataList.clear();
+        dataList.addAll(data);
+        notifyDataSetChanged();
     }
 }

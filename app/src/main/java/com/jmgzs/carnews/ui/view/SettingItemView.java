@@ -87,6 +87,10 @@ public class SettingItemView extends RelativeLayout implements CompoundButton.On
         tvState.setText(state);
     }
 
+    public CharSequence getTextState(){
+        return tvState.getText();
+    }
+
     public void setTextState(int resId) {
         tvState.setText(resId);
     }

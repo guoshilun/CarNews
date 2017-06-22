@@ -18,6 +18,7 @@ import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.network.NetWorkReciver;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.SPBase;
+import com.jmgzs.lib_network.utils.L;
 
 import java.util.ArrayList;
 
@@ -78,13 +79,12 @@ public class AutoPagerAdapter extends RecyclingPagerAdapter {
             tvTitle.setText("");
         } else {
             tvTitle.setText(info.getTitle());
-            if ((App.isMobile && NetWorkReciver.isMobile(mContext)) ||info.getImg_list().size()==0) {
+            if ((App.isMobile && NetWorkReciver.isMobile(mContext)) || info.getImg_list().size() == 0) {
                 ivPic.setImageResource(R.mipmap.app_default_middle);
             } else
                 request.load(info.getImg_list().get(0)).into(ivPic);
         }
         ivPic.setOnClickListener(bannerListener);
-
         return convertView;
     }
 
@@ -112,7 +112,7 @@ public class AutoPagerAdapter extends RecyclingPagerAdapter {
         notifyDataSetChanged();
     }
 
-    public ArrayList<NewsDataBean> getData(){
+    public ArrayList<NewsDataBean> getData() {
         return infos;
     }
 }
