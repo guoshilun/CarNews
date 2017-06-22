@@ -32,7 +32,8 @@ import java.util.List;
 public class NewsStoreActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     private SwipeMenuListView listView;
-private StoreAdapter adapter ;
+    private StoreAdapter adapter;
+
     @Override
     protected int getContent(Bundle save) {
         return R.layout.activity_news_store;
@@ -41,11 +42,12 @@ private StoreAdapter adapter ;
     @Override
     protected void initView() {
         getView(R.id.titleInfo_img_back).setOnClickListener(this);
+        getView(R.id.titleInfo_img_more).setOnClickListener(this);
         TextView title = getView(R.id.titleInfo_tv_title);
         title.setText(R.string.setting_store);
         listView = getView(R.id.swipe_list);
 
-          adapter = new StoreAdapter(this, null);
+        adapter = new StoreAdapter(this, null);
         SwipeMenuCreator creator = new SwipeMenuCreator() {
             @Override
             public void create(SwipeMenu menu) {
@@ -72,22 +74,31 @@ private StoreAdapter adapter ;
     private void selectData() {
 //        DBHelper helper = DBHelper.getInstance(this);
         List<NewsDataBean> all = LoaderUtil.get().loadCache(this);
-        if (all!=null)
-        adapter.updateData(all);
+        if (all != null)
+            adapter.updateData(all);
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         L.e("click item " + i);
-        if (i <0||i>adapterView.getCount()) return;
-        Intent in =new Intent(this ,NewsInfoActivity.class);
-        in.putExtra("aid",((NewsDataBean)adapterView.getItemAtPosition(i)).getAid());
+        if (i < 0 || i > adapterView.getCount()) return;
+        Intent in = new Intent(this, NewsInfoActivity.class);
+        in.putExtra("aid", ((NewsDataBean) adapterView.getItemAtPosition(i)).getAid());
         startActivity(in);
     }
 
     @Override
     public void onClick(View view) {
-        finish();
+        switch (view.getId()) {
+            case R.id.titleInfo_img_back:
+                finish();
+                break;
+            case R.id.titleInfo_img_more:
+                showDeleteDialog(-1);
+                break;
+            default:
+                break;
+        }
     }
 
     private void showDeleteDialog(final int pos) {
@@ -99,7 +110,13 @@ private StoreAdapter adapter ;
             public void onMenuItemClick(int position) {
                 switch (position) {
                     case DialogMenu.MENU_ITEM_BOTTOM:
-                        LoaderUtil.get().deleteNews(NewsStoreActivity.this,adapter.getItem(pos).getAid()+"");
+                        if (pos != -1) {
+                            LoaderUtil.get().deleteNews(NewsStoreActivity.this, adapter.getItem(pos).getAid() + "");
+                            adapter.removeItem(pos);
+                        }else {
+                            LoaderUtil.get().deleteAllNews(NewsStoreActivity.this);
+                            adapter.clear();
+                        }
                         break;
 
                     default:
@@ -108,7 +125,10 @@ private StoreAdapter adapter ;
             }
         });
         menuDialog.show();
-        menuDialog.setMenuItemTopText(View.VISIBLE, "删除该条收藏?");
+        if (pos == -1) {
+            menuDialog.setMenuItemTopText(View.VISIBLE, "清空收藏列表?");
+        } else
+            menuDialog.setMenuItemTopText(View.VISIBLE, "删除该条收藏?");
         menuDialog.setMenuItemMiddle1Text(View.GONE, null);
         menuDialog.setMenuItemMiddle2Text(View.GONE, null);
         menuDialog.setMenuItemBottomText(View.VISIBLE, "确定");

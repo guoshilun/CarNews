@@ -83,6 +83,13 @@ public class SettingItemView extends RelativeLayout implements CompoundButton.On
         tvTitle.setText(resId);
     }
 
+    public void setTvTips(String tips){
+        tvTips.setText(tips);
+    }
+    public void setTvTips(Integer tipsId){
+        tvTips.setText(tipsId);
+    }
+
     public void setTextState(String state) {
         tvState.setText(state);
     }

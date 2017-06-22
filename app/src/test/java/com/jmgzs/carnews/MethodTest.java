@@ -30,5 +30,7 @@ public class MethodTest {
         ss = TimeUtils.getTimeFromDateString("2017-06-10 12:10:00");//更早
         L.syso(ss);
 
+        double v = 720/(376.875-18);
+        L.syso(v +" ===");
     }
 }

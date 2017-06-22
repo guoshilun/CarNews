@@ -52,27 +52,55 @@ public class LoaderUtil {
     }
 
     public List<NewsDataBean> loadCache(final Context ct) {
-        Future<List<NewsDataBean>> f = pool.submit((new Callable<List<NewsDataBean>>() {
-            @Override
-            public List<NewsDataBean> call() throws Exception {
-                DBHelper helper = DBHelper.getInstance(ct);
+//        Future<List<NewsDataBean>> f = pool.submit((new Callable<List<NewsDataBean>>() {
+//            @Override
+//            public List<NewsDataBean> call() throws Exception {
+                DBHelper helper = getHelper(ct);
                 return helper.queryNews();
-            }
-        }));
-        try {
-            return f.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+//            }
+//        }));
+//        try {
+//            return f.get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }finally {
+//            f.cancel(true);
+//        }
+//        return null;
+    }
+
+    public boolean insertOrUpdate(Context ct , NewsDataBean d){
+        DBHelper db = getHelper(ct);
+      return   db.insertOrUpdate(d);
+    }
+
+    public boolean insert(Context ct , NewsDataBean d){
+        DBHelper db = getHelper(ct);
+        return db.addNews(d);
     }
 
     public boolean deleteNews(Context ct ,String aid){
-        DBHelper helper = DBHelper.getInstance(ct);
+        DBHelper helper = getHelper(ct);
         return helper.deleteNews(aid);
 
+    }
+
+    public boolean deleteAllNews(Context ct){
+        DBHelper helper = getHelper(ct);
+        return helper.deleteAll();
+
+    }
+
+    public boolean hasStored(Context ct , String aid){
+        DBHelper dh = getHelper(ct);
+      return   dh.checkNews(aid);
+
+    }
+
+    private DBHelper getHelper(Context ct){
+        return DBHelper.getInstance(ct);
     }
 
 }

@@ -77,11 +77,11 @@ public class RCVHolder extends BaseHolder<NewsDataBean> {
         title.setText(data.getTitle());
         author.setText(data.getPublish_source());
         time.setText(TimeUtils.getTimeFromDateString(data.getPublish_time()));
-        if (data.getImg_list().size() == 0) {
+        if (data.getImg_list().size() < 3) {
             contentLayout.setVisibility(View.GONE);
         } else {
             contentLayout.setVisibility(View.VISIBLE);
-            if ((App.isMobile && NetWorkReciver.isMobile(getContext()))|| data.getImg_list().size()==0) {
+            if ((App.isMobile && NetWorkReciver.isMobile(getContext()))) {
                 image.setImageResource(R.mipmap.app_default_middle);
                 image2.setImageResource(R.mipmap.app_default_middle);
                 image3.setImageResource(R.mipmap.app_default_middle);

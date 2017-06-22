@@ -7,10 +7,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.BaseActivity;
@@ -59,6 +64,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
     protected void initView() {
         TextView title = getView(R.id.titleInfo_tv_title);
         title.setText(R.string.user_setting);
+        getView(R.id.titleInfo_img_more).setVisibility(View.INVISIBLE);
         itemStore = getView(R.id.setting_store);
         itemWifi = getView(R.id.setting_wifi);
         itemTextSize = getView(R.id.setting_textsize);
@@ -80,7 +86,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemStore.show(false, false, false, true);
         itemWifi.show(true, false, true, false);
         itemTextSize.show(false, true, false, true);
-        itemPush.show(false, false, true, false);
+        itemPush.show(true, false, true, false);
         itemCache.show(false, true, false, true);
         itemUpdate.show(false, false, false, true);
         itemUser.show(false, false, false, true);
@@ -92,6 +98,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemCache.setTextTitle(R.string.setting_cache);
         itemUpdate.setTextTitle(R.string.setting_update);
         itemUser.setTextTitle(R.string.setting_user);
+        itemPush.setTvTips(R.string.setting_push_tips);
 
         itemStore.setOnClickListener(this);
         itemTextSize.setOnClickListener(this);
@@ -102,11 +109,11 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemWifi.setonCheckChangedListener(this);
         itemPush.setonCheckChangedListener(this);
 
-        GlideApp.with(this).asBitmap().fitCenter().error(R.mipmap.user_icon).
-                placeholder(R.mipmap.user_icon).load(App.headPath).into(headImage);
+        if (App.headPath != null)
+            GlideApp.with(this).asBitmap().fitCenter().error(R.mipmap.user_icon).
+                    placeholder(R.mipmap.user_icon).load(App.headPath).into(headImage);
 
         itemCache.setTextState(GlideCacheUtil.getInstance().getCacheSize(this));
-//        itemCache.setTextState("0.8MB");
         itemWifi.setChecked(App.isMobile);
         itemPush.setChecked(App.isRecptPush);
     }
@@ -237,7 +244,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                                 placeholder(R.mipmap.user_icon).load(cropPath).into(headImage);
                         SPBase.putString(Const.SPKey.HEAD_PATH, cropPath);
                         T.toastS("头像更新成功!");
-                    } else{
+                    } else {
                         T.toastS(this, "裁剪异常" + cropPath);
                         FileUtils.deleteFile(cropPath);
                     }
