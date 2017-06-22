@@ -5,10 +5,12 @@ import android.content.Context;
 import android.view.View;
 
 import com.jmgzs.carnews.ui.view.ShareBoardView;
+import com.umeng.socialize.Config;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.common.QueuedWork;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
 import com.jmgzs.lib_network.utils.L;
@@ -20,10 +22,11 @@ import com.jmgzs.lib_network.utils.L;
 public class ShareUtils {
 
     public static void init(Context context){
-        UMShareAPI.get(context);
-
         PlatformConfig.setWeixin("wx9b5cb75750f4ed62", "346b090018f9bcad83ad192b05ae2761");
         PlatformConfig.setQQZone("101404695", "73a1de5a0018604073da2847a08fda06");
+        Config.DEBUG = true;
+        QueuedWork.isUseThreadPool = false;
+        UMShareAPI.get(context);
     }
 
     private static void shareText(Activity context,PlatformConfig.Platform platform, String text, UMShareListener shareListener){
@@ -109,7 +112,7 @@ public class ShareUtils {
         }, boardListener);
         int[] xy = new int[2];
         parent.getLocationOnScreen(xy);
-        L.e("屏幕中的x:"+xy[0]+"\ty:"+xy[1]);
+//        L.e("屏幕中的x:"+xy[0]+"\ty:"+xy[1]);
         board.show(parent, xy[0], xy[1]);
     }
 

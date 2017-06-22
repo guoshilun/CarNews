@@ -48,7 +48,7 @@ public class ScrollControlFrameLayout extends FrameLayout {
     public void setAlphaView(View alphaView) {
         this.alphaView = alphaView;
         alphaViewHeight = alphaView.getMeasuredHeight();
-        L.e("alphaView的高度：" + alphaViewHeight);
+//        L.e("alphaView的高度：" + alphaViewHeight);
     }
 
     public void setScrollView(View scrollView) {
@@ -70,14 +70,14 @@ public class ScrollControlFrameLayout extends FrameLayout {
         } else if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
             requestDisallowInterceptTouchEvent(true);
             float yDelta = event.getY() - mY;
-            L.e("x:" + event.getX() + "\ty:" + event.getY());
+//            L.e("x:" + event.getX() + "\ty:" + event.getY());
 
             if (yDelta < 0) {//上滑手势↑，页面向下滚动
-                L.e("开始上滑");
+//                L.e("开始上滑");
                 if (scrollView != null) {
                     LayoutParams lps = (LayoutParams) scrollView.getLayoutParams();
                     if (lps.topMargin <= 0) {
-                        L.e("开始滚动");
+//                        L.e("开始滚动");
                         if (isIntercepted) {
                             isIntercepted = false;
                         }
@@ -88,12 +88,12 @@ public class ScrollControlFrameLayout extends FrameLayout {
                         if (oldMarginTop < 0) {
                             oldMarginTop = 0;
                         }
-                        L.e("不滚动");
+//                        L.e("不滚动");
                         LayoutParams newLps = new LayoutParams(lps.width, lps.height);
                         newLps.setMargins(lps.leftMargin, oldMarginTop, lps.rightMargin, lps.bottomMargin);
                         scrollView.setLayoutParams(newLps);
                         this.invalidate();
-                        L.e("scrollview margin:" + oldMarginTop);
+//                        L.e("scrollview margin:" + oldMarginTop);
                     }
                 }
                 //透明度
@@ -109,18 +109,18 @@ public class ScrollControlFrameLayout extends FrameLayout {
                         if (oldPaddingTop < -alphaViewHeight) {
                             oldPaddingTop = -alphaViewHeight;
                         }
-                        L.e("减少alphaView的padding" + oldPaddingTop);
+//                        L.e("减少alphaView的padding" + oldPaddingTop);
                         alphaView.setPadding(alphaView.getPaddingLeft(), oldPaddingTop, alphaView.getPaddingRight(), alphaView.getPaddingBottom());
                     }
                 }
             } else {//下滑手势↓，页面向上滚动
-                L.e("开始下滑");
+//                L.e("开始下滑");
                 //透明度
                 if (alphaView != null) {
                     if (alphaView.getVisibility() != View.VISIBLE) {
                         alphaView.setVisibility(View.VISIBLE);
                     } else {
-                        L.e("当前alphaView可见");
+//                        L.e("当前alphaView可见");
                     }
                     if (alphaView.getAlpha() < 1) {
                         alphaView.setAlpha(alphaView.getAlpha() + yDelta / 100);
@@ -130,21 +130,21 @@ public class ScrollControlFrameLayout extends FrameLayout {
                     } else {
                         alphaView.setAlpha(1);
                     }
-                    L.e("alphaView的alpha:" + alphaView.getAlpha());
+//                    L.e("alphaView的alpha:" + alphaView.getAlpha());
                     //位移
                     if (alphaView.getPaddingTop() < 0) {
                         int oldPaddingTop = (int) (yDelta / 4 + alphaView.getPaddingTop());
                         if (oldPaddingTop > 0) {
                             oldPaddingTop = 0;
                         }
-                        L.e("增加alphaView的padding:" + oldPaddingTop + " Visible:" + alphaView.getVisibility());
+//                        L.e("增加alphaView的padding:" + oldPaddingTop + " Visible:" + alphaView.getVisibility());
                         alphaView.setPadding(alphaView.getPaddingLeft(), oldPaddingTop, alphaView.getPaddingRight(), alphaView.getPaddingBottom());
                     }
                 }
             }
             if (scrollEndListener != null) {
                 if (scrollEndListener.isScrollVerticalEnd(true)) {//scrollview到顶
-                    L.e("最后下滑");
+//                    L.e("最后下滑");
                     if (scrollView != null) {
                         if (yDelta > 0) {
                             LayoutParams lps = (LayoutParams) scrollView.getLayoutParams();
@@ -156,7 +156,7 @@ public class ScrollControlFrameLayout extends FrameLayout {
                             newLps.setMargins(lps.leftMargin, oldMarginTop, lps.rightMargin, lps.bottomMargin);
                             scrollView.setLayoutParams(newLps);
                             invalidate();
-                            L.e("滚动View的margin:" + oldMarginTop);
+//                            L.e("滚动View的margin:" + oldMarginTop);
                             if (interceptedStartY > 0) {
                                 interceptedStartY -= yDelta;
                                 if (interceptedStartY < 0) {

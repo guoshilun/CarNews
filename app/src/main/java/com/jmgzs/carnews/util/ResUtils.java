@@ -16,7 +16,7 @@ public class ResUtils {
             if (callBack != null){
                 IGetRsp res = (IGetRsp) response;
                 StatusBean rsp;
-                if ((rsp = res.getRsp()) == null || rsp.getStatus() != 0){
+                if ((rsp = res.getRsp()) == null || rsp.getStatus() != 1){
                     int errorCode;
                     String msg;
                     if (rsp == null){

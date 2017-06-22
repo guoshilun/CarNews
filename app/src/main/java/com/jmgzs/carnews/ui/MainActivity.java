@@ -121,6 +121,7 @@ public class MainActivity extends BaseActivity {
 //
 //                    }
 //                });
+                startActivity(new Intent(this, UserSettingActivity.class));
                 break;
             default:
                 break;

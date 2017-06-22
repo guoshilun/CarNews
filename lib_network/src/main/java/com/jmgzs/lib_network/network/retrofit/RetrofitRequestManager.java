@@ -229,31 +229,13 @@ public class RetrofitRequestManager {
         try {
             // 解析返回是否正常
             L.e("data:"+data);
-            JSONObject json = new JSONObject(data);
-            JSONObject rsp = json.getJSONObject("rsp");
-            int code = rsp.getInt("status");
-            if (code == 1){
-                //解析返回的数据
-//                JSONObject dataObj = json.getJSONObject("data");
-                Gson gson = new GsonBuilder().registerTypeAdapterFactory(new JsonFilterAdapterFactory()).create();
-                T result = gson.fromJson(data, responseType);
-                callback.onSuccess(request.getUrl(), result);
-                return true;
-            }else{
-                String msg = json.getString("reason");
-//                L.e(requestType + " ErrorCode：" + code + " Message:" + msg);
-                callback.onFailure(request.getUrl(), code, msg);
-                return false;
-            }
+            //解析返回的数据
+            Gson gson = new GsonBuilder().registerTypeAdapterFactory(new JsonFilterAdapterFactory()).create();
+            T result = gson.fromJson(data, responseType);
+            callback.onSuccess(request.getUrl(), result);
+            return true;
         } catch (JsonSyntaxException e) {
-//            L.e(requestType + " Error：" + e, e);
-            int errorCode = NetworkErrorCode.ERROR_CODE_DATA_FORMAT.getCode();
-            String msg = NetworkErrorCode.ERROR_CODE_DATA_FORMAT.getMsg();
-            L.e(requestType + " ErrorCode：" + errorCode + " Message:" + msg);
-            callback.onFailure(request.getUrl(), errorCode, msg);
-            return false;
-        } catch (JSONException e) {
-//            L.e(requestType + " Error：" + e, e);
+            L.e(requestType + " Error：" + e, e);
             int errorCode = NetworkErrorCode.ERROR_CODE_DATA_FORMAT.getCode();
             String msg = NetworkErrorCode.ERROR_CODE_DATA_FORMAT.getMsg();
             L.e(requestType + " ErrorCode：" + errorCode + " Message:" + msg);
