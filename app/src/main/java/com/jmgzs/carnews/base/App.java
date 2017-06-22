@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
 import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.carnews.util.ShareUtils;
 import com.jmgzs.lib_network.utils.L;
 import com.jmgzs.carnews.util.SPBase;
 
@@ -37,6 +38,7 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
     public void onCreate() {
         super.onCreate();
         initPush();
+        initShare();
         instance = this;
         if (shouldInit())
             init();
@@ -44,6 +46,10 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
 
     private void initPush(){
         PushUtil.getPush().appInit(this);
+    }
+
+    private void initShare(){
+        ShareUtils.init(this);
     }
 
     private boolean shouldInit() {

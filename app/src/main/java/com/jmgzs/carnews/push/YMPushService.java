@@ -18,24 +18,26 @@ import org.json.JSONObject;
  * Created by Wxl on 2017/6/19.
  */
 
-public class YMPush extends UmengMessageService implements IPush {
+public class YMPushService extends UmengMessageService implements IPush {
 
     private IPushReceiver listener;
 
     @Override
     public void appInit(Context context) {
         PushAgent mPushAgent = PushAgent.getInstance(context);
+        mPushAgent.setDebugMode(true);
         //注册推送服务，每次调用register方法都会回调该接口
         mPushAgent.register(new IUmengRegisterCallback() {
 
             @Override
             public void onSuccess(String deviceToken) {
                 //注册成功会返回device token
+                L.e("推送注册成功");
             }
 
             @Override
             public void onFailure(String s, String s1) {
-
+                L.e("推送注册失败");
             }
         });
     }
@@ -52,6 +54,7 @@ public class YMPush extends UmengMessageService implements IPush {
 
     @Override
     public void onMessage(Context context, Intent intent) {
+        L.e("收到推送");
         try {
             //可以通过MESSAGE_BODY取得消息体
             String message = intent.getStringExtra(AgooConstants.MESSAGE_BODY);

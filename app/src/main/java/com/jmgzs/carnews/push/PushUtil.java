@@ -10,12 +10,9 @@ public class PushUtil {
 
         public static synchronized IPush getPush(){
             if (mPush == null){
-                mPush = pushFactory();
+                mPush = new YMPushService();
             }
             return mPush;
         }
 
-        private static synchronized IPush pushFactory(){
-            return new YMPush();
-        }
 }

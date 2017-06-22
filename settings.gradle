@@ -1,1 +1,1 @@
-include ':app', ':lib_smarttablelayout', ':lib_roundedimage', ':lib_autoviewpager', ':lib_swipelistview', ':lib_adv', ':lib_network'
+include ':app', ':lib_smarttablelayout', ':lib_roundedimage', ':lib_autoviewpager', ':lib_swipelistview', ':lib_adv', ':lib_network', ':lib_push'
