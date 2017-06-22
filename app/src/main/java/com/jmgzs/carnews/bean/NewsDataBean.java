@@ -17,8 +17,9 @@ public class NewsDataBean extends BaseInfo {
     private String abstr = "";
     private int search_key = 0;
     private String content;
+    private int del = 0;//本地记录1删除,0正常
 
-    private ArrayList<String> img_list;
+    private List<String> img_list;
 
     public NewsDataBean() {
         this("");
@@ -36,6 +37,14 @@ public class NewsDataBean extends BaseInfo {
             photos.add(p.getUrl());
         }
         this.img_list = photos;
+    }
+
+    public int getDel() {
+        return del;
+    }
+
+    public void setDel(int del) {
+        this.del = del;
     }
 
     public String getContent() {
@@ -95,11 +104,11 @@ public class NewsDataBean extends BaseInfo {
         this.search_key = search_key;
     }
 
-    public ArrayList<String> getImg_list() {
+    public List<String> getImg_list() {
         return img_list;
     }
 
-    public void setImg_list(ArrayList<String> img_list) {
+    public void setImg_list(List<String> img_list) {
         this.img_list = img_list;
     }
 }

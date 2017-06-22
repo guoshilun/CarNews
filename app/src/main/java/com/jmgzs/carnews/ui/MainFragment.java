@@ -3,6 +3,7 @@ package com.jmgzs.carnews.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -60,6 +61,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
     private static final int pageCount = 5;
     private boolean loadAll = false;
+    private boolean isLoading = false ;
 
     @Nullable
     @Override
@@ -102,7 +104,8 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (RecyclerView.SCROLL_STATE_IDLE == newState) {
-                    if (adapter != null && lastVisibleItem + 1 == adapter.getItemCount() && !loadAll) {
+                    if (adapter != null && lastVisibleItem + 1 == adapter.getItemCount() && !loadAll && !isLoading) {
+                        isLoading = !isLoading ;
                         getData(startKey);
                     }
                 }
@@ -122,7 +125,6 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
         headerPager.setInterval(3000);
         headerPager.setOffscreenPageLimit(3);
-
     }
 
 
@@ -144,7 +146,6 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
         });
         if (headerPager.isCurrentAutoScroll())
             headerPager.startAutoScroll();
-
     }
 
 
@@ -162,7 +163,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     @Override
     public void onResume() {
         super.onResume();
-        if (headerPager != null && headerPager.getChildCount() > 1 && headerPager.isCurrentAutoScroll())
+        if (headerPager != null && headerPager.getChildCount() > 1 && headerPager.isCurrentAutoScroll() && getUserVisibleHint())
             headerPager.startAutoScroll();
     }
 
@@ -215,17 +216,20 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
                 L.e("date news size:" + data.getData().size());
                 initAdapter(url, data, true);
                 refreshLayout.setRefreshing(false);
+                isLoading =false;
             }
 
             @Override
             public void onFailure(String url, int errorCode, String msg) {
                 T.toastS("数据请求失败,请稍后重试。");
                 refreshLayout.setRefreshing(false);
+                isLoading =false;
             }
 
             @Override
             public void onCancel(String url) {
                 refreshLayout.setRefreshing(false);
+                isLoading =false;
 
             }
         });
@@ -242,6 +246,9 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
         }
         loadAll = false;
         ArrayList<NewsDataBean> list = data.getData();
+        for (NewsDataBean b :list){
+            L.e(getClass().getSimpleName(),String.valueOf(b.getAid()));
+        }
         if (adapter == null || adapter.getDataCount() == 0) {//第一次
             if (saveCache) ConfigCache.setUrlCache(getContext(), url, data.toString());
             ArrayList<NewsDataBean> headerList = new ArrayList<>();

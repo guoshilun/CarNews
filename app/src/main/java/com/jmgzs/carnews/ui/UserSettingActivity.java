@@ -1,9 +1,14 @@
 package com.jmgzs.carnews.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.jmgzs.carnews.R;
@@ -16,10 +21,17 @@ import com.jmgzs.carnews.ui.view.SettingItemView;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.GlideCacheUtil;
 import com.jmgzs.carnews.util.SPBase;
+import com.jmgzs.carnews.util.T;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
+import com.jmgzs.lib_network.utils.FileUtils;
+import com.jmgzs.lib_network.utils.L;
 
-import static com.jmgzs.carnews.util.SPBase.clear;
-import static java.util.ResourceBundle.clearCache;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
+import static com.jmgzs.carnews.util.Const.PhotoCode.CACHE_TAKE_PHOTO;
+import static com.taobao.accs.ACCSManager.mContext;
 
 
 public class UserSettingActivity extends BaseActivity implements SettingItemView.OnCheckChangedListener {
@@ -36,6 +48,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
 
 
     private RoundedImageView headImage;
+    private String cropPath = null;
 
     @Override
     protected int getContent(Bundle save) {
@@ -89,8 +102,13 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemWifi.setonCheckChangedListener(this);
         itemPush.setonCheckChangedListener(this);
 
+        GlideApp.with(this).asBitmap().fitCenter().error(R.mipmap.user_icon).
+                placeholder(R.mipmap.user_icon).load(App.headPath).into(headImage);
+
         itemCache.setTextState(GlideCacheUtil.getInstance().getCacheSize(this));
 //        itemCache.setTextState("0.8MB");
+        itemWifi.setChecked(App.isMobile);
+        itemPush.setChecked(App.isRecptPush);
     }
 
     @Override
@@ -113,8 +131,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                 startActivity(new Intent(this, MianZeActivity.class));
                 break;
             case R.id.setting_cache:
-                showCacheMenu();
-//                clearGlideCache();
+                if (!TextUtils.isEmpty(itemCache.getTextState()))
+                    showCacheMenu();
                 break;
             case R.id.setting_textsize:
 
@@ -128,10 +146,12 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
     public void onCheckChangedListener(View compoundButton, boolean b) {
         switch (compoundButton.getId()) {
             case R.id.setting_wifi:
-                SPBase.putBoolean(Const.SPKey.WIFI, b);
+                if (b != App.isMobile)
+                    SPBase.putBoolean(Const.SPKey.WIFI, b);
                 break;
             case R.id.setting_push:
-                SPBase.putBoolean(Const.SPKey.PUSH, b);
+                if (b != App.isRecptPush)
+                    SPBase.putBoolean(Const.SPKey.PUSH, b);
                 break;
             default:
                 break;
@@ -150,9 +170,11 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
             @Override
             public void onMenuItemClick(int position) {
                 switch (position) {
-                    case DialogMenu.MENU_ITEM_TOP:
+                    case DialogMenu.MENU_ITEM_MIDDLE_2:
+                        camera();
                         break;
                     case DialogMenu.MENU_ITEM_BOTTOM:
+                        gallery();
                         break;
 
                     default:
@@ -170,9 +192,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
             @Override
             public void onMenuItemClick(int position) {
                 switch (position) {
-                    case DialogMenu.MENU_ITEM_TOP:
-                        break;
                     case DialogMenu.MENU_ITEM_BOTTOM:
+                        clearGlideCache();
                         break;
 
                     default:
@@ -181,9 +202,109 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
             }
         });
         menuDialog.show();
-        menuDialog.setMenuItemTopText(View.VISIBLE,"删除缓存?");
-        menuDialog.setMenuItemMiddle1Text(View.GONE,null);
-        menuDialog.setMenuItemMiddle2Text(View.GONE,null);
-        menuDialog.setMenuItemBottomText(View.VISIBLE,"确定");
+        menuDialog.setMenuItemTopText(View.VISIBLE, "删除缓存?");
+        menuDialog.setMenuItemMiddle1Text(View.GONE, null);
+        menuDialog.setMenuItemMiddle2Text(View.GONE, null);
+        menuDialog.setMenuItemBottomText(View.VISIBLE, "确定");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case Const.PhotoCode.PHOTO_REQUEST_CAMERA:
+                    File f = getCameraFile();
+                    if (FileUtils.isFileExist(f.getPath()))
+                        crop(Uri.fromFile(f));
+                    else T.toastS(this, "图片路径异常");
+
+                    break;
+                case Const.PhotoCode.PHOTO_REQUEST_GALLERY:
+                    if (data.getData() == null) {
+                        T.toastS(this, "图片路径异常");
+                    } else
+                        crop(data.getData());
+                    break;
+                case Const.PhotoCode.PHOTO_REQUEST_CUT:
+                    if (data != null) {
+                        Uri uri = data.getData();
+                        if (uri != null && uri.getPath() != null) {
+                            cropPath = uri.getPath();
+                        }
+                    }
+                    if (null != cropPath && FileUtils.isFileExist(cropPath)) {
+                        GlideApp.with(this).asBitmap().fitCenter().error(R.mipmap.user_icon).
+                                placeholder(R.mipmap.user_icon).load(cropPath).into(headImage);
+                        SPBase.putString(Const.SPKey.HEAD_PATH, cropPath);
+                        T.toastS("头像更新成功!");
+                    } else{
+                        T.toastS(this, "裁剪异常" + cropPath);
+                        FileUtils.deleteFile(cropPath);
+                    }
+                    L.e(getClass().getSimpleName(), cropPath);
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * 从相册获取
+     */
+    public void gallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_GALLERY);
+    }
+
+    private final static String PHOTO_FILE_NAME = "temp_head.jpg";
+
+    /**
+     * 从相机获取
+     */
+    public void camera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getCameraFile()));
+        startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_CAMERA);
+    }
+
+    private File getCameraFile() {
+        return new File(FileUtils.getFilePath(this, CACHE_TAKE_PHOTO), PHOTO_FILE_NAME);
+    }
+
+    /**
+     * 剪切图片
+     *
+     * @param uri
+     * @function:
+     * @author:zjy
+     * @date:
+     */
+    private void crop(Uri uri) {
+        // 获取系统时间 然后将裁剪后的图片保存至指定的文件夹
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddhhmmss", Locale.CHINA);
+        String address = sDateFormat.format(new java.util.Date());
+        File cropFile = new File(FileUtils.getFilePath(this, CACHE_TAKE_PHOTO), address + ".JPEG");
+        cropPath = cropFile.getPath();
+        Uri imageUri = Uri.fromFile(cropFile);
+        // 裁剪图片意图
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        // 裁剪框的比例，1：1
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        // 裁剪后输出图片的尺寸大小
+        intent.putExtra("outputX", 640);
+        intent.putExtra("outputY", 640);
+        // 输出路径
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        // 图片格式
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", false);// 取消人脸识别
+        intent.putExtra("return-data", false);// true:不返回uri，false：返回uri
+        startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_CUT);
     }
 }

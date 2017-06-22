@@ -88,20 +88,20 @@ public class FileUtils {
     //复制文件夹
     public static void copyFileDir(File sourceFile, File targetFile)
             throws IOException {
-        if (sourceFile.isDirectory() && targetFile.isDirectory()){
+        if (sourceFile.isDirectory() && targetFile.isDirectory()) {
             File newDir = new File(targetFile, sourceFile.getName());
-            if (!newDir.exists()){
+            if (!newDir.exists()) {
                 newDir.mkdirs();
             }
             File[] subFiles = sourceFile.listFiles();
-            if (subFiles != null && subFiles.length > 0){
-                for (File subFile : subFiles){
-                    if (subFile != null && subFile.exists()){
-                        if (subFile.isDirectory()){
+            if (subFiles != null && subFiles.length > 0) {
+                for (File subFile : subFiles) {
+                    if (subFile != null && subFile.exists()) {
+                        if (subFile.isDirectory()) {
                             copyFileDir(subFile, newDir);
-                        }else{
+                        } else {
                             File newFile = new File(newDir, subFile.getName());
-                            if (!newFile.exists()){
+                            if (!newFile.exists()) {
                                 newFile.createNewFile();
                             }
                             copyFile(subFile, newFile);
@@ -111,6 +111,7 @@ public class FileUtils {
             }
         }
     }
+
     // 复制文件
     public static void copyFile(File sourceFile, File targetFile)
             throws IOException {
@@ -195,6 +196,7 @@ public class FileUtils {
     // 获取文件的路径
     public static String getFilePath(Context context, String fileDir) {
         String filePath = getAppBaseFile(context) + File.separator + fileDir;
+        createDir(filePath);
         return filePath;
     }
 
@@ -206,6 +208,7 @@ public class FileUtils {
             baseDir = baseDir + File.separator + cacheDir + File.separator
                     + subDir + File.separator;
         }
+        createDir(baseDir);
         return baseDir;
     }
 
@@ -238,22 +241,26 @@ public class FileUtils {
         return dir;
     }
 
-    public static boolean isFileExist(Context ct,String fileName) {
-        if (TextUtils.isEmpty(fileName)) return false ;
+    public static boolean isFileExist(Context ct, String fileName) {
+        if (TextUtils.isEmpty(fileName)) return false;
         File file = new File(getAppBaseFile(ct) + File.separator + fileName);
-        return file.isFile() && file.exists();
+        return isFileExist(file);
     }
 
-    public static boolean isFileExistOnFileDir(Context ct,String fileName) {
-        if (TextUtils.isEmpty(fileName)) return false ;
+    public static boolean isFileExistOnFileDir(Context ct, String fileName) {
+        if (TextUtils.isEmpty(fileName)) return false;
         File file = new File(getFileDirBasePath(ct) + fileName);
-        return file.isFile() && file.exists();
+        return isFileExist(file);
     }
 
     public static boolean isFileExist(String filePath) {
-        if (TextUtils.isEmpty(filePath)) return false ;
+        if (TextUtils.isEmpty(filePath)) return false;
         File file = new File(filePath);
-        return file.isFile() && file.exists();
+        return isFileExist(file);
+    }
+
+    public static boolean isFileExist(File file) {
+        return file != null && file.isFile() && file.exists();
     }
 
     /**

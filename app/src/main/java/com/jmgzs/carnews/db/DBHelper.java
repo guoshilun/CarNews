@@ -5,13 +5,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 
 import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.bean.Photo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static android.R.attr.id;
+import static com.umeng.message.proguard.k.C;
 
 /**
  * Created by mac on 17/6/14.
@@ -33,6 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_PUBLISH_TIME = "publish_time";
     private static final String COLUMN_IMAGES = "image_list";
     private static final String COLUMN_TIME = "create_time";
+    private static final String COLUMN_DEL = "del";
 
     private static final String CREATE_TABLE = "create table if not exists " + TABLE_NEWS + "("
             + COLUMN_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
@@ -42,6 +48,7 @@ public class DBHelper extends SQLiteOpenHelper {
             + COLUMN_SOURCE + " varchar not null,"
             + COLUMN_PUBLISH_TIME + " varchar not null,"
             + COLUMN_IMAGES + " varchar not null,"
+            + COLUMN_DEL + " integer default 0,"
             + COLUMN_TIME + " timestamp not null default('now','localtime'))";
 
     private static volatile DBHelper instance;
@@ -73,6 +80,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 ////////////////////////////////////////////
+
     /**
      * 删除收藏
      *
@@ -82,9 +90,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public synchronized boolean deleteNews(String aid) {
         SQLiteDatabase db = getWritableDatabase();
         if (db != null && aid != null && aid.length() > 0) {
-//            String delSql = "delete from "+TABLE_NEWS+" where aid = "+aid;
             try {
-                int row = db.delete(TABLE_NEWS, "aid=?", new String[]{aid});
+                ContentValues cv = new ContentValues();
+                cv.put(COLUMN_DEL, 1);
+                int row = db.update(TABLE_NEWS, cv, COLUMN_AID + "=?", new String[]{aid});
                 return row > 0;
             } finally {
                 db.close();
@@ -166,7 +175,7 @@ public class DBHelper extends SQLiteOpenHelper {
             return null;
         }
 
-        Cursor cr = db.query(true, TABLE_NEWS, null, null, null, null, null, "id desc", null);
+       Cursor cr = db.query(true, TABLE_NEWS, null, COLUMN_DEL+"=?", new String[]{"0"}, null, null, COLUMN_ID+" desc", null);
         if (cr == null) return null;
         try {
             ArrayList<NewsDataBean> list = new ArrayList<>();
@@ -179,8 +188,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 bean.setTitle(cr.getString(cr.getColumnIndex(COLUMN_TITLE)));
 
                 String images = cr.getString(cr.getColumnIndex(COLUMN_IMAGES));
-                ArrayList photos = strToArray(images);
-                bean.setImg_list(photos);
+                bean.setImg_list(strToArray(images));
                 list.add(bean);
             }
         } finally {
@@ -191,17 +199,31 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 检测是否已经收藏过
-     * @param aid
+     * 检测是否已经收藏过,收藏过转换del=0,否则新增一条数据
+     *
+     * @param info 新闻
      * @return
      */
-    public boolean checkNews(String aid) {
+    public boolean checkNews(NewsDataBean info) {
+        int aid = info.getAid();
         SQLiteDatabase db = getReadableDatabase();
-        if (db != null && aid != null && aid.length() > 0) {
-
-            Cursor cr = db.query(TABLE_NEWS, new String[]{COLUMN_AID}, "aid = ?", new String[]{aid}, null, null, null);
+        if (db != null) {
+            Cursor cr = db.query(TABLE_NEWS, new String[]{COLUMN_AID}, COLUMN_AID + "=?",
+                    new String[]{String.valueOf(aid)}, null, null, null);
             try {
-                return cr != null && cr.getCount() > 0;
+                if (cr != null && cr.getCount() > 0) {
+                    cr.moveToFirst();
+                    int del = cr.getInt(cr.getColumnIndex(COLUMN_DEL));
+                    if (del == 0) return true; //已收藏过
+                    else {
+                        ContentValues cv = new ContentValues();
+                        cv.put(COLUMN_DEL, 0);
+                        del = db.update(TABLE_NEWS, cv, COLUMN_AID + "=?", new String[]{String.valueOf(aid)});
+                        return del > 0;
+                    }
+                } else {
+                    return addNews(info);
+                }
             } finally {
                 if (cr != null) cr.close();
             }
@@ -209,13 +231,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    private ArrayList<Photo> strToArray(String str) {
-        ArrayList<Photo> photos = new ArrayList<>();
-        //TODO
-        return null;
+    private List<String> strToArray(String str) {
+        if (TextUtils.isEmpty(str)) return null;
+        String[] array = str.split(",");
+        return Arrays.asList(array);
     }
 
-    private String arrayToStr(ArrayList list) {
+    private String arrayToStr(List list) {
         return list == null || list.size() == 0 ? "" : list.toString().replace("[", "").replace("]", "");
     }
 }

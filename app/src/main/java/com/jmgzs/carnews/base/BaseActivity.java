@@ -32,6 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         translucentStatusBar();
+        L.setTag(getClass().getSimpleName());
         PushUtil.getPush().activityInit(this);
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);

@@ -11,6 +11,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.jmgzs.autoviewpager.R;
@@ -144,10 +145,11 @@ public class CircleIndicator extends View implements ViewPager.OnPageChangeListe
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
                 if (mIndicatorMode != Mode.SOLO) {
                     trigger(position, positionOffset);
-                    if (mListener != null) {
-                        mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                    }
                 }
+                if (mListener != null) {
+                    mListener.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                }
+//                Log.i(getClass().getSimpleName(),position+" auto scroll");
             }
 
             @Override
@@ -272,10 +274,10 @@ public class CircleIndicator extends View implements ViewPager.OnPageChangeListe
 //        Log.e("CircleIndicator", "onDraw()");
         super.onDraw(canvas);
         int sc = canvas.saveLayer(0, 0, getWidth(), getHeight(), null, Canvas.MATRIX_SAVE_FLAG |
-                        Canvas.CLIP_SAVE_FLAG |
-                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |
-                        Canvas.FULL_COLOR_LAYER_SAVE_FLAG |
-                        Canvas.CLIP_TO_LAYER_SAVE_FLAG);
+                Canvas.CLIP_SAVE_FLAG |
+                Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |
+                Canvas.FULL_COLOR_LAYER_SAVE_FLAG |
+                Canvas.CLIP_TO_LAYER_SAVE_FLAG);
         for (ShapeHolder item : tabItems) {
             canvas.save();
             canvas.translate(item.getX(), item.getY());

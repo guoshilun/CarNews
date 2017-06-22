@@ -13,6 +13,9 @@ import com.jmgzs.carnews.util.SPBase;
 
 import java.util.List;
 
+import static android.R.attr.key;
+import static android.R.attr.level;
+
 /**
  * Created by mac on 17/6/15.
  * Description:
@@ -23,6 +26,7 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
 
     public static boolean isMobile = false;
     public static boolean isRecptPush = true;
+    public static String headPath;
     private static App instance;
 
     public static App getInstance() {
@@ -58,19 +62,25 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
     private void init() {
         SPBase.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         DensityUtils.init(this);
+        initSP(SPBase.getSharedPreferences());
     }
 
     @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
+    public void onTerminate() {
+        super.onTerminate();
         SPBase.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        initSP(sharedPreferences);
+    }
+
+    private void initSP(SharedPreferences sharedPreferences){
         isMobile = sharedPreferences.getBoolean(Const.SPKey.WIFI,false);
         isRecptPush = sharedPreferences.getBoolean(Const.SPKey.PUSH,true);
-        L.e("app  sp --:"+key +"-"+ isRecptPush+isMobile);
+        headPath = sharedPreferences.getString(Const.SPKey.HEAD_PATH,null);
+        L.i("app  sp --:"+key +"-"+ isRecptPush+isMobile+headPath);
     }
 
 }

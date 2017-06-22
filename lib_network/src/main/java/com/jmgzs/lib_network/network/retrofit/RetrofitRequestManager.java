@@ -232,7 +232,7 @@ public class RetrofitRequestManager {
             JSONObject json = new JSONObject(data);
             JSONObject rsp = json.getJSONObject("rsp");
             int code = rsp.getInt("status");
-            if (code == 0){
+            if (code == 1){
                 //解析返回的数据
 //                JSONObject dataObj = json.getJSONObject("data");
                 Gson gson = new GsonBuilder().registerTypeAdapterFactory(new JsonFilterAdapterFactory()).create();
@@ -241,19 +241,19 @@ public class RetrofitRequestManager {
                 return true;
             }else{
                 String msg = json.getString("reason");
-                L.e(requestType + " ErrorCode：" + code + " Message:" + msg);
+//                L.e(requestType + " ErrorCode：" + code + " Message:" + msg);
                 callback.onFailure(request.getUrl(), code, msg);
                 return false;
             }
         } catch (JsonSyntaxException e) {
-            L.e(requestType + " Error：" + e, e);
+//            L.e(requestType + " Error：" + e, e);
             int errorCode = NetworkErrorCode.ERROR_CODE_DATA_FORMAT.getCode();
             String msg = NetworkErrorCode.ERROR_CODE_DATA_FORMAT.getMsg();
             L.e(requestType + " ErrorCode：" + errorCode + " Message:" + msg);
             callback.onFailure(request.getUrl(), errorCode, msg);
             return false;
         } catch (JSONException e) {
-            L.e(requestType + " Error：" + e, e);
+//            L.e(requestType + " Error：" + e, e);
             int errorCode = NetworkErrorCode.ERROR_CODE_DATA_FORMAT.getCode();
             String msg = NetworkErrorCode.ERROR_CODE_DATA_FORMAT.getMsg();
             L.e(requestType + " ErrorCode：" + errorCode + " Message:" + msg);
@@ -293,35 +293,35 @@ class JsonFilterAdapterFactory implements TypeAdapterFactory {
                             try {
                                 field.setAccessible(true);
                                 JsonElement item = jo.get(field.getName());
-                                L.e("JsonElement:"+item);
+//                                L.e("JsonElement:"+item);
                                 Object value;
                                 if (item == null){
                                     value = null;
                                 }else if (item.isJsonNull()){
                                     value = null;
-                                    L.e("Null");
+//                                    L.e("Null");
                                 }else if (item.isJsonArray()){
                                     value = item.getAsJsonArray();
-                                    L.e("Array:"+value);
+//                                    L.e("Array:"+value);
                                 }else if (item.isJsonObject()){
                                     value = item.getAsJsonObject();
-                                    L.e("Object:"+value);
+//                                    L.e("Object:"+value);
                                 }else if (item.isJsonPrimitive()){
                                     JsonPrimitive primitive = item.getAsJsonPrimitive();
-                                    L.e("Primitive:"+primitive);
+//                                    L.e("Primitive:"+primitive);
                                     if (primitive.isBoolean()){
                                         value = primitive.getAsBoolean();
                                     }else if (primitive.isString()){
                                         value = primitive.getAsString();
                                     }else {
                                         Number number = primitive.getAsNumber();
-                                        L.e("Number:"+number);
+//                                        L.e("Number:"+number);
                                         value = number.doubleValue();
                                     }
                                 }else{
                                     value = null;
                                 }
-                                L.e("field:"+field+"\tvalue:"+value+"\ttarget:"+obj);
+//                                L.e("field:"+field+"\tvalue:"+value+"\ttarget:"+obj);
                                 JsonElementHelper.checkJsonValidation(field, value, obj);
                             } catch (com.jmgzs.lib_network.network.annotation.JsonElement.JsonNotInvalidException e) {
                                 throw new JsonSyntaxException(e);

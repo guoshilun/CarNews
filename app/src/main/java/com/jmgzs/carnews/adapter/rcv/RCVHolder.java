@@ -25,6 +25,7 @@ import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.bean.Photo;
 import com.jmgzs.carnews.network.NetWorkReciver;
 import com.jmgzs.carnews.util.TimeUtils;
+import com.jmgzs.lib_network.utils.L;
 
 import java.util.Collections;
 import java.util.List;

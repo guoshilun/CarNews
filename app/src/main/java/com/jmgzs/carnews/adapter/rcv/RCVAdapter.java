@@ -88,7 +88,6 @@ public class RCVAdapter extends RCVBaseAdapter<NewsDataBean, BaseHolder<NewsData
         @Override
         public void setData(NewsDataBean data) {
             if (data == null) return;
-            L.e(data.toString());
             title.setText(data.getTitle());
             author.setText(data.getPublish_source());
             time.setText(TimeUtils.getTimeFromDateString(data.getPublish_time()));

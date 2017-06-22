@@ -86,7 +86,6 @@ public class ConfigCache {
         if (TextUtils.isEmpty(data)) {
             return;
         }
-        FileUtils.createDir(FileUtils.getCachePath(context));
         File file = new File(FileUtils.getCachePath(context) + File.separator + replaceUrlWithPlus(url));
         if (file.exists()) {
             file.delete();
