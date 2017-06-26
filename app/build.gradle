@@ -25,12 +25,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
-        debug{
+        debug {
             minifyEnabled false
             signingConfig signingConfigs.debug
         }
     }
-
     testOptions {
         unitTests.returnDefaultValues = true;
     }

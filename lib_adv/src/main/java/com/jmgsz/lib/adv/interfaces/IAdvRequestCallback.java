@@ -6,6 +6,6 @@ package com.jmgsz.lib.adv.interfaces;
 
 public interface IAdvRequestCallback {
 
-    void onGetAdvSuccess(String html);
+    void onGetAdvSuccess(String html, int width, int height);
     void onGetAdvFailure();
 }

@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
 
 import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
@@ -29,9 +30,18 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
     public static boolean isRecptPush = true;
     public static String headPath;
     private static App instance;
+    private Handler handler = new Handler();
 
     public static App getInstance() {
         return instance;
+    }
+
+    public void runOnUiThread(Runnable runnable){
+        handler.post(runnable);
+    }
+
+    public void runOnUiThread(int delay, Runnable runnable){
+        handler.postDelayed(runnable, delay);
     }
 
     @Override

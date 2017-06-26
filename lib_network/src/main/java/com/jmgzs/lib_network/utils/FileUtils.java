@@ -150,7 +150,7 @@ public class FileUtils {
         if (!folderDir.exists()) {
             folderDir.mkdirs();
         }
-        File fileNew = new File(fileName);
+        File fileNew = new File(folderDir, fileName);
         if (!fileNew.exists()) {
             try {
                 fileNew.createNewFile();

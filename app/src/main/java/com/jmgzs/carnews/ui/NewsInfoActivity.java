@@ -2,8 +2,16 @@ package com.jmgzs.carnews.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.TransitionDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -18,11 +26,13 @@ import com.jmgsz.lib.adv.bean.AdvRequestBean;
 import com.jmgsz.lib.adv.interfaces.IAdvRequestCallback;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
+import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.bean.NewsInfoBean;
 import com.jmgzs.carnews.js.JsBridge;
 import com.jmgzs.carnews.network.Urls;
+import com.jmgzs.carnews.ui.view.ScaleClickUtils;
 import com.jmgzs.carnews.ui.view.ScrollControlFrameLayout;
 import com.jmgzs.carnews.ui.view.ScrollableWebView;
 import com.jmgzs.carnews.ui.view.ShareBoardView;
@@ -63,6 +73,7 @@ public class NewsInfoActivity extends BaseActivity{
     private ToggleButton tgbtnFav;
     private TextView tvTitle;
     private JsBridge js;
+    private Animation animShareOpen, animShareClose;
 
     private UMShareListener mShareListener;
     private ShareUtils shareUtils;
@@ -76,7 +87,7 @@ public class NewsInfoActivity extends BaseActivity{
         Intent intent = getIntent();
         if (intent == null || 0 >((newsId = intent.getIntExtra(INTENT_AID,-1)))){
             Toast.makeText(this, "数据异常", Toast.LENGTH_SHORT).show();
-            this.finish();
+            this.onBackPressed();
             return;
         }
         top = findViewById(R.id.newsInfo_top_bar);
@@ -93,6 +104,45 @@ public class NewsInfoActivity extends BaseActivity{
         requestInfo(newsId);
 
 //        wv.loadDataWithBaseURL("file:///android_asset/", htmlTemplate, "text/html", "utf-8", null);
+    }
+
+    private void initAnim(){
+        animShareOpen = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_show);
+        animShareOpen.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                L.e("alpha1动画开始");
+                contentCover.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                L.e("alpha1动画结束");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        animShareClose = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_hide);
+        animShareClose.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                L.e("alpha2动画开始");
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                contentCover.setVisibility(View.GONE);
+                L.e("alpha2动画结束");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
     private void initButtons(){
@@ -120,10 +170,33 @@ public class NewsInfoActivity extends BaseActivity{
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     T.toastS("收藏成功");
-                    imgFav.setImageResource(R.mipmap.fav_2);
+                    ScaleClickUtils.startScaleSmallAnim(imgFav, new Runnable() {
+                        @Override
+                        public void run() {
+                            imgFav.setImageResource(R.mipmap.fav_2);
+                            App.getInstance().runOnUiThread(300, new Runnable() {
+                                @Override
+                                public void run() {
+                                    ScaleClickUtils.startScaleBigAnim(imgFav, null);
+                                }
+                            });
+                        }
+                    });
+
                 }else{
                     T.toastS("已取消收藏");
-                    imgFav.setImageResource(R.mipmap.fav_1);
+                    ScaleClickUtils.startScaleSmallAnim(imgFav, new Runnable() {
+                        @Override
+                        public void run() {
+                            imgFav.setImageResource(R.mipmap.fav_1);
+                            App.getInstance().runOnUiThread(300, new Runnable() {
+                                @Override
+                                public void run() {
+                                    ScaleClickUtils.startScaleBigAnim(imgFav, null);
+                                }
+                            });
+                        }
+                    });
                 }
             }
         });
@@ -146,6 +219,7 @@ public class NewsInfoActivity extends BaseActivity{
 
     private void initShare(){
         shareUtils = new ShareUtils();
+        initAnim();
     }
 
     private void initWebView(){
@@ -154,6 +228,19 @@ public class NewsInfoActivity extends BaseActivity{
         wv.getSettings().setJavaScriptEnabled(true);
         wv.getSettings().setUseWideViewPort(false);
         wv.getSettings().setLoadsImagesAutomatically(true);
+        wv.setWebChromeClient(new WebChromeClient(){
+
+        });
+        wv.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                L.e("url:"+url);
+                if (url.startsWith("file")){
+                    return false;
+                }
+                return true;
+            }
+        });
         js = new JsBridge(this, new JsBridge.IJsCallback() {
             @Override
             public void close() {
@@ -163,8 +250,10 @@ public class NewsInfoActivity extends BaseActivity{
         wv.addJavascriptInterface(js, "carnews");
     }
 
-    private void showAdv(String html){
-        wv.loadUrl("javascript:showAdv(\""+html+"\")");
+    private void showAdv(String html, int height){
+        String newHtml = "javascript:showAdv(\""+html+"\", "+height+")";
+        L.e("插入广告html："+newHtml);
+        wv.loadUrl(newHtml);
     }
 
     private void hideAdv(){
@@ -203,10 +292,13 @@ public class NewsInfoActivity extends BaseActivity{
                 String content = info.getContent();
                 try {
                     String html = FileUtils.readTextInputStream(NewsInfoActivity.this.getAssets().open("info"+ File.separator+"info_template.html"));
-                    html = String.format(html, content == null ? "" : content, info.getTitle() == null ? "" : info.getTitle(), info.getPublish_source() == null ? "" : info.getPublish_source(), info.getPublish_time() == null ? "" : info.getPublish_time());
+                    html = html.replace("%1$s", content == null ? "" : content);
+                    html = html.replace("%2$s", info.getTitle() == null ? "" : info.getTitle());
+                    html = html.replace("%3$s", info.getPublish_source() == null ? "" : info.getPublish_source());
+                    html = html.replace("%4$s", info.getPublish_time() == null ? "" : info.getPublish_time());
                     L.e(html);
                     wv.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "utf-8", null);
-//                    requestAdv();
+                    requestAdv();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -240,7 +332,7 @@ public class NewsInfoActivity extends BaseActivity{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.titleInfo_img_back://返回
-                this.finish();
+                this.onBackPressed();
                 break;
             case R.id.bottomBar_img_share://分享
             case R.id.titleInfo_img_more:
@@ -267,10 +359,15 @@ public class NewsInfoActivity extends BaseActivity{
                 }, new ShareBoardView.IOnBoardDismissListener() {
                     @Override
                     public void onDismiss(boolean isDismiss) {
+                        contentCover.clearAnimation();
                         if (isDismiss){
-                            contentCover.setVisibility(View.GONE);
+                            L.e("开始关闭动画");
+                            contentCover.setAnimation(animShareClose);
+                            animShareClose.start();
                         }else{
-                            contentCover.setVisibility(View.VISIBLE);
+                            L.e("开始启动动画");
+                            contentCover.setAnimation(animShareOpen);
+                            animShareOpen.start();
                         }
                     }
                 });
@@ -287,22 +384,57 @@ public class NewsInfoActivity extends BaseActivity{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                String req = "{\"id\":\"ebb7fbcb-01da-4255-8c87-98eedbcd2909\",\"user_agent\":\"Mozilla/5.0 (Linux; U; Android 4.3; zh-cn; R8007 Build/JLS36C) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30\",\"app_site_info\":{\"appsite_id\":\"51e71da6-5b46-4d9f-b94f-9ec6a\",\"categories\":[0],\"app_bundle_name\":\"dongfangtoutiao_test\",\"app_name\":\"\"},\"net_type\":2,\"ad_slot_info\":[{\"sid\": 0,\"height\": 220,\"screen_position\": 1,\"loc_id\": \"bf8a85e6-849e-11e6-8c73-a4dcbef43d46\",\"width\": 156,\"ad_num\": 1,\"html_material\": false}],\"id_info\": {\"mac\": \"d8:55:a3:ce:e4:40\",\"idfa\": \"5b7e9e4f42a6635f\"},\"device_info\": {\"orientation\": 2,\"model\": \"MX5\",\"brand\": \"MEIXU\",\"screen_width\": 1080,\"type\": 2,\"screen_height\": 1920},\"user_ip\": \"58.30.22.0\",\"template_id\": [2044,2001],\"channel_id\": 1001}";
+                String req = "{\"id\":\"ebb7fbcb-01da-4255-8c87-98eedbcd2909\",\"user_agent\":\"Mozilla/5.0 (Linux; U; Android 4.3; zh-cn; R8007 Build/JLS36C) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30\",\"app_site_info\":{\"appsite_id\":\"51e71da6-5b46-4d9f-b94f-9ec6a\",\"categories\":[0],\"app_bundle_name\":\"dongfangtoutiao_test\",\"app_name\":\"\"},\"net_type\":2,\"ad_slot_info\":[{\"sid\": 0,\"height\": 220,\"screen_position\": 1,\"loc_id\": \"bf8a85e6-849e-11e6-8c73-a4dcbef43d46\",\"width\": 156,\"ad_num\": 1,\"html_material\": false}],\"id_info\": {\"mac\": \"d8:55:a3:ce:e4:40\",\"idfa\": \"5b7e9e4f42a6635f\"},\"device_info\": {\"orientation\": 2,\"model\": \"MX5\",\"brand\": \"MEIXU\",\"screen_width\": 1080,\"type\": 2,\"screen_height\": 1920},\"user_ip\": \"58.30.22.0\",\"template_id\": [2044],\"channel_id\": 1001}";
                 AdvRequestUtil.requestAdv(NewsInfoActivity.this, new Gson().fromJson(req, AdvRequestBean.class), new IAdvRequestCallback() {
                     @Override
-                    public void onGetAdvSuccess(String html) {
-                        showAdv(html);
+                    public void onGetAdvSuccess(String html, int width, int height) {
                         L.e("广告请求成功");
+                        File file = FileUtils.createFile(NewsInfoActivity.this, FileUtils.getCachePath(NewsInfoActivity.this)+File.separator+"info", "info_adv.html");
+                        try {
+                            if (file == null){
+                                return;
+                            }
+                            html = html.replaceAll("\\./","file:///android_assets/");
+                            FileUtils.writeTextFile(file, html);
+                            L.e("adv Html:"+html);
+                            showAdv(Uri.fromFile(file).toString(), height);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
                     }
 
                     @Override
                     public void onGetAdvFailure() {
-                        showAdv("<p>广告请求失败</p>");
                         L.e("广告请求失败");
+                        File file = FileUtils.createFile(NewsInfoActivity.this, FileUtils.getCachePath(NewsInfoActivity.this)+File.separator+"info", "info_adv.html");
+                        try {
+                            if (file == null){
+                                L.e("广告缓存文件不存在");
+                                return;
+                            }
+                            FileUtils.writeTextFile(file, "<p>广告请求失败</p>");
+                            L.e("开始显示广告:"+file.getAbsolutePath());
+                            L.e("开始显示广告:"+Uri.fromFile(file).toString());
+                            showAdv(Uri.fromFile(file).toString(), 60);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 });
             }
         }.start();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 }
