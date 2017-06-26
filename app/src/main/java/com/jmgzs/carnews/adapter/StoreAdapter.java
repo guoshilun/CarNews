@@ -1,6 +1,7 @@
 package com.jmgzs.carnews.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,12 +11,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jmgzs.carnews.R;
+import com.jmgzs.carnews.base.App;
+import com.jmgzs.carnews.base.GlideApp;
+import com.jmgzs.carnews.base.GlideRequest;
 import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.carnews.network.NetWorkReciver;
+import com.jmgzs.carnews.util.TimeUtils;
 import com.jmgzs.lib_network.utils.L;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.R.attr.author;
+import static android.R.attr.data;
 
 
 /**
@@ -24,6 +33,8 @@ import java.util.List;
  */
 
 public class StoreAdapter extends BaseAdapter {
+
+    private final GlideRequest<Drawable> request;
     private List<NewsDataBean> dataList;
     private Context ct;
 
@@ -41,19 +52,21 @@ public class StoreAdapter extends BaseAdapter {
         imageW = (DensityUtils.SCREEN_WIDTH_PIXELS - DensityUtils.dip2px(ct, (5 * 4))) / 3;
         imageH = imageW - DensityUtils.dip2px(ct, 20);
 
+        request = GlideApp.with(ct).asDrawable().centerCrop().error(R.mipmap.app_default_middle);
+
         L.e("adapter w=" + imageW + ",h=" + imageH);
 
     }
 
     @Override
     public int getCount() {
-        return dataList == null ? 10 : dataList.size();
+        return dataList == null ? 0 : dataList.size();
     }
 
     @Override
     public NewsDataBean getItem(int i) {
-//        return dataList.get(i);
-        return null;
+        return dataList.get(i);
+//        return null;
     }
 
     @Override
@@ -77,7 +90,7 @@ public class StoreAdapter extends BaseAdapter {
             }
         else
             h = (ISetData) view.getTag();
-        h.setData(getItem(i));
+        h.setData(getItem(i), request);
         return view;
     }
 
@@ -88,13 +101,13 @@ public class StoreAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-//        int size = getItem(position).getImg_list().size();
-        int size = position % 3;
-        return size == 0 ? TYPE0 : (size == 1 ? TYPE1 : TYPE2);
+        int size = getItem(position).getImg_list().size();
+//        int size = position % 3;
+        return size == 0 ? TYPE0 : (size == 3 ? TYPE2 : TYPE1);
     }
 
     private interface ISetData {
-        void setData(NewsDataBean b);
+        void setData(NewsDataBean b, GlideRequest request);
     }
 
     private static class Holder implements ISetData {
@@ -116,12 +129,22 @@ public class StoreAdapter extends BaseAdapter {
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) image.getLayoutParams();
             params.width = imageW;
             params.height = imageH;
-            L.e("w=" + imageW + ",h=" + imageH);
+//            L.e("w=" + imageW + ",h=" + imageH);
             image.setLayoutParams(params);
         }
 
         @Override
-        public void setData(NewsDataBean b) {
+        public void setData(NewsDataBean b, GlideRequest request) {
+            if (b == null) {
+                return;
+            }
+            title.setText(b.getTitle());
+            source.setText(b.getPublish_source());
+            publishTime.setText(TimeUtils.getTimeFromDateString(b.getPublish_time()));
+            if (b.getImg_list().size() == 0) {
+                image.setImageResource(R.mipmap.app_default_middle);
+            } else
+                request.load(b.getImg_list().get(0)).into(image);
 
         }
     }
@@ -150,12 +173,22 @@ public class StoreAdapter extends BaseAdapter {
         }
 
         @Override
-        public void setData(NewsDataBean b) {
-//            if (b!=null &&b.getImg_list().size() == 0) {
-            imagesLayout.setVisibility(View.GONE);
-//            } else {
-//                imagesLayout.setVisibility(View.VISIBLE);
-//            }
+        public void setData(NewsDataBean data, GlideRequest request) {
+            if (data == null) {
+                return;
+            }
+            title.setText(data.getTitle());
+            source.setText(data.getPublish_source());
+            publishTime.setText(TimeUtils.getTimeFromDateString(data.getPublish_time()));
+            if (data.getImg_list().size() < 3) {
+                imagesLayout.setVisibility(View.GONE);
+            } else {
+                imagesLayout.setVisibility(View.VISIBLE);
+                request.load(data.getImg_list().get(0)).into(image);
+                request.load(data.getImg_list().get(1)).into(image2);
+                request.load(data.getImg_list().get(2)).into(image3);
+            }
+
         }
     }
 
@@ -165,4 +198,18 @@ public class StoreAdapter extends BaseAdapter {
         dataList.addAll(data);
         notifyDataSetChanged();
     }
+
+    public void clear(){
+        dataList.clear();
+        notifyDataSetChanged();
+    }
+
+    public void removeItem(int pos) {
+        NewsDataBean d = dataList.remove(pos);
+        if (d != null) {
+            notifyDataSetChanged();
+        }
+    }
+
+
 }

@@ -38,8 +38,7 @@
             android:value="5937b5da07fe65264a000c8f"></meta-data>
         <meta-data
             android:name="UMENG_MESSAGE_SECRET"
-            android:value="8fc2746a91e1a80d5574a3d30588d289">
-        </meta-data>
+            android:value="8fc2746a91e1a80d5574a3d30588d289"></meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="Umeng"></meta-data>
@@ -78,6 +77,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <uses-library
             android:name="com.google.android.maps"
             android:required="false" />
@@ -118,6 +118,17 @@
             android:name=".ui.MianZeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+
+        <!-- 兼容7.0文件访问 -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.android7.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/path" />
+        </provider>
 
         <receiver
             android:name="com.jmgzs.carnews.network.NetWorkReciver"

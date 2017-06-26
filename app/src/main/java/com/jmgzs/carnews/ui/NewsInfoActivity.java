@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -37,6 +38,7 @@ import com.jmgzs.carnews.ui.view.ScrollControlFrameLayout;
 import com.jmgzs.carnews.ui.view.ScrollableWebView;
 import com.jmgzs.carnews.ui.view.ShareBoardView;
 import com.jmgzs.carnews.ui.view.TitleBarScrollController;
+import com.jmgzs.carnews.util.LoaderUtil;
 import com.jmgzs.carnews.util.ResUtils;
 import com.jmgzs.carnews.util.ShareUtils;
 import com.jmgzs.carnews.util.T;
@@ -51,12 +53,14 @@ import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
-/**新闻详情界面
+/**
+ * 新闻详情界面
  * Created by Wxl on 2017/6/12.
  */
 
-public class NewsInfoActivity extends BaseActivity{
+public class NewsInfoActivity extends BaseActivity {
 
     @Override
     protected int getContent(Bundle save) {
@@ -81,15 +85,20 @@ public class NewsInfoActivity extends BaseActivity{
     private int newsId;
     private String downloadUrl;
     public static final String INTENT_AID = "aid";
+    private boolean hasStored = false;
+    private NewsDataBean info;
+    private ArrayList<String> images ;
 
     @Override
     protected void initView() {
         Intent intent = getIntent();
-        if (intent == null || 0 >((newsId = intent.getIntExtra(INTENT_AID,-1)))){
+        if (intent == null || 0 > ((newsId = intent.getIntExtra(INTENT_AID, -1)))) {
             Toast.makeText(this, "数据异常", Toast.LENGTH_SHORT).show();
             this.onBackPressed();
             return;
         }
+        images = intent.getStringArrayListExtra("images");
+        L.e(images.toString());
         top = findViewById(R.id.newsInfo_top_bar);
         statusBar = findViewById(R.id.newInfo_status_bar);
         bottomBar = findViewById(R.id.newsInfo_bottom_bar);
@@ -105,7 +114,6 @@ public class NewsInfoActivity extends BaseActivity{
 
 //        wv.loadDataWithBaseURL("file:///android_asset/", htmlTemplate, "text/html", "utf-8", null);
     }
-
     private void initAnim(){
         animShareOpen = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_show);
         animShareOpen.setAnimationListener(new Animation.AnimationListener() {
@@ -145,7 +153,7 @@ public class NewsInfoActivity extends BaseActivity{
         });
     }
 
-    private void initButtons(){
+    private void initButtons() {
         btnShare = (ImageView) findViewById(R.id.bottomBar_img_share);
         btnShareTop = (ImageView) findViewById(R.id.titleInfo_img_more);
         btnBack = (ImageView) findViewById(R.id.titleInfo_img_back);
@@ -159,12 +167,16 @@ public class NewsInfoActivity extends BaseActivity{
         initFavBtn();
     }
 
-    private void initFavBtn(){
+    private void initFavBtn() {
         imgFav = (ImageView) findViewById(R.id.bottomBar_img_home);
         tgbtnFav = (ToggleButton) findViewById(R.id.bottomBar_tgbtn_home);
-        //TODO 根据收藏与否更新按钮状态
-        tgbtnFav.setChecked(false);
-        imgFav.setImageResource(R.mipmap.fav_1);
+        hasStored = LoaderUtil.get().hasStored(this, String.valueOf(newsId));
+        tgbtnFav.setChecked(hasStored);
+        if (hasStored) {
+            imgFav.setImageResource(R.mipmap.fav_2);
+        } else {
+            imgFav.setImageResource(R.mipmap.fav_1);
+        }
         tgbtnFav.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -202,13 +214,13 @@ public class NewsInfoActivity extends BaseActivity{
         });
     }
 
-    private void initOneBtn(ImageView btn, int imgRes){
+    private void initOneBtn(ImageView btn, int imgRes) {
         btn.setImageResource(imgRes);
         btn.setOnClickListener(this);
         btn.setBackgroundResource(R.drawable.bg_trans_to_black);
     }
 
-    private void initTitle(){
+    private void initTitle() {
         tvTitle = (TextView) findViewById(R.id.titleInfo_tv_title);
         tvTitle.setText("");
     }
@@ -217,12 +229,12 @@ public class NewsInfoActivity extends BaseActivity{
     protected void addPaddingAboveContentView() {
     }
 
-    private void initShare(){
+    private void initShare() {
         shareUtils = new ShareUtils();
         initAnim();
     }
 
-    private void initWebView(){
+    private void initWebView() {
         wv = (ScrollableWebView) findViewById(R.id.newsInfo_wv);
 
         wv.getSettings().setJavaScriptEnabled(true);
@@ -256,31 +268,31 @@ public class NewsInfoActivity extends BaseActivity{
         wv.loadUrl(newHtml);
     }
 
-    private void hideAdv(){
+    private void hideAdv() {
         wv.loadUrl("javascript:closeAdv()");
     }
 
-    private void initScroll(){
+    private void initScroll() {
         findViewById(R.id.titleInfoParent).setBackgroundColor(Color.WHITE);
         scrollControlView = (ScrollControlFrameLayout) findViewById(R.id.newsInfo_scf);
         content = findViewById(R.id.newsInfo_content);
 
-        ((LinearLayout.LayoutParams)statusBar.getLayoutParams()).height = DensityUtils.getStatusBarHeight(this);
+        ((LinearLayout.LayoutParams) statusBar.getLayoutParams()).height = DensityUtils.getStatusBarHeight(this);
         top.measure(View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenWidthPixels(this), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenHeightPixels(this), View.MeasureSpec.AT_MOST));
         TitleBarScrollController controller = new TitleBarScrollController(wv);
         wv.setScrollListener(controller);
-        ((FrameLayout.LayoutParams)content.getLayoutParams()).topMargin = top.getMeasuredHeight();
+        ((FrameLayout.LayoutParams) content.getLayoutParams()).topMargin = top.getMeasuredHeight();
         scrollControlView.setAlphaView(top);
         scrollControlView.setScrollView(content);
         scrollControlView.setScrollEndListener(controller);
     }
 
-    private void requestInfo(int newId){
+    private void requestInfo(int newId) {
         RequestUtil.requestByGetAsy(this, Urls.getUrlInfo(newId), NewsInfoBean.class, new IRequestCallBack<NewsInfoBean>() {
 
             @Override
             public void onSuccess(String url, NewsInfoBean data) {
-                if (!ResUtils.processResponse(url, data, this)){
+                if (!ResUtils.processResponse(url, data, this)) {
                     return;
                 }
                 NewsDataBean info;
@@ -319,7 +331,18 @@ public class NewsInfoActivity extends BaseActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        UMShareAPI.get(this).onActivityResult(requestCode,resultCode,data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onStop() {
+        if (info != null)
+            if (tgbtnFav.isChecked() && !hasStored)
+                LoaderUtil.get().insertOrUpdate(this, info);
+            else if (hasStored && !tgbtnFav.isChecked())
+                LoaderUtil.get().deleteNews(this, String.valueOf(info.getAid()));
+        super.onStop();
+
     }
 
     @Override
@@ -330,7 +353,7 @@ public class NewsInfoActivity extends BaseActivity{
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.titleInfo_img_back://返回
                 this.onBackPressed();
                 break;
@@ -375,8 +398,8 @@ public class NewsInfoActivity extends BaseActivity{
         }
     }
 
-    private void requestAdv(){
-        new Thread(){
+    private void requestAdv() {
+        new Thread() {
             @Override
             public void run() {
                 try {

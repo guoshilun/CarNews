@@ -8,15 +8,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
 import com.jmgzs.carnews.bean.NewsDataBean;
-import com.jmgzs.carnews.bean.Photo;
+import com.jmgzs.lib_network.utils.L;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static android.R.attr.id;
-import static com.umeng.message.proguard.k.C;
+import static android.R.id.list;
 
 /**
  * Created by mac on 17/6/14.
@@ -49,7 +48,7 @@ public class DBHelper extends SQLiteOpenHelper {
             + COLUMN_PUBLISH_TIME + " varchar not null,"
             + COLUMN_IMAGES + " varchar not null,"
             + COLUMN_DEL + " integer default 0,"
-            + COLUMN_TIME + " timestamp not null default('now','localtime'))";
+            + COLUMN_TIME + " timestamp not null default (datetime('now','localtime')))";
 
     private static volatile DBHelper instance;
 
@@ -175,7 +174,7 @@ public class DBHelper extends SQLiteOpenHelper {
             return null;
         }
 
-       Cursor cr = db.query(true, TABLE_NEWS, null, COLUMN_DEL+"=?", new String[]{"0"}, null, null, COLUMN_ID+" desc", null);
+        Cursor cr = db.query(true, TABLE_NEWS, null, COLUMN_DEL + "=?", new String[]{"0"}, null, null, COLUMN_ID + " desc", null);
         if (cr == null) return null;
         try {
             ArrayList<NewsDataBean> list = new ArrayList<>();
@@ -184,31 +183,31 @@ public class DBHelper extends SQLiteOpenHelper {
                 bean.setAid(cr.getInt(cr.getColumnIndex(COLUMN_AID)));
                 bean.setPublish_source(cr.getString(cr.getColumnIndex(COLUMN_SOURCE)));
                 bean.setPublish_time(cr.getString(cr.getColumnIndex(COLUMN_PUBLISH_TIME)));
-                bean.setAbstr(cr.getString(cr.getColumnIndex(COLUMN_TITLE)));
+                bean.setAbstr(cr.getString(cr.getColumnIndex(COLUMN_SUMMARY)));
                 bean.setTitle(cr.getString(cr.getColumnIndex(COLUMN_TITLE)));
 
                 String images = cr.getString(cr.getColumnIndex(COLUMN_IMAGES));
                 bean.setImg_list(strToArray(images));
                 list.add(bean);
             }
+            return list;
         } finally {
             cr.close();
             db.close();
         }
-        return null;
     }
 
     /**
-     * 检测是否已经收藏过,收藏过转换del=0,否则新增一条数据
+     * 检测是否已经收藏过,收藏过update del为0,否则新增一条数据
      *
      * @param info 新闻
      * @return
      */
-    public boolean checkNews(NewsDataBean info) {
+    public boolean insertOrUpdate(NewsDataBean info) {
         int aid = info.getAid();
         SQLiteDatabase db = getReadableDatabase();
         if (db != null) {
-            Cursor cr = db.query(TABLE_NEWS, new String[]{COLUMN_AID}, COLUMN_AID + "=?",
+            Cursor cr = db.query(TABLE_NEWS, new String[]{COLUMN_AID,COLUMN_DEL}, COLUMN_AID + "=?",
                     new String[]{String.valueOf(aid)}, null, null, null);
             try {
                 if (cr != null && cr.getCount() > 0) {
@@ -231,13 +230,31 @@ public class DBHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public boolean checkNews(String aid) {
+        SQLiteDatabase db = getReadableDatabase();
+        if (db != null && aid != null && aid.length() > 0) {
+            Cursor cr = db.query(TABLE_NEWS, new String[]{COLUMN_AID}, COLUMN_AID + "=? and del=0",
+                    new String[]{String.valueOf(aid)}, null, null, null);
+            try {
+                return (cr != null && cr.getCount() > 0);
+            } finally {
+                if (cr != null) cr.close();
+            }
+        }
+        return false;
+    }
+
     private List<String> strToArray(String str) {
         if (TextUtils.isEmpty(str)) return null;
+        L.e(getClass().getSimpleName(),str);
+
         String[] array = str.split(",");
         return Arrays.asList(array);
     }
 
     private String arrayToStr(List list) {
-        return list == null || list.size() == 0 ? "" : list.toString().replace("[", "").replace("]", "");
+        String ss =  list == null || list.size() == 0 ? "" : list.toString().replace("[", "").replace("]", "").replaceAll("\\s","");
+        L.e(getClass().getSimpleName(),ss);
+        return ss;
     }
 }

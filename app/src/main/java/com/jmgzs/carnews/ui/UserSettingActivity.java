@@ -1,16 +1,24 @@
 package com.jmgzs.carnews.ui;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.BaseActivity;
@@ -19,6 +27,8 @@ import com.jmgzs.carnews.ui.dialog.DialogMenu;
 import com.jmgzs.carnews.ui.dialog.IMenuItemClickListerer;
 import com.jmgzs.carnews.ui.view.SettingItemView;
 import com.jmgzs.carnews.util.Const;
+import com.jmgzs.carnews.util.FileProvider7;
+import com.jmgzs.carnews.util.GetPathFromUri4kitkat;
 import com.jmgzs.carnews.util.GlideCacheUtil;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.carnews.util.T;
@@ -27,11 +37,16 @@ import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import static com.jmgzs.carnews.util.Const.PhotoCode.CACHE_TAKE_PHOTO;
 import static com.taobao.accs.ACCSManager.mContext;
+import static com.umeng.message.provider.a.e;
+import static com.umeng.message.provider.a.f;
 
 
 public class UserSettingActivity extends BaseActivity implements SettingItemView.OnCheckChangedListener {
@@ -59,6 +74,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
     protected void initView() {
         TextView title = getView(R.id.titleInfo_tv_title);
         title.setText(R.string.user_setting);
+        getView(R.id.titleInfo_img_more).setVisibility(View.INVISIBLE);
         itemStore = getView(R.id.setting_store);
         itemWifi = getView(R.id.setting_wifi);
         itemTextSize = getView(R.id.setting_textsize);
@@ -80,7 +96,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemStore.show(false, false, false, true);
         itemWifi.show(true, false, true, false);
         itemTextSize.show(false, true, false, true);
-        itemPush.show(false, false, true, false);
+        itemPush.show(true, false, true, false);
         itemCache.show(false, true, false, true);
         itemUpdate.show(false, false, false, true);
         itemUser.show(false, false, false, true);
@@ -92,6 +108,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemCache.setTextTitle(R.string.setting_cache);
         itemUpdate.setTextTitle(R.string.setting_update);
         itemUser.setTextTitle(R.string.setting_user);
+        itemPush.setTvTips(R.string.setting_push_tips);
 
         itemStore.setOnClickListener(this);
         itemTextSize.setOnClickListener(this);
@@ -102,11 +119,11 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemWifi.setonCheckChangedListener(this);
         itemPush.setonCheckChangedListener(this);
 
-        GlideApp.with(this).asBitmap().fitCenter().error(R.mipmap.user_icon).
-                placeholder(R.mipmap.user_icon).load(App.headPath).into(headImage);
+        if (App.headPath != null)
+            GlideApp.with(this).asBitmap().fitCenter().error(R.mipmap.user_icon).
+                    placeholder(R.mipmap.user_icon).load(App.headPath).into(headImage);
 
         itemCache.setTextState(GlideCacheUtil.getInstance().getCacheSize(this));
-//        itemCache.setTextState("0.8MB");
         itemWifi.setChecked(App.isMobile);
         itemPush.setChecked(App.isRecptPush);
     }
@@ -215,15 +232,19 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                 case Const.PhotoCode.PHOTO_REQUEST_CAMERA:
                     File f = getCameraFile();
                     if (FileUtils.isFileExist(f.getPath()))
-                        crop(Uri.fromFile(f));
-                    else T.toastS(this, "图片路径异常");
+                        crop(FileProvider7.getUriForFile(this, f));
+                    else T.toastS(this, "图片不存在");
 
                     break;
                 case Const.PhotoCode.PHOTO_REQUEST_GALLERY:
                     if (data.getData() == null) {
-                        T.toastS(this, "图片路径异常");
-                    } else
-                        crop(data.getData());
+                        T.toastS(this, "图片不存在");
+                    } else {
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                            crop(Uri.parse("file://"+GetPathFromUri4kitkat.getPath(this, data.getData())));
+                        } else
+                            crop(data.getData());
+                    }
                     break;
                 case Const.PhotoCode.PHOTO_REQUEST_CUT:
                     if (data != null) {
@@ -237,8 +258,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                                 placeholder(R.mipmap.user_icon).load(cropPath).into(headImage);
                         SPBase.putString(Const.SPKey.HEAD_PATH, cropPath);
                         T.toastS("头像更新成功!");
-                    } else{
-                        T.toastS(this, "裁剪异常" + cropPath);
+                    } else {
+                        T.toastS(this, "裁剪异常");
                         FileUtils.deleteFile(cropPath);
                     }
                     L.e(getClass().getSimpleName(), cropPath);
@@ -255,6 +276,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
      */
     public void gallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         intent.setType("image/*");
         startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_GALLERY);
     }
@@ -266,12 +289,17 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
      */
     public void camera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getCameraFile()));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        Uri imgUri =FileProvider7.getUriForFile(this, getCameraFile()) ;
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
         startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_CAMERA);
     }
 
     private File getCameraFile() {
-        return new File(FileUtils.getFilePath(this, CACHE_TAKE_PHOTO), PHOTO_FILE_NAME);
+        File f=  new File(FileUtils.getFilePath(this, CACHE_TAKE_PHOTO), PHOTO_FILE_NAME);
+        return f;
     }
 
     /**
@@ -287,10 +315,13 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddhhmmss", Locale.CHINA);
         String address = sDateFormat.format(new java.util.Date());
         File cropFile = new File(FileUtils.getFilePath(this, CACHE_TAKE_PHOTO), address + ".JPEG");
-        cropPath = cropFile.getPath();
-        Uri imageUri = Uri.fromFile(cropFile);
+        Uri imageUri = FileProvider7.getUriForFile(this, cropFile);
+        cropPath = imageUri.getPath();
         // 裁剪图片意图
         Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");
         // 裁剪框的比例，1：1
@@ -306,5 +337,19 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         intent.putExtra("noFaceDetection", false);// 取消人脸识别
         intent.putExtra("return-data", false);// true:不返回uri，false：返回uri
         startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_CUT);
+    }
+
+    private boolean checkUriPermission(Intent intent ,Uri imgUri){
+        List resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        if (resInfoList.size() == 0) {
+            return false;
+        }
+        Iterator resInfoIterator = resInfoList.iterator();
+        while (resInfoIterator.hasNext()) {
+            ResolveInfo resolveInfo = (ResolveInfo) resInfoIterator.next();
+            String packageName = resolveInfo.activityInfo.packageName;
+            grantUriPermission(packageName, imgUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        }
+        return true;
     }
 }

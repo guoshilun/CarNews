@@ -35,6 +35,7 @@ import com.jmgzs.lib_network.utils.L;
 import com.jmgzs.carnews.util.T;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -142,7 +143,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
             public void onClick(View view) {
                 int pos = headerPager.getCurrentItem();
                 L.e("click header pos:" + pos);
-                goNewsDetail(adapter.getItem(pos).getAid());
+                goNewsDetail(adapter.getItem(pos));
             }
         });
         if (headerPager.isCurrentAutoScroll())
@@ -190,12 +191,13 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     public void onItemClick(View view, int position) {
         if (position < 0 || position > adapter.getItemCount()) return;
         L.e("click pos:" + position);
-        goNewsDetail(adapter.getItem(position - adapter.getHeadersCount()).getAid());
+        goNewsDetail(adapter.getItem(position - adapter.getHeadersCount()));
     }
 
-    private void goNewsDetail(int aid) {
+    private void goNewsDetail(NewsDataBean dataBean) {
         Intent in = new Intent(getContext(), NewsInfoActivity.class);
-        in.putExtra("aid", aid);
+        in.putExtra("aid", dataBean.getAid());
+        in.putStringArrayListExtra("images", new ArrayList<>(dataBean.getImg_list()));
         startActivity(in);
 
     }

@@ -26,7 +26,8 @@ public class MainActivity extends BaseActivity {
     private ViewPager vPager;
     private int currentPosition = 0;
     private HomeAdapter adapter;
-    private RoundedImageView head ;
+    private RoundedImageView head;
+
     @Override
     protected int getContent(Bundle savedInstanceState) {
         return R.layout.activity_main;
@@ -34,7 +35,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-          head = getView(R.id.btn_right);
+        head = getView(R.id.btn_right);
         head.setOnClickListener(this);
 
         vPager = getView(R.id.main_pager);
@@ -78,7 +79,7 @@ public class MainActivity extends BaseActivity {
 //                ivTopLeftIcon.setAlpha(1 - positionOffset);
 //                ivTopLeftIcon.setTranslationX(-ivTopLeftIcon.getWidth() * 2 * positionOffset);
 
-                L.i(position +","+positionOffset+","+positionOffsetPixels);
+                L.i(position + "," + positionOffset + "," + positionOffsetPixels);
             }
 
             @Override
@@ -96,8 +97,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        GlideApp.with(this).asBitmap().centerInside().
-                placeholder(R.mipmap.user_head_default).error(R.mipmap.user_head_default).load(App.headPath).into(head);
+        if (App.headPath != null)
+            GlideApp.with(this).asBitmap().centerInside().
+                    placeholder(R.mipmap.user_head_default).error(R.mipmap.user_head_default).load(App.headPath).into(head);
 
     }
 

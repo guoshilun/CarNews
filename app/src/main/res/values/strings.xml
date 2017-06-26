@@ -5,6 +5,7 @@
     <string name="setting_wifi">流量优化</string>
     <string name="setting_textsize">字体大小</string>
     <string name="setting_push">新闻推送</string>
+    <string name="setting_push_tips">开启后接收最新资讯</string>
     <string name="setting_cache">清除缓存</string>
     <string name="setting_update">检查更新</string>
     <string name="setting_user">免责申明</string>
