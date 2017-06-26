@@ -24,8 +24,8 @@
             android:id="@+id/newsInfo_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@android:color/white">
+            android:background="@android:color/white"
+            android:orientation="vertical">
 
             <com.jmgzs.carnews.ui.view.ScrollableWebView
                 android:id="@+id/newsInfo_wv"
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="#7f000000"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </com.jmgzs.carnews.ui.view.ScrollControlFrameLayout>
     <!--顶部条-->
     <LinearLayout
@@ -53,7 +53,7 @@
             android:id="@+id/newInfo_status_bar"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@android:color/white"/>
+            android:background="@android:color/white" />
 
         <include layout="@layout/layout_title_info" />
 

@@ -63,7 +63,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
     private static final int pageCount = 5;
     private boolean loadAll = false;
-    private boolean isLoading = false ;
+    private boolean isLoading = false;
 
     @Nullable
     @Override
@@ -107,7 +107,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
                 super.onScrollStateChanged(recyclerView, newState);
                 if (RecyclerView.SCROLL_STATE_IDLE == newState) {
                     if (adapter != null && lastVisibleItem + 1 == adapter.getItemCount() && !loadAll && !isLoading) {
-                        isLoading = !isLoading ;
+                        isLoading = !isLoading;
                         getData(startKey);
                     }
                 }
@@ -181,7 +181,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
             initAdapter(Urls.getUrlNews(String.valueOf(0), getChannel()), getNewsDataCache(0), false);
             startKey = 0;
             getData(startKey);
-        }else {
+        } else {
             createHeaderAdapter(headerAdapter.getData());
             createAdapter(adapter.getData());
         }
@@ -197,7 +197,10 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     private void goNewsDetail(NewsDataBean dataBean) {
         Intent in = new Intent(getContext(), NewsInfoActivity.class);
         in.putExtra("aid", dataBean.getAid());
-        in.putStringArrayListExtra("images", new ArrayList<>(dataBean.getImg_list()));
+        if (dataBean.getImg_list() != null)
+            in.putStringArrayListExtra("images", new ArrayList<>(dataBean.getImg_list()));
+        else
+            in.putStringArrayListExtra("images", new ArrayList<String>());
         startActivity(in);
 
     }
@@ -216,26 +219,26 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
             @Override
             public void onSuccess(String url, NewsListBean data) {
-                if (!ResUtils.processResponse(url, data, this)){
+                if (!ResUtils.processResponse(url, data, this)) {
                     return;
                 }
                 L.e("date news size:" + data.getData().size());
                 initAdapter(url, data, true);
                 refreshLayout.setRefreshing(false);
-                isLoading =false;
+                isLoading = false;
             }
 
             @Override
             public void onFailure(String url, int errorCode, String msg) {
                 T.toastS("数据请求失败,请稍后重试。");
                 refreshLayout.setRefreshing(false);
-                isLoading =false;
+                isLoading = false;
             }
 
             @Override
             public void onCancel(String url) {
                 refreshLayout.setRefreshing(false);
-                isLoading =false;
+                isLoading = false;
 
             }
         });
@@ -252,8 +255,8 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
         }
         loadAll = false;
         ArrayList<NewsDataBean> list = data.getData();
-        for (NewsDataBean b :list){
-            L.e(getClass().getSimpleName(),String.valueOf(b.getAid()));
+        for (NewsDataBean b : list) {
+            L.e(getClass().getSimpleName(), String.valueOf(b.getAid()));
         }
         if (adapter == null || adapter.getDataCount() == 0) {//第一次
             if (saveCache) ConfigCache.setUrlCache(getContext(), url, data.toString());

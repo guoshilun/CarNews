@@ -17,7 +17,7 @@
         android:includeFontPadding="false"
         android:text="我的收藏"
         android:textColor="@color/item_time_505050"
-        android:textSize="@dimen/text_16sp" />
+        android:textSize="?text_16sp" />
 
     <TextView
         android:id="@+id/setting_item_tips_tv"
@@ -30,7 +30,7 @@
         android:layout_toRightOf="@+id/setting_item_title_text"
         android:includeFontPadding="false"
         android:text="开启后移动网络不加载图片"
-        android:textSize="@dimen/text_12sp" />
+        android:textSize="?text_12sp" />
 
 
     <CheckBox
@@ -54,7 +54,7 @@
         android:layout_toStartOf="@+id/setting_item_right_image"
         android:text="中"
         android:textColor="@color/item_time_505050"
-        android:textSize="@dimen/text_12sp" />
+        android:textSize="?text_12sp" />
 
     <ImageView
         android:id="@+id/setting_item_right_image"

@@ -5,6 +5,9 @@ import com.jmgzs.carnews.util.TimeUtils;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by mac on 17/6/14.
@@ -32,5 +35,11 @@ public class MethodTest {
 
         double v = 720/(376.875-18);
         L.syso(v +" ===");
+    }
+
+    @Test
+    public void testCollections(){
+        List<String> a = new ArrayList<>(null);
+
     }
 }

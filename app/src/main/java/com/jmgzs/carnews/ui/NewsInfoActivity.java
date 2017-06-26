@@ -214,7 +214,7 @@ public class NewsInfoActivity extends BaseActivity {
                 }
                 //TODO 加载页面
                 info.setAid(newsId);
-                info.setImg_list(images);
+//                info.setImg_list(images);
                 String content = info.getContent();
                 try {
                     String html = FileUtils.readTextInputStream(NewsInfoActivity.this.getAssets().open("info" + File.separator + "info_template.html"));

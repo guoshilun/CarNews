@@ -23,7 +23,7 @@
         android:gravity="center"
         android:text="个人中心"
         android:textColor="@color/colorWhite"
-        android:textSize="@dimen/text_20sp" />
+        android:textSize="?text_20sp" />
 
     <ImageView
         android:id="@+id/titleInfo_img_more"

@@ -14,6 +14,7 @@ public class Const {
         public static final String WIFI = "openWifi";
         public static final String PUSH = "openPush";
         public static final String HEAD_PATH="headPath";
+        public static final String TEXT_SIZE="defaultTextSize";
     }
 
     public static class PhotoCode{

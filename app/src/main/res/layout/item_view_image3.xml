@@ -17,7 +17,7 @@
         android:maxLines="2"
         android:text="汽车之家"
         android:textColor="@color/colorBlack"
-        android:textSize="@dimen/text_16sp" />
+        android:textSize="?text_16sp" />
 
     <LinearLayout
         android:id="@+id/item_images_layout"
@@ -72,7 +72,7 @@
             android:layout_marginRight="@dimen/top_tab_padding"
             android:text="汽车之家"
             android:textColor="@color/item_time_505050"
-            android:textSize="@dimen/text_12sp" />
+            android:textSize="?text_12sp" />
 
         <TextView
             android:id="@+id/item_time"
@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:text="1分钟前"
             android:textColor="@color/item_time_505050"
-            android:textSize="@dimen/text_12sp" />
+            android:textSize="?text_12sp" />
     </LinearLayout>
 
 </RelativeLayout>

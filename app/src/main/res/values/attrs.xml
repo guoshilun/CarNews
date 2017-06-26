@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<attr name="text_small" format="reference|attrsion"/>-->
+    <!--<attr name="text_middle" format="reference|attrsion"/>-->
+    <!--<attr name="text_big" format="reference|attrsion"/>-->
+
+    <attr name="text_20sp" format="reference|dimension" />
+    <attr name="text_18sp" format="reference|dimension" />
+    <attr name="text_16sp" format="reference|dimension" />
+    <attr name="text_12sp" format="reference|dimension" />
+    <attr name="text_10sp" format="reference|dimension" />
+
+</resources>

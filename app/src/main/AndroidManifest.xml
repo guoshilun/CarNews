@@ -87,6 +87,7 @@
 
         <activity
             android:name=".ui.SplashActivity"
+            android:configChanges="fontScale"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -97,25 +98,30 @@
 
         <activity
             android:name=".ui.MainActivity"
+            android:configChanges="fontScale"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.UserSettingActivity"
+            android:configChanges="fontScale"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.NewsStoreActivity"
+            android:configChanges="fontScale"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.NewsInfoActivity"
+            android:configChanges="fontScale"
             android:hardwareAccelerated="false"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.MianZeActivity"
+            android:configChanges="fontScale"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 

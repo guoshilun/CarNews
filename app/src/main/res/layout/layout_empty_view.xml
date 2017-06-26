@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <com.jmgzs.lib.view.roundedimage.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/iv_empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_centerInParent="true"
         android:layout_marginBottom="10dp"
-        android:src="@mipmap/car_title_logo"
-        />
+        android:src="@mipmap/logo"
+        app:riv_corner_radius="@dimen/activity_horizontal_margin" />
 
     <TextView
         android:id="@+id/tv_empty"
@@ -20,7 +20,8 @@
         android:layout_centerInParent="true"
         android:gravity="center"
         android:padding="10dp"
-        android:text="暂时还没有内容哦，点击刷新" />
+        android:text="暂时还没有内容哦，点击刷新"
+        android:textSize="?text_20sp" />
 
 
 </RelativeLayout>
