@@ -50,6 +50,8 @@ public final class PermissionUtil {
             return false;
         for (String p : permission) {
             if (ActivityCompat.checkSelfPermission(ct, p) != PackageManager.PERMISSION_GRANTED) {
+                if (ct instanceof Activity)
+                    ActivityCompat.requestPermissions((Activity) ct, permission, 0);
                 return false;
             }
         }
@@ -68,17 +70,17 @@ public final class PermissionUtil {
         }
     }
 
-    private boolean isPermissionOk(Context ct){
-        if (hasPermission(ct)){
-            Log.e("app","权限正常");
+    private boolean isPermissionOk(Activity ct) {
+        if (hasPermission(ct)) {
+            Log.e("app", "权限正常");
             return true;
-        }else{
-            Log.e("app","缺少权限");
+        } else {
+            Log.e("app", "缺少权限");
             return false;
         }
     }
 
-    private boolean hasPermission(Context ct){
-        return isGranted(ct, Manifest.permission.ACCESS_COARSE_LOCATION) && isGranted(ct, Manifest.permission.ACCESS_FINE_LOCATION) && isGranted(ct, Manifest.permission.ACCESS_WIFI_STATE)&& isGranted(ct, Manifest.permission.READ_PHONE_STATE)&& isGranted(ct, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    private boolean hasPermission(Activity ct) {
+        return isGranted(ct, Manifest.permission.ACCESS_COARSE_LOCATION) && isGranted(ct, Manifest.permission.ACCESS_FINE_LOCATION) && isGranted(ct, Manifest.permission.ACCESS_WIFI_STATE) && isGranted(ct, Manifest.permission.READ_PHONE_STATE) && isGranted(ct, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 }

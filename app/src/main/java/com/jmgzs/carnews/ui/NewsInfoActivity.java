@@ -121,7 +121,6 @@ public class NewsInfoActivity extends BaseActivity {
     private void initFavBtn() {
         imgFav = (ImageView) findViewById(R.id.bottomBar_img_home);
         tgbtnFav = (ToggleButton) findViewById(R.id.bottomBar_tgbtn_home);
-        //TODO 根据收藏与否更新按钮状态
         hasStored = LoaderUtil.get().hasStored(this, String.valueOf(newsId));
         tgbtnFav.setChecked(hasStored);
         if (hasStored) {

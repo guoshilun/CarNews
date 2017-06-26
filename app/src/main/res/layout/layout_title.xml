@@ -16,10 +16,10 @@
 
     <com.jmgzs.lib.view.roundedimage.RoundedImageView
         android:id="@+id/btn_right"
-        android:layout_width="40dp"
+        android:layout_width="35dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/padding_5dp"
+        android:layout_margin="@dimen/padding_8dp"
         android:background="@android:color/transparent"
         android:cropToPadding="false"
         android:scaleType="fitXY"

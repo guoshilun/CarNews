@@ -1,9 +1,12 @@
 package com.jmgzs.carnews.ui;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -24,6 +27,8 @@ import com.jmgzs.carnews.ui.dialog.DialogMenu;
 import com.jmgzs.carnews.ui.dialog.IMenuItemClickListerer;
 import com.jmgzs.carnews.ui.view.SettingItemView;
 import com.jmgzs.carnews.util.Const;
+import com.jmgzs.carnews.util.FileProvider7;
+import com.jmgzs.carnews.util.GetPathFromUri4kitkat;
 import com.jmgzs.carnews.util.GlideCacheUtil;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.carnews.util.T;
@@ -32,11 +37,16 @@ import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import static com.jmgzs.carnews.util.Const.PhotoCode.CACHE_TAKE_PHOTO;
 import static com.taobao.accs.ACCSManager.mContext;
+import static com.umeng.message.provider.a.e;
+import static com.umeng.message.provider.a.f;
 
 
 public class UserSettingActivity extends BaseActivity implements SettingItemView.OnCheckChangedListener {
@@ -222,15 +232,19 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                 case Const.PhotoCode.PHOTO_REQUEST_CAMERA:
                     File f = getCameraFile();
                     if (FileUtils.isFileExist(f.getPath()))
-                        crop(Uri.fromFile(f));
-                    else T.toastS(this, "图片路径异常");
+                        crop(FileProvider7.getUriForFile(this, f));
+                    else T.toastS(this, "图片不存在");
 
                     break;
                 case Const.PhotoCode.PHOTO_REQUEST_GALLERY:
                     if (data.getData() == null) {
-                        T.toastS(this, "图片路径异常");
-                    } else
-                        crop(data.getData());
+                        T.toastS(this, "图片不存在");
+                    } else {
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                            crop(Uri.parse("file://"+GetPathFromUri4kitkat.getPath(this, data.getData())));
+                        } else
+                            crop(data.getData());
+                    }
                     break;
                 case Const.PhotoCode.PHOTO_REQUEST_CUT:
                     if (data != null) {
@@ -245,7 +259,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                         SPBase.putString(Const.SPKey.HEAD_PATH, cropPath);
                         T.toastS("头像更新成功!");
                     } else {
-                        T.toastS(this, "裁剪异常" + cropPath);
+                        T.toastS(this, "裁剪异常");
                         FileUtils.deleteFile(cropPath);
                     }
                     L.e(getClass().getSimpleName(), cropPath);
@@ -262,6 +276,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
      */
     public void gallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         intent.setType("image/*");
         startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_GALLERY);
     }
@@ -273,12 +289,17 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
      */
     public void camera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getCameraFile()));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        Uri imgUri =FileProvider7.getUriForFile(this, getCameraFile()) ;
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
         startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_CAMERA);
     }
 
     private File getCameraFile() {
-        return new File(FileUtils.getFilePath(this, CACHE_TAKE_PHOTO), PHOTO_FILE_NAME);
+        File f=  new File(FileUtils.getFilePath(this, CACHE_TAKE_PHOTO), PHOTO_FILE_NAME);
+        return f;
     }
 
     /**
@@ -294,10 +315,13 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddhhmmss", Locale.CHINA);
         String address = sDateFormat.format(new java.util.Date());
         File cropFile = new File(FileUtils.getFilePath(this, CACHE_TAKE_PHOTO), address + ".JPEG");
-        cropPath = cropFile.getPath();
-        Uri imageUri = Uri.fromFile(cropFile);
+        Uri imageUri = FileProvider7.getUriForFile(this, cropFile);
+        cropPath = imageUri.getPath();
         // 裁剪图片意图
         Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
         intent.setDataAndType(uri, "image/*");
         intent.putExtra("crop", "true");
         // 裁剪框的比例，1：1
@@ -313,5 +337,19 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         intent.putExtra("noFaceDetection", false);// 取消人脸识别
         intent.putExtra("return-data", false);// true:不返回uri，false：返回uri
         startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_CUT);
+    }
+
+    private boolean checkUriPermission(Intent intent ,Uri imgUri){
+        List resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        if (resInfoList.size() == 0) {
+            return false;
+        }
+        Iterator resInfoIterator = resInfoList.iterator();
+        while (resInfoIterator.hasNext()) {
+            ResolveInfo resolveInfo = (ResolveInfo) resInfoIterator.next();
+            String packageName = resolveInfo.activityInfo.packageName;
+            grantUriPermission(packageName, imgUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        }
+        return true;
     }
 }
