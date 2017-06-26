@@ -17,6 +17,7 @@
             color:#a8a8a8;
         }
         p{
+            font-size:15px;
         }
         #adv{
             width:100%;
@@ -78,6 +79,25 @@ function showAdv(html, height){
         }
     }
 
+};
+function changeFontSize(fontSize){
+    window.carnews.toast("字体大小:"+fontSize);
+    var size = parseInt(fontSize * 20);
+    window.carnews.toast("title 字体大小:"+size);
+    var title = document.getElementById('title');
+    title.style.fontSize=size+'px';
+    var desc = document.getElementById('desc');
+    var size = parseInt(fontSize*12);
+    window.carnews.toast("desc 字体大小:"+size);
+    desc.style.fontSize=size+'px';
+    // 获取节点对象
+    var tags = document.getElementsByTagName("p");
+     for (var i=0; i < tags.length; i++){
+        var tag = tags[i];
+        var size = parseInt(fontSize*15);
+        window.carnews.toast("p 字体大小:"+size);
+        tag.style.fontSize=size+'px';
+     }
 };
     </script>
 </head>

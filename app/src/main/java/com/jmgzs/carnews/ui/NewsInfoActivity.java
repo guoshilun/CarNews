@@ -39,8 +39,10 @@ import com.jmgzs.carnews.ui.view.ScrollControlFrameLayout;
 import com.jmgzs.carnews.ui.view.ScrollableWebView;
 import com.jmgzs.carnews.ui.view.ShareBoardView;
 import com.jmgzs.carnews.ui.view.TitleBarScrollController;
+import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.LoaderUtil;
 import com.jmgzs.carnews.util.ResUtils;
+import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.carnews.util.ShareUtils;
 import com.jmgzs.carnews.util.T;
 import com.jmgzs.lib_network.network.IRequestCallBack;
@@ -323,6 +325,10 @@ public class NewsInfoActivity extends BaseActivity {
                     html = html.replace("%4$s", info.getPublish_time() == null ? "" : info.getPublish_time());
                     L.e(html);
                     wv.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "utf-8", null);
+                    float size = (SPBase.getInt(Const.SPKey.TEXT_SIZE, 1) - 1) * 1f + 1;
+                    L.e("字体大小："+size);
+                    String changeFontSize = "javascript:changeFontSize(\""+ size +"\")";
+                    wv.loadUrl(changeFontSize);
                     requestAdv();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -372,7 +378,7 @@ public class NewsInfoActivity extends BaseActivity {
                 break;
             case R.id.bottomBar_img_share://分享
             case R.id.titleInfo_img_more:
-                shareUtils.shareUrl(NewsInfoActivity.this, bottomBar, "http://www.baidu.com", "测试", "测试描述", R.mipmap.car_title_logo, new UMShareListener() {
+                shareUtils.shareUrl(NewsInfoActivity.this, bottomBar, "http://www.baidu.com", info.getTitle(), info.getContent(), R.mipmap.car_title_logo, new UMShareListener() {
                     @Override
                     public void onStart(SHARE_MEDIA share_media) {
 
