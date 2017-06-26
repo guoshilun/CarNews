@@ -1,6 +1,10 @@
 package com.jmgzs.carnews.ui.view;
 
 import android.app.Activity;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +21,8 @@ import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import java.util.Arrays;
+
+import static android.os.Build.VERSION_CODES.N;
 
 /**
  * 分享面板
@@ -44,6 +50,7 @@ public class ShareBoardView {
         View view = LayoutInflater.from(context).inflate(R.layout.layout_share_board, (ViewGroup) context.findViewById(android.R.id.content), false);
         pop = new PopupWindow(view, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
         pop.setTouchable(true);
+        pop.setBackgroundDrawable(new BitmapDrawable());
         pop.setOutsideTouchable(true);
         pop.setAnimationStyle(R.style.pop_up_2_down_anim);
         pop.setOnDismissListener(new PopupWindow.OnDismissListener() {
