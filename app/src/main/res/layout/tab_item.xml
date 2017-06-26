@@ -8,5 +8,6 @@
         android:id="@+id/tab_item_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="?text_18sp"
         android:text="TextView" />
 </LinearLayout>

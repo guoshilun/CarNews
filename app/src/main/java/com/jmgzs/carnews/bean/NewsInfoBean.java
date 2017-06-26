@@ -2,11 +2,13 @@ package com.jmgzs.carnews.bean;
 
 import java.util.ArrayList;
 
-/**新闻详情返回
+/**
+ * 新闻详情返回
  * Created by Wxl on 2017/6/21.
  */
 
-public class NewsInfoBean extends BaseInfo implements IGetRsp{
+public class NewsInfoBean extends BaseInfo implements IGetRsp {
+
     private ArrayList<NewsDataBean> data;
     private StatusBean rsp;
 

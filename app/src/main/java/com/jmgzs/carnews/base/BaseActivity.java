@@ -1,5 +1,8 @@
 package com.jmgzs.carnews.base;
 
+import android.app.Application;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +19,11 @@ import android.widget.LinearLayout;
 import com.jmgzs.carnews.R;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.push.PushUtil;
+import com.jmgzs.carnews.util.Const;
+import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.lib_network.utils.L;
+
+import static com.umeng.message.proguard.k.A;
 
 /**
  * Created by mac on 17/6/5.
@@ -31,6 +38,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme();
         translucentStatusBar();
         L.setTag(getClass().getSimpleName());
         PushUtil.getPush().activityInit(this);
@@ -43,11 +51,11 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         initView();
     }
 
-    private void translucentStatusBar(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){//4.4 全透明状态栏
+    private void translucentStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//4.4 全透明状态栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0 全透明实现
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0 全透明实现
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -56,27 +64,49 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             window.setStatusBarColor(Color.TRANSPARENT);
         }
     }
-    protected int getStatusBarColor(){
+
+    protected int getStatusBarColor() {
         return this.getResources().getColor(R.color.colorPrimary);
     }
 
-    public void setStatusBarColor(int color){
+    public void setStatusBarColor(int color) {
         if (paddingView != null) {
             paddingView = new View(this);
             paddingView.setBackgroundColor(color);
         }
     }
 
-    protected void addPaddingAboveContentView(){
+    protected void addPaddingAboveContentView() {
         int statusBarHeight = DensityUtils.getStatusBarHeight(this);
-        if (paddingView == null){
+        if (paddingView == null) {
             paddingView = new View(this);
-        }else{
-            ((ViewGroup)paddingView.getParent()).removeView(paddingView);
+        } else {
+            ((ViewGroup) paddingView.getParent()).removeView(paddingView);
         }
         paddingView.setBackgroundColor(getStatusBarColor());
 //        L.e("状态栏高度："+statusBarHeight);
         root.addView(paddingView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, statusBarHeight));
+    }
+
+    protected void setTheme() {
+        int type = SPBase.getInt(Const.SPKey.TEXT_SIZE, 1);
+        if (type == 0)
+            setTheme(R.style.Text_Size_Small);
+        else if (type == 1)
+            setTheme(R.style.Default_Text_Size_Middle);
+        else
+            setTheme(R.style.Text_Size_Big);
+
+    }
+
+
+    @Override
+    public Resources getResources() {
+        Resources res = super.getResources();
+        Configuration config = new Configuration() ;//res.getConfiguration();
+//        config.fontScale = 2f;
+        res.updateConfiguration(config, res.getDisplayMetrics());
+        return res;
     }
 
     @Override
@@ -109,6 +139,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     protected abstract int getContent(Bundle save);
+
     protected abstract void initView();
 
 
@@ -120,12 +151,12 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    protected <E extends View>E getView(View rootView,int resID){
+    protected <E extends View> E getView(View rootView, int resID) {
         try {
-            if (null != rootView){
-                return (E)findViewById(resID);
-            }else throw new NullPointerException();
-        }catch (Exception e){
+            if (null != rootView) {
+                return (E) findViewById(resID);
+            } else throw new NullPointerException();
+        } catch (Exception e) {
             throw e;
         }
     }

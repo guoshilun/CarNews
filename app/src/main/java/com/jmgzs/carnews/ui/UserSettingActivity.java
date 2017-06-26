@@ -1,5 +1,7 @@
 package com.jmgzs.carnews.ui;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -43,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import static android.R.attr.data;
 import static com.jmgzs.carnews.util.Const.PhotoCode.CACHE_TAKE_PHOTO;
 import static com.taobao.accs.ACCSManager.mContext;
 import static com.umeng.message.provider.a.e;
@@ -64,6 +67,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
 
     private RoundedImageView headImage;
     private String cropPath = null;
+    private String[] textSizeTitle = {"小", "标准", "大"};
+    private int type = 1;
 
     @Override
     protected int getContent(Bundle save) {
@@ -126,6 +131,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemCache.setTextState(GlideCacheUtil.getInstance().getCacheSize(this));
         itemWifi.setChecked(App.isMobile);
         itemPush.setChecked(App.isRecptPush);
+        type = SPBase.getInt(Const.SPKey.TEXT_SIZE, 1);
+        itemTextSize.setTextState(textSizeTitle[type]);
     }
 
     @Override
@@ -152,7 +159,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                     showCacheMenu();
                 break;
             case R.id.setting_textsize:
-
+                showTextMenu();
                 break;
             default:
                 break;
@@ -193,7 +200,6 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                     case DialogMenu.MENU_ITEM_BOTTOM:
                         gallery();
                         break;
-
                     default:
                         break;
                 }
@@ -225,6 +231,70 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         menuDialog.setMenuItemBottomText(View.VISIBLE, "确定");
     }
 
+    private void showTextMenu() {
+        DialogMenu menuDialog = new DialogMenu(this);
+        menuDialog.setOnMenuItemClickListener(new IMenuItemClickListerer() {
+
+            @Override
+            public void onMenuItemClick(int position) {
+                int newType = -1;
+                switch (position) {
+                    case DialogMenu.MENU_ITEM_TOP:
+                        newType = 0;
+                        break;
+                    case DialogMenu.MENU_ITEM_MIDDLE_1:
+                        newType = 1;
+                        break;
+                    case DialogMenu.MENU_ITEM_BOTTOM:
+                        newType = 2;
+                        break;
+                    default:
+                        return;
+                }
+                if (type != newType) {
+                    itemTextSize.setTextState(textSizeTitle[newType]);
+                    SPBase.putInt(Const.SPKey.TEXT_SIZE, newType);
+                    showAppRestartMenu();
+                }
+            }
+        });
+        menuDialog.show();
+        menuDialog.setMenuItemTopText(View.VISIBLE, "小");
+        menuDialog.setMenuItemMiddle1Text(View.VISIBLE, "标准");
+        menuDialog.setMenuItemMiddle2Text(View.GONE, null);
+        menuDialog.setMenuItemBottomText(View.VISIBLE, "大");
+
+    }
+
+    private void showAppRestartMenu() {
+        DialogMenu menuDialog = new DialogMenu(this);
+        menuDialog.setOnMenuItemClickListener(new IMenuItemClickListerer() {
+
+            @Override
+            public void onMenuItemClick(int position) {
+                switch (position) {
+                    case DialogMenu.MENU_ITEM_BOTTOM:
+                        restartApp();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        menuDialog.show();
+        menuDialog.setMenuItemTopText(View.VISIBLE, "字体设置完成,重启后生效");
+        menuDialog.setMenuItemMiddle1Text(View.GONE, null);
+        menuDialog.setMenuItemMiddle2Text(View.GONE, null);
+        menuDialog.setMenuItemBottomText(View.VISIBLE, "立即重启");
+    }
+
+    private void restartApp() {
+        Intent in = getPackageManager().getLaunchIntentForPackage(getPackageName());
+        in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(in);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -241,7 +311,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                         T.toastS(this, "图片不存在");
                     } else {
                         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-                            crop(Uri.parse("file://"+GetPathFromUri4kitkat.getPath(this, data.getData())));
+                            crop(Uri.parse("file://" + GetPathFromUri4kitkat.getPath(this, data.getData())));
                         } else
                             crop(data.getData());
                     }
@@ -291,14 +361,14 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        Uri imgUri =FileProvider7.getUriForFile(this, getCameraFile()) ;
+        Uri imgUri = FileProvider7.getUriForFile(this, getCameraFile());
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
         startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_CAMERA);
     }
 
     private File getCameraFile() {
-        File f=  new File(FileUtils.getFilePath(this, CACHE_TAKE_PHOTO), PHOTO_FILE_NAME);
+        File f = new File(FileUtils.getFilePath(this, CACHE_TAKE_PHOTO), PHOTO_FILE_NAME);
         return f;
     }
 
@@ -339,7 +409,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         startActivityForResult(intent, Const.PhotoCode.PHOTO_REQUEST_CUT);
     }
 
-    private boolean checkUriPermission(Intent intent ,Uri imgUri){
+    private boolean checkUriPermission(Intent intent, Uri imgUri) {
         List resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         if (resInfoList.size() == 0) {
             return false;

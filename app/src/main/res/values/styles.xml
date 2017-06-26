@@ -33,4 +33,29 @@
         <item name="android:windowEnterAnimation">@anim/anim_scale_up</item>
         <item name="android:windowExitAnimation">@anim/anim_scale_down</item>
     </style>
+
+
+    <style name="Default_Text_Size_Middle">
+        <item name="text_20sp">@dimen/text_20sp</item>
+        <item name="text_18sp">@dimen/text_18sp</item>
+        <item name="text_16sp">@dimen/text_16sp</item>
+        <item name="text_12sp">@dimen/text_12sp</item>
+        <item name="text_10sp">@dimen/text_10sp</item>
+    </style>
+
+    <style name="Text_Size_Small">
+        <item name="text_20sp">@dimen/text_20sp_small</item>
+        <item name="text_18sp">@dimen/text_18sp_small</item>
+        <item name="text_16sp">@dimen/text_16sp_small</item>
+        <item name="text_12sp">@dimen/text_12sp_small</item>
+        <item name="text_10sp">@dimen/text_10sp_small</item>
+    </style>
+
+    <style name="Text_Size_Big">
+        <item name="text_20sp">@dimen/text_20sp_big</item>
+        <item name="text_18sp">@dimen/text_18sp_big</item>
+        <item name="text_16sp">@dimen/text_16sp_big</item>
+        <item name="text_12sp">@dimen/text_12sp_big</item>
+        <item name="text_10sp">@dimen/text_10sp_big</item>
+    </style>
 </resources>

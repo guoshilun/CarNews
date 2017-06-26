@@ -45,7 +45,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/padding_8dp"
             android:text="@string/splash_text"
-            android:textSize="@dimen/text_16sp" />
+            android:textSize="?text_16sp" />
 
     </LinearLayout>
 </RelativeLayout>
