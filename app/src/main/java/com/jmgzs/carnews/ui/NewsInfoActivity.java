@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebChromeClient;
@@ -120,39 +121,25 @@ public class NewsInfoActivity extends BaseActivity {
     }
     private void initAnim(){
         animShareOpen = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_show);
-        animShareOpen.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                L.e("alpha1动画开始");
-                contentCover.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                L.e("alpha1动画结束");
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
         animShareClose = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_hide);
         animShareClose.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                L.e("alpha2动画开始");
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                contentCover.setVisibility(View.GONE);
-                L.e("alpha2动画结束");
+                App.getInstance().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        contentCover.setVisibility(View.GONE);
+                        ((ViewGroup)contentCover.getParent().getParent()).invalidate();
+                    }
+                });
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
     }
@@ -324,11 +311,10 @@ public class NewsInfoActivity extends BaseActivity {
                     html = html.replace("%3$s", info.getPublish_source() == null ? "" : info.getPublish_source());
                     html = html.replace("%4$s", info.getPublish_time() == null ? "" : info.getPublish_time());
                     L.e(html);
-                    wv.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "utf-8", null);
-                    float size = (SPBase.getInt(Const.SPKey.TEXT_SIZE, 1) - 1) * 1f + 1;
+                    float size = (SPBase.getInt(Const.SPKey.TEXT_SIZE, 1) - 1) * 0.2f + 1;
                     L.e("字体大小："+size);
-                    String changeFontSize = "javascript:changeFontSize(\""+ size +"\")";
-                    wv.loadUrl(changeFontSize);
+                    js.setFontSize(size);
+                    wv.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "utf-8", null);
                     requestAdv();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -401,15 +387,16 @@ public class NewsInfoActivity extends BaseActivity {
                 }, new ShareBoardView.IOnBoardDismissListener() {
                     @Override
                     public void onDismiss(boolean isDismiss) {
-                        contentCover.clearAnimation();
                         if (isDismiss){
-                            L.e("开始关闭动画");
                             contentCover.setAnimation(animShareClose);
-                            animShareClose.start();
+                            contentCover.invalidate();
+                            animShareClose.startNow();
                         }else{
-                            L.e("开始启动动画");
+                            contentCover.setVisibility(View.VISIBLE);
+                            ((ViewGroup)contentCover.getParent().getParent()).invalidate();
                             contentCover.setAnimation(animShareOpen);
-                            animShareOpen.start();
+                            contentCover.invalidate();
+                            animShareOpen.startNow();
                         }
                     }
                 });

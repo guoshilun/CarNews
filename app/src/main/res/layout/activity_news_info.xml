@@ -34,12 +34,13 @@
                 android:background="@android:color/white" />
         </LinearLayout>
 
-        <ImageView
+        <View
             android:id="@+id/newsInfo_grey_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="#7f000000"
-            android:visibility="gone" />
+            android:background="#7f000000"
+            android:visibility="gone"
+            android:orientation="horizontal"/>
     </com.jmgzs.carnews.ui.view.ScrollControlFrameLayout>
     <!--顶部条-->
     <LinearLayout

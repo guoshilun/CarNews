@@ -50,7 +50,7 @@ public class ShareBoardView {
         View view = LayoutInflater.from(context).inflate(R.layout.layout_share_board, (ViewGroup) context.findViewById(android.R.id.content), false);
         pop = new PopupWindow(view, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
         pop.setTouchable(true);
-        pop.setBackgroundDrawable(new BitmapDrawable());
+        pop.setBackgroundDrawable(new ColorDrawable(Color.DKGRAY));
         pop.setOutsideTouchable(true);
         pop.setAnimationStyle(R.style.pop_up_2_down_anim);
         pop.setOnDismissListener(new PopupWindow.OnDismissListener() {

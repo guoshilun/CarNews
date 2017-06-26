@@ -17,6 +17,7 @@ public class JsBridge {
 
     private Activity activity;
     private IJsCallback callback;
+    private float fontSize;
 
     public JsBridge(Activity activity, IJsCallback callback){
         this.activity = activity;
@@ -45,6 +46,19 @@ public class JsBridge {
                 T.toastS(msg);
             }
         });
+    }
+
+    @JavascriptInterface
+    public float toast(){
+        return fontSize;
+    }
+    @JavascriptInterface
+    public float getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(float fontSize) {
+        this.fontSize = fontSize;
     }
 
     public interface IJsCallback{
