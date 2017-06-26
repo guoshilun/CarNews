@@ -30,7 +30,7 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
     public static boolean isRecptPush = true;
     public static String headPath;
     private static App instance;
-    private Handler handler = new Handler();
+    private Handler handler;
 
     public static App getInstance() {
         return instance;
@@ -47,6 +47,7 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
     @Override
     public void onCreate() {
         super.onCreate();
+        handler = new Handler();
         initPush();
         initShare();
         instance = this;

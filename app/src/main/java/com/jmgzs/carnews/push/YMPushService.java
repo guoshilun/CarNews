@@ -36,6 +36,8 @@ import com.umeng.message.entity.UMessage;
 import org.android.agoo.common.AgooConstants;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  * Created by Wxl on 2017/6/19.
  */
@@ -163,6 +165,9 @@ public class YMPushService extends UmengMessageService implements IPush {
         Intent intent = new Intent(context, NewsInfoActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(NewsInfoActivity.INTENT_AID, pushBean.getAid());
+        ArrayList<String> imgList = new ArrayList<>();
+        imgList.add(pushBean.getImg());
+        intent.putStringArrayListExtra(NewsInfoActivity.INTENT_IMAGES, imgList);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
         //实例化NotificationCompat.Builde并设置相关属性
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)

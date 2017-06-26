@@ -2,6 +2,7 @@ package com.jmgzs.carnews.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -85,9 +86,10 @@ public class NewsInfoActivity extends BaseActivity {
     private int newsId;
     private String downloadUrl;
     public static final String INTENT_AID = "aid";
+    public static final String INTENT_IMAGES = "images";
     private boolean hasStored = false;
     private NewsDataBean info;
-    private ArrayList<String> images ;
+    private ArrayList<String> images;
 
     @Override
     protected void initView() {
@@ -97,7 +99,7 @@ public class NewsInfoActivity extends BaseActivity {
             this.onBackPressed();
             return;
         }
-        images = intent.getStringArrayListExtra("images");
+        images = intent.getStringArrayListExtra(INTENT_IMAGES);
         L.e(images.toString());
         top = findViewById(R.id.newsInfo_top_bar);
         statusBar = findViewById(R.id.newInfo_status_bar);
@@ -180,16 +182,22 @@ public class NewsInfoActivity extends BaseActivity {
         tgbtnFav.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                tgbtnFav.setEnabled(false);
                 if (isChecked){
                     T.toastS("收藏成功");
                     ScaleClickUtils.startScaleSmallAnim(imgFav, new Runnable() {
                         @Override
                         public void run() {
-                            imgFav.setImageResource(R.mipmap.fav_2);
-                            App.getInstance().runOnUiThread(300, new Runnable() {
+                            App.getInstance().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ScaleClickUtils.startScaleBigAnim(imgFav, null);
+                                    ScaleClickUtils.startScaleBigAnim(imgFav, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            imgFav.setImageResource(R.mipmap.fav_2);
+                                            tgbtnFav.setEnabled(true);
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -200,11 +208,16 @@ public class NewsInfoActivity extends BaseActivity {
                     ScaleClickUtils.startScaleSmallAnim(imgFav, new Runnable() {
                         @Override
                         public void run() {
-                            imgFav.setImageResource(R.mipmap.fav_1);
-                            App.getInstance().runOnUiThread(300, new Runnable() {
+                            App.getInstance().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ScaleClickUtils.startScaleBigAnim(imgFav, null);
+                                    ScaleClickUtils.startScaleBigAnim(imgFav, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            imgFav.setImageResource(R.mipmap.fav_1);
+                                            tgbtnFav.setEnabled(true);
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -295,11 +308,11 @@ public class NewsInfoActivity extends BaseActivity {
                 if (!ResUtils.processResponse(url, data, this)) {
                     return;
                 }
-                NewsDataBean info;
                 if (data == null || data.getData() == null || data.getData().size() < 1 || (info = data.getData().get(0)) == null){
                     onFailure(url, NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getCode(), NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getMsg());
                     return;
                 }
+                info.setAid(newsId);
                 //TODO 加载页面
                 String content = info.getContent();
                 try {

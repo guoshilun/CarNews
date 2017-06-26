@@ -1,5 +1,6 @@
 package com.jmgzs.carnews.ui.view;
 
+import android.app.Activity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -7,6 +8,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 
 import com.jmgzs.carnews.R;
+import com.jmgzs.carnews.base.App;
 
 /**
  * Created by Wxl on 2017/6/23.
@@ -53,13 +55,8 @@ public class ScaleClickUtils {
 
     public static void startScaleSmallAnim(final View v, final Runnable runnable){
         v.clearAnimation();
-        AnimationSet set = new AnimationSet(false);
         Animation smallAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.anim_scale_small);
-        Animation alphaAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.anim_alpha_dismiss);
-        set.addAnimation(smallAnim);
-        set.addAnimation(alphaAnim);
-        set.setFillBefore(true);
-        set.setAnimationListener(new Animation.AnimationListener() {
+        smallAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -77,19 +74,14 @@ public class ScaleClickUtils {
 
             }
         });
-        v.setAnimation(set);
-        set.startNow();
+        v.setAnimation(smallAnim);
+        smallAnim.startNow();
     }
 
     public static void startScaleBigAnim(final View v, final Runnable runnable){
         v.clearAnimation();
-        AnimationSet set = new AnimationSet(false);
         Animation bigAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.anim_scale_big);
-        Animation alphaAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.anim_alpha_show_before);
-        set.addAnimation(bigAnim);
-        set.addAnimation(alphaAnim);
-        set.setFillBefore(true);
-        set.setAnimationListener(new Animation.AnimationListener() {
+        bigAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -97,7 +89,7 @@ public class ScaleClickUtils {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (runnable != null){
+                if (runnable != null) {
                     runnable.run();
                 }
             }
@@ -107,7 +99,7 @@ public class ScaleClickUtils {
 
             }
         });
-        v.setAnimation(set);
-        set.startNow();
+        v.setAnimation(bigAnim);
+        bigAnim.startNow();
     }
 }

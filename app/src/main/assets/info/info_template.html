@@ -16,6 +16,8 @@
             font-size:12px;
             color:#a8a8a8;
         }
+        p{
+        }
         #adv{
             width:100%;
             height:60px;
@@ -25,9 +27,9 @@
     </style>
     <script type="text/javascript">
 function adClick(){
-    window.carnews.close();
+    <!--window.carnews.close();-->
     var winWidth = window.innerWidth;
-	window.carnews.toast('屏幕宽:'+winWidth);
+	<!--window.carnews.toast('屏幕宽:'+winWidth);-->
     function getImgNaturalStyle(img) {
         var nWidth, nHeight
         if (img.naturalWidth) { // 现代浏览器
@@ -43,11 +45,11 @@ function adClick(){
         var imgNatural = getImgNaturalStyle(img);
         width = imgNatural[0];
         height = imgNatural[1];
-        window.carnews.toast("img1宽:"+width+"img1高："+height);
+        <!--window.carnews.toast("img1宽:"+width+"img1高："+height);-->
         height = Math.round(height);
         img.height = Math.round(height * (winWidth - 18) / width);
         img.width = winWidth - 18;
-        window.carnews.toast("img宽:"+img.width+"img高："+img.height);
+        <!--window.carnews.toast("img宽:"+img.width+"img高："+img.height);-->
     }
 };
 function closeAdv(){
