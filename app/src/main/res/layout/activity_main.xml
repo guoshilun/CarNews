@@ -22,6 +22,7 @@
         app:stl_distributeEvenly="true"
         app:stl_dividerColor="@color/colorTransparent"
         app:stl_dividerThickness="0dp"
+        app:stl_clickable="true"
         app:stl_indicatorAlwaysInCenter="false"
         app:stl_indicatorColor="@color/app_title_selected"
         app:stl_indicatorCornerRadius="2dp"

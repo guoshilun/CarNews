@@ -45,8 +45,7 @@ public abstract class BaseDialog extends Dialog implements View.OnClickListener 
      *                present its UI.
      */
     public BaseDialog(Context context) {
-        super(context, R.style.customDialog_roll_up_down);
-        this.context = context;
+        this(context, R.style.customDialog_roll_up_down);
     }
 
     public BaseDialog(Context context, int theme) {
@@ -65,6 +64,7 @@ public abstract class BaseDialog extends Dialog implements View.OnClickListener 
 
     protected void setWindow(int x, int y) {
         Window dialogWindow = getWindow();
+        dialogWindow.setBackgroundDrawableResource(R.color.colorTransparent);
         LayoutParams lp = dialogWindow.getAttributes();
         DisplayMetrics d = context.getResources().getDisplayMetrics(); // 获取屏幕宽、高用
         lp.width = (int) (d.widthPixels * mWidthScale);
