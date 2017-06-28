@@ -21,9 +21,9 @@ import com.jmgzs.lib_network.utils.L;
 
 public class TabItem extends View {
 
-    private int mTextSize = 16;
-    private int mTextColorSelect = 0x696969;
-    private int mTextColorNormal = 0x0159a1;
+    private int mTextSize = 17;
+    private int mTextColorSelect = 0x0159a1;
+    private int mTextColorNormal = 0x696969;
     private Paint mTextPaintNormal;
     private Paint mTextPaintSelect;
     private int mViewHeight, mViewWidth;
@@ -106,6 +106,16 @@ public class TabItem extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (isSelected()) {
+//                getTextPaintSelect().setAlpha(255);
+//                getTextPaintNormal().setAlpha(0);
+            setTabAlpha(1);
+        } else {
+            setTabAlpha(0);
+//                getTextPaintSelect().setAlpha(0);
+//                getTextPaintNormal().setAlpha(255);
+        }
+
         drawBitmap(canvas);
         drawText(canvas);
         drawDot(canvas);
@@ -130,23 +140,11 @@ public class TabItem extends View {
         if (!TextUtils.isEmpty(mTextValue)) {
             float x = (mViewWidth - mBoundText.width()) / 2.0f;
             float y = (mViewHeight + (mIconNormal == null ? 0 : mIconNormal.getHeight()) + mBoundText.height()) / 2.0F;
-            if (isSelected()) {
-                getTextPaintSelect().setAlpha(0xff);
-                getTextPaintNormal().setAlpha(0);
-            canvas.drawText(mTextValue, x, y, getTextPaintSelect());
-            } else {
-                getTextPaintSelect().setAlpha(0);
-                getTextPaintNormal().setAlpha(0xff);
             canvas.drawText(mTextValue, x, y, getTextPaintNormal());
-            }
-            L.i(isSelected() + ",normal:" + getTextPaintNormal().getColor() + "-alpha---" + getTextPaintNormal().getAlpha() + ",select:" + getTextPaintSelect().getAlpha() + "," + getTextPaintSelect().getColor());
+            canvas.drawText(mTextValue, x, y, getTextPaintSelect());
+            L.i(isSelected() + ",normal:" + getTextPaintNormal().getColor() + "-alpha---" + getTextPaintNormal().getAlpha() +
+                    ",select:" + getTextPaintSelect().getAlpha() + "," + getTextPaintSelect().getColor());
         }
-    }
-
-    private void colorListDrawable() {
-        ColorStateList colorStateList = getResources().getColorStateList(R.color.title_text_selector);
-
-
     }
 
     private void drawDot(Canvas canvas) {
@@ -210,7 +208,7 @@ public class TabItem extends View {
         getTextPaintSelect().setAlpha(paintAlpha);
         getTextPaintNormal().setAlpha(255 - paintAlpha);
         getDotPaint().setAlpha(255 - paintAlpha);
-        invalidate();
+//        invalidate();
     }
 
     private Paint getIconPaintSelect() {

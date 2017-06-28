@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#99232323">
+    android:background="@color/colorTransparent">
 
     <LinearLayout
         android:id="@+id/update_frame"
@@ -55,8 +55,8 @@
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="10dp"
                     android:focusable="true"
-                    android:textAppearance="?android:attr/textAppearanceInverse"
                     android:text="@string/app_name"
+                    android:textAppearance="?android:attr/textAppearanceInverse"
                     android:textColor="@color/item_time_505050" />
             </LinearLayout>
         </ScrollView>
@@ -86,7 +86,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/update_button_ok_bg_selector"
                 android:gravity="center"
-                android:padding="10dp"
+                android:padding="12dp"
                 android:text="@string/updateNow"
                 android:textAppearance="?android:attr/textAppearanceButton"
                 android:textColor="#FFFFFF" />
@@ -98,7 +98,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/update_button_cancel_bg_selector"
                 android:gravity="center"
-                android:padding="10dp"
+                android:padding="12dp"
                 android:text="@string/notNow"
                 android:textAppearance="?android:attr/textAppearanceButton"
                 android:textColor="@color/item_time_505050" />

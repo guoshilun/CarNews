@@ -18,7 +18,6 @@ import java.util.ArrayList;
 public class HomeTabProvider implements SmartTabLayout.TabProvider {
 
     private ArrayList<TabItem> mInfos;
-//    private ArrayList<View> mInfos;
     private int padding;
 
     public HomeTabProvider(Context context) {
@@ -36,14 +35,14 @@ public class HomeTabProvider implements SmartTabLayout.TabProvider {
         tab.setLayoutParams(params);
         tab.setPadding(padding, padding, padding, padding);
         tab.setTextValue(adapter.getPageTitle(position).toString());
-        tab.setTextColorNormal(R.color.app_title_normal);
-        tab.setTextColorSelect(R.color.app_title_selected);
+//        tab.setTextColorNormal(R.color.app_title_normal);
+//        tab.setTextColorSelect(R.color.app_title_selected);
 //        tab.setTextSize(16);
 //        if (position == 0) {
 //            tab.setIconText(R.mipmap.icon_feather_gray, R.mipmap.icon_feather_red, null);
 //        } else {
 //            tab.setIconText(R.mipmap.icon_msg_gray, R.mipmap.icon_msg_red, null);
-            tab.setDot(context.getResources().getColor(R.color.app_red_color), context.getResources().getDimension(R.dimen.padding_3dp));
+//            tab.setDot(context.getResources().getColor(R.color.app_red_color), context.getResources().getDimension(R.dimen.padding_3dp));
 //        }
 //        switch ()
 

@@ -2,6 +2,7 @@ package com.jmgzs.carnews.ui;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -25,8 +26,12 @@ import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.base.GlideApp;
+import com.jmgzs.carnews.bean.UpdateInfo;
+import com.jmgzs.carnews.network.update.UpdateDownloadListener;
+import com.jmgzs.carnews.ui.dialog.BaseDialog;
 import com.jmgzs.carnews.ui.dialog.DialogMenu;
 import com.jmgzs.carnews.ui.dialog.IMenuItemClickListerer;
+import com.jmgzs.carnews.ui.dialog.UpdateDialog;
 import com.jmgzs.carnews.ui.view.SettingItemView;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.FileProvider7;
@@ -35,6 +40,8 @@ import com.jmgzs.carnews.util.GlideCacheUtil;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.carnews.util.T;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
+import com.jmgzs.lib_network.network.IRequestCallBack;
+import com.jmgzs.lib_network.network.RequestUtil;
 import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 
@@ -148,8 +155,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
             case R.id.setting_store:
                 startActivity(new Intent(this, NewsStoreActivity.class));
                 break;
-            case R.id.setting_push:
-
+            case R.id.setting_update:
+                checkUpdate();
                 break;
             case R.id.setting_user:
                 startActivity(new Intent(this, MianZeActivity.class));
@@ -294,6 +301,57 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         in.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(in);
     }
+
+    private void checkUpdate() {
+        showUpdateDialog(null);
+        String url = "http://oss.ucdl.pp.uc.cn/fs01/union_pack/Wandoujia_136165_web_inner_referral_binded.apk?x-oss-process=udf%2Fpp-udf%2CJjc3LiMnJ3Bxd353dHM%3D";
+
+        RequestUtil.requestByGetSync(this, url, UpdateInfo.class, new IRequestCallBack<UpdateInfo>() {
+            @Override
+            public void onSuccess(String url, UpdateInfo data) {
+                if (data != null && data.getRsp().getStatus() == 1) showUpdateDialog(data);
+                else T.toastS("当前为最新版");
+
+            }
+
+            @Override
+            public void onFailure(String url, int errorCode, String msg) {
+                T.toastS("未知异常");
+            }
+
+            @Override
+            public void onCancel(String url) {
+
+            }
+        });
+    }
+
+    private void showUpdateDialog(final UpdateInfo data) {
+        UpdateDialog updateDialog = new UpdateDialog(this);
+        updateDialog.show();
+        updateDialog.setData("1.update\n2.test\n3.重大更新....", 0);
+        updateDialog.setOnDialogClickListener(new BaseDialog.OnDialogClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+//                if (updateListener == null)
+//                    updateListener = new UpdateDownloadListener(MainActivity.this);
+//                updateListener.onDownloadStart(data.getUrl(), "汽车头条v" + data.getVersion_name() + "更新",
+//                        "1.修复若干bug\n2.功能新增");
+
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (updateListener != null) {
+            updateListener.destroy();
+
+        }
+        super.onDestroy();
+    }
+
+    private UpdateDownloadListener updateListener;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -65,7 +65,6 @@ public class RCVAdapter extends RCVBaseAdapter<NewsDataBean, BaseHolder<NewsData
     }
 
     public static class Holder extends BaseHolder<NewsDataBean> {
-//        implements ListPreloader.PreloadModelProvider<Photo>, ListPreloader.PreloadSizeProvider<Photo> {
 
         private ImageView image;
         private TextView title;

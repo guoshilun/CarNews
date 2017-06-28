@@ -51,7 +51,7 @@ public class MainActivity extends BaseActivity {
         vPager.setOffscreenPageLimit(1);
 
         tabProvider = new HomeTabProvider(this);
-        SmartTabLayout tab = getView(R.id.pager_tab);
+        final SmartTabLayout tab = getView(R.id.pager_tab);
         tab.setCustomTabView(tabProvider);
         tab.setViewPager(vPager);
         tab.setOnTouchListener(new View.OnTouchListener() {
@@ -92,24 +92,21 @@ public class MainActivity extends BaseActivity {
             public void onPageSelected(int position) {
                 currentPosition = position;
 //                changeTextColor(position);
+//                for (int i = 0, j = adapter.getCount(); i < j; i++) {
+//                    if (i == position) {
+//                        ( (TabItem)tab.getTabAt(position)).setTabAlpha(1);
+//                    }else
+//                        ( (TabItem)tab.getTabAt(i)).setTabAlpha(0);
+//                }
             }
 
-            private void changeTextColor(int position) {
-                for (int i = 0, j = adapter.getCount(); i < j; i++) {
-                    if (i == position) {
-                        tabProvider.getTabItem(i).setTabAlpha(1);
-                    } else {
-                        tabProvider.getTabItem(i).setTabAlpha(0);
-
-                    }
-                }
-            }
 
             @Override
             public void onPageScrollStateChanged(int state) {
             }
         });
     }
+
 
     @Override
     protected void onResume() {
@@ -133,7 +130,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        checkUpdate();
+//        checkUpdate();
+        super.onBackPressed();
     }
 
     private UpdateDownloadListener updateListener;
