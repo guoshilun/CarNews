@@ -62,7 +62,12 @@ public class JsBridge {
     public void setPageWidth(int width) {
         pageWidth = width;
     }
-
+    @JavascriptInterface
+    public void loadFinish() {
+        if (callback != null){
+            callback.loadFinish();
+        }
+    }
     public int getPageWidth() {
         return pageWidth;
     }
@@ -73,5 +78,7 @@ public class JsBridge {
 
     public interface IJsCallback{
         void close();
+
+        void loadFinish();
     }
 }

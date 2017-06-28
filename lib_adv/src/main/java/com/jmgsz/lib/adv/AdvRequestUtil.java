@@ -141,7 +141,7 @@ public class AdvRequestUtil {
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.detail\\s+\\}\\}", adInfoBean.getAd_material().getContent());
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.desc\\s+\\}\\}", adInfoBean.getAd_material().getDesc());
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.url\\s+\\}\\}", adInfoBean.getAd_material().getImages().get(0));
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.width\\s+\\}\\}", ""+type.getWidth());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.width\\s+\\}\\}", "100%");
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.height\\s+\\}\\}", "" + type.getHeight());
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.url\\s+\\}\\}", adInfoBean.getAd_material().getIcon());
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.w\\s+\\}\\}", ""+type.getImgW());
