@@ -1,9 +1,12 @@
 package com.jmgsz.lib.adv;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.jmgsz.lib.adv.bean.AdvBean;
@@ -11,13 +14,20 @@ import com.jmgsz.lib.adv.bean.AdvRequestBean;
 import com.jmgsz.lib.adv.bean.AdvResponseBean;
 import com.jmgsz.lib.adv.enums.AdSlotType;
 import com.jmgsz.lib.adv.interfaces.IAdvRequestCallback;
+import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgsz.lib.adv.utils.DeviceUtils;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.NetworkErrorCode;
 import com.jmgzs.lib_network.network.RequestUtil;
 import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
+import com.jmgzs.lib_network.utils.NetworkUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.jmgsz.lib.adv.AdvUrls.API_ADV;
 
@@ -27,6 +37,75 @@ import static com.jmgsz.lib.adv.AdvUrls.API_ADV;
  */
 
 public class AdvRequestUtil {
+
+    public static AdvRequestBean getAdvRequest(Context context, AdSlotType slotType){
+        AdvRequestBean req = new AdvRequestBean();
+        req.setId("ebb7fbcb-01da-4255-8c87-98eedbcd2909");
+        req.setUser_agent("Mozilla/5.0 (Linux; U; Android 4.3; zh-cn; R8007 Build/JLS36C) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30");
+
+        //app信息
+        AdvRequestBean.AppSiteInfoBean site = new AdvRequestBean.AppSiteInfoBean();
+        site.setAppsite_id("51e71da6-5b46-4d9f-b94f-9ec6a");
+        site.setCategories(Arrays.asList(0));
+        site.setApp_name(getApplicationName(context));
+        site.setApp_bundle_name(context.getPackageName());
+        req.setApp_site_info(site);
+
+        //网络
+        req.setNet_type(NetworkUtils.getNetworkState(context)+1);
+
+        //广告位
+        AdvRequestBean.AdSlotInfoBean slot = new AdvRequestBean.AdSlotInfoBean();
+        slot.setSid(0);
+        slot.setHeight(slotType.getHeight());
+        slot.setWidth(slotType.getWidth());
+        slot.setScreen_position(1);
+        slot.setLoc_id("bf8a85e6-849e-11e6-8c73-a4dcbef43d46");
+        slot.setAd_num(1);
+        slot.setHtml_material(false);
+        slot.setProduct_type(Arrays.asList(1,2,3,4));
+        req.setAd_slot_info(Arrays.asList(slot));
+
+        //imei
+        AdvRequestBean.IdInfoBean idInfo = new AdvRequestBean.IdInfoBean();
+        idInfo.setImei(DeviceUtils.getIMEI(context));
+        req.setId_info(idInfo);
+
+        //Device
+        AdvRequestBean.DeviceInfoBean device = new AdvRequestBean.DeviceInfoBean();
+        device.setOrientation(2);
+        device.setModel(DeviceUtils.getDeviceName());
+        device.setBrand(DeviceUtils.getBrand());
+        device.setScreen_width(DensityUtils.getScreenWidthPixels(context));
+        device.setScreen_height(DensityUtils.getScreenHeightPixels(context));
+        device.setType(2);
+        req.setDevice_info(device);
+
+        AdvRequestBean.GeoInfoBean geo = new AdvRequestBean.GeoInfoBean();
+        geo.setLatitude(23.16f);
+        geo.setLongitude(113.23f);
+        req.setGeo_info(geo);
+
+        req.setTemplate_id(Arrays.asList(slotType.getTemplateId()));
+        req.setUser_ip(DeviceUtils.getDeviceCurrentIP());
+
+        req.setChannel_id(1001);
+
+        return req;
+    }
+    public static String getApplicationName(Context context) {
+        PackageManager packageManager = null;
+        ApplicationInfo applicationInfo = null;
+        try {
+            packageManager = context.getPackageManager();
+            applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            applicationInfo = null;
+        }
+        String applicationName =
+                (String) packageManager.getApplicationLabel(applicationInfo);
+        return applicationName;
+    }
 
     public static void requestAdv(final Context context, final AdvRequestBean request, final IAdvRequestCallback callback){
         //TODO 请求广告数据
@@ -46,32 +125,29 @@ public class AdvRequestUtil {
                 }
                 int width = type.getWidth();
                 int height = type.getHeight();
-                if (type.getType() == AdSlotType.TYPE_OPEN){
 
-                }else if (type.getType() == AdSlotType.TYPE_INFO){
-
-                }else if (type.getType() == AdSlotType.TYPE_BANNER){
-
-                }else if (type.getType() == AdSlotType.TYPE_INSERT){
-
-                }else{
+                String templateName = getTemplateId(type);
+                if (TextUtils.isEmpty(templateName)){
                     onFailure(url, NetworkErrorCode.ERROR_CODE_UNKNOWN.getCode(), "未找到对应的广告位类型的模板");
                     return;
                 }
                 //TODO 装载html模板
                 String htmlTemplate;
                 try {
-                    htmlTemplate = FileUtils.readTextInputStream(context.getAssets().open("x80_80_test.html"));
-                    AdvBean htmlData = AdvBean.getDataByStr("{\"exposure_url\":\"http://s.mjmobi.com/imp?info=ChhDTWpvdXZyTEt4Q0tvTUZRR1AzejFwRUIQxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIgyOi6-ssrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\",\"btn_url\":\"http://c.mjmobi.com/cli?info=ChhDTWpvdXZyTEt4Q0tvTUZRR1AzejFwRUIQACC4DijEoKvgu6fY0cgBMMjouvrLKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"image\":{\"url\":\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\",\"width\":\"100%\",\"height\":\"100%\"},\"gl\":{\"logo\":{\"url\":\"file:///android_asset/public/img/wgtt.jpg\",\"w\":40,\"h\":40,\"scale\":2},\"title\":\"中草药高端护肤品牌\",\"detail\":\"喜欢, 是唯一的捷径. 我只管喜欢\",\"desc\":\"我只管喜欢, 不是因为有钱才喜欢, 是因为喜欢才有钱!\"}}");
+                    htmlTemplate = FileUtils.readTextInputStream(context.getAssets().open("axd"+ File.separator+templateName));
+//                    AdvBean htmlData = AdvBean.getDataByStr("{\"exposure_url\":\"http://s.mjmobi.com/imp?info=ChhDTWpvdXZyTEt4Q0tvTUZRR1AzejFwRUIQxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIgyOi6-ssrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\",\"btn_url\":\"http://c.mjmobi.com/cli?info=ChhDTWpvdXZyTEt4Q0tvTUZRR1AzejFwRUIQACC4DijEoKvgu6fY0cgBMMjouvrLKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"image\":{\"url\":\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\",\"width\":\"100%\",\"height\":\"100%\"},\"gl\":{\"logo\":{\"url\":\"file:///android_asset/public/img/wgtt.jpg\",\"w\":40,\"h\":40,\"scale\":2},\"title\":\"中草药高端护肤品牌\",\"detail\":\"喜欢, 是唯一的捷径. 我只管喜欢\",\"desc\":\"我只管喜欢, 不是因为有钱才喜欢, 是因为喜欢才有钱!\"}}");
                     L.e("读取到的html模板:"+htmlTemplate);
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.title\\s+\\}\\}", htmlData.getGl().getTitle());
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.detail\\s+\\}\\}", htmlData.getGl().getDetail());
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.desc\\s+\\}\\}", htmlData.getGl().getDesc());
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.url\\s+\\}\\}", htmlData.getGl().getLogo().getUrl());
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.w\\s+\\}\\}", "" + htmlData.getGl().getLogo().getW());
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.h\\s+\\}\\}", "" + htmlData.getGl().getLogo().getH());
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.scale\\s+\\}\\}", "" + htmlData.getGl().getLogo().getScale());
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.exposure_url\\s+\\}\\}", htmlData.getExposure_url());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.title\\s+\\}\\}", adInfoBean.getAd_material().getTitle());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.detail\\s+\\}\\}", adInfoBean.getAd_material().getContent());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.desc\\s+\\}\\}", adInfoBean.getAd_material().getDesc());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.url\\s+\\}\\}", adInfoBean.getAd_material().getImages().get(0));
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.width\\s+\\}\\}", ""+type.getWidth());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.height\\s+\\}\\}", "" + type.getHeight());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.url\\s+\\}\\}", adInfoBean.getAd_material().getIcon());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.w\\s+\\}\\}", ""+type.getImgW());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.h\\s+\\}\\}", "" + type.getImgH());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.btn_url\\s+\\}\\}", adInfoBean.getAd_material().getClick_url());
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.exposure_url\\s+\\}\\}", adInfoBean.getAd_material().getShow_urls().get(0));
                     L.e("读取到的html模板2:"+htmlTemplate);
 
                 } catch (IOException e) {
@@ -104,15 +180,31 @@ public class AdvRequestUtil {
 
     }
 
-    public String getRealPathFromURI(Context context, Uri contentUri) {
-        String res = null;
-        String[] proj = { MediaStore.Images.Media.DATA };
-        Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
-        if(cursor.moveToFirst()){
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            res = cursor.getString(column_index);
-        }
-        cursor.close();
-        return res;
+    private static String getTemplateId(AdSlotType type){
+        Map<Integer, String> templateNameMap = new HashMap<>();
+        templateNameMap.put(2019, "img.mustache");
+        templateNameMap.put(2032, "img.mustache");
+        templateNameMap.put(2023, "img.mustache");
+        templateNameMap.put(2044, "img.mustache");
+        templateNameMap.put(2020, "img.mustache");
+        templateNameMap.put(2021, "img.mustache");
+        templateNameMap.put(2017, "img.mustache");
+        templateNameMap.put(2018, "img.mustache");
+        templateNameMap.put(2022, "img.mustache");
+        templateNameMap.put(2033, "img.mustache");
+        templateNameMap.put(2024, "img.mustache");
+        templateNameMap.put(2031, "img.mustache");
+
+//        templateNameMap.put(2001, "x75_75.mustache");
+        templateNameMap.put(2004, "x80_80.mustache");
+        templateNameMap.put(2003, "x240_180.mustache");
+        templateNameMap.put(2010, "x600_300.mustache");
+        templateNameMap.put(2048, "x600_300.mustache");
+        templateNameMap.put(2039, "x720_405.mustache");
+        templateNameMap.put(2029, "x800_120.mustache");
+        //待定
+        templateNameMap.put(2061, "x600_300.mustache");
+
+        return templateNameMap.get(type.getTemplateId());
     }
 }

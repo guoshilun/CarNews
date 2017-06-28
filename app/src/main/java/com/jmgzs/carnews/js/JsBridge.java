@@ -18,6 +18,7 @@ public class JsBridge {
     private Activity activity;
     private IJsCallback callback;
     private float fontSize;
+    private int pageWidth;
 
     public JsBridge(Activity activity, IJsCallback callback){
         this.activity = activity;
@@ -55,6 +56,15 @@ public class JsBridge {
     @JavascriptInterface
     public float getFontSize() {
         return fontSize;
+    }
+
+    @JavascriptInterface
+    public void setPageWidth(int width) {
+        pageWidth = width;
+    }
+
+    public int getPageWidth() {
+        return pageWidth;
     }
 
     public void setFontSize(float fontSize) {

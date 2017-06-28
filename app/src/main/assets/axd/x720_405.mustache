@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Global Head File -->
+    <title>{{title}}-{{mainTitle}}</title>
+    <meta charset="utf-8">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="yes" name="apple-touch-fullscreen">
+    <meta content="telephone=no,email=no" name="format-detection">
+    <meta name="App-Config" content="fullscreen=yes,useHistoryState=yes,transition=yes">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta name="referrer" content="always" />
+    <link rel="shortcut icon" href="file:///android_assets/axd/favicon.ico">
+    <link rel="stylesheet" href="file:///android_assets/axd/css/bootstrap.css" />
+    <link rel="stylesheet" href="file:///android_assets/axd/css/common.css" />
+    <link rel="stylesheet" href="file:///android_assets/axd/css/axd.css" />
+    <style>
+        .brand_content span {
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="axd_container axd_container_top">
+        <!-- 曝光 -->
+        <div class="axd_expose">
+            <img src="{{ axd.exposure_url }}" alt="">
+        </div>
+        <!-- 关闭按钮 -->
+        <a class="axd_cl" href="mjapp://close" onclick="window.carnews.close()">x</a>
+        <!-- 广告标识 -->
+        <em class="axd_ax">广告</em>
+        <div>
+            <div class="axd_container_content">
+                <div class="brand_content">
+                    <span class="brand_title">{{ axd.gl.title }}</span>
+                </div>
+            </div>
+            <div class="axd_container_bg">
+                <a href="{{ axd.btn_url }}" target="_blank">
+                    <img src="{{ axd.image.url }}" width="{{ axd.image.width }}" alt="">
+                </a>
+            </div>
+            <!-- 图文内容 -->
+            <div class="axd_container_content">
+                <div class="brand_content">
+                    <span class="brand_desc">{{ axd.gl.detail }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="file:///android_assets/axd/js/jquery.js"></script>
+</body>
+
+</html>

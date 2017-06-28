@@ -2,17 +2,14 @@ package com.jmgzs.carnews.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.CompoundButton;
@@ -23,9 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.google.gson.Gson;
 import com.jmgsz.lib.adv.AdvRequestUtil;
-import com.jmgsz.lib.adv.bean.AdvRequestBean;
+import com.jmgsz.lib.adv.enums.AdSlotType;
 import com.jmgsz.lib.adv.interfaces.IAdvRequestCallback;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
@@ -58,6 +54,10 @@ import com.umeng.socialize.bean.SHARE_MEDIA;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 新闻详情界面
@@ -86,12 +86,14 @@ public class NewsInfoActivity extends BaseActivity {
     private UMShareListener mShareListener;
     private ShareUtils shareUtils;
 
-    private int newsId;
+    private int newsId;//新闻id
     private String downloadUrl;
     public static final String INTENT_AID = "aid";
     public static final String INTENT_IMAGES = "images";
+    public static final String INTENT_CHANNEL = "channel";
     private boolean hasStored = false;
     private NewsDataBean info;
+    private String channel;//新闻类型
     private ArrayList<String> images;
 
     @Override
@@ -103,7 +105,8 @@ public class NewsInfoActivity extends BaseActivity {
             return;
         }
         images = intent.getStringArrayListExtra(INTENT_IMAGES);
-        L.e(images.toString());
+        channel = intent.getStringExtra(INTENT_CHANNEL);
+//        L.e(images.toString());
         top = findViewById(R.id.newsInfo_top_bar);
         statusBar = findViewById(R.id.newInfo_status_bar);
         bottomBar = findViewById(R.id.newsInfo_bottom_bar);
@@ -264,8 +267,9 @@ public class NewsInfoActivity extends BaseActivity {
         wv.addJavascriptInterface(js, "carnews");
     }
 
-    private void showAdv(String html, int height){
-        String newHtml = "javascript:showAdv(\""+html+"\", "+height+")";
+    private void showAdv(String html, int width, int height){
+        int newHeight = js.getPageWidth() * height / width;
+        String newHtml = "javascript:showAdv(\""+html+"\", "+newHeight+")";
         L.e("插入广告html："+newHtml);
         wv.loadUrl(newHtml);
     }
@@ -405,6 +409,9 @@ public class NewsInfoActivity extends BaseActivity {
     }
 
     private void requestAdv() {
+        if (TextUtils.isEmpty(channel)){
+            return;
+        }
         new Thread() {
             @Override
             public void run() {
@@ -413,8 +420,12 @@ public class NewsInfoActivity extends BaseActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                String req = "{\"id\":\"ebb7fbcb-01da-4255-8c87-98eedbcd2909\",\"user_agent\":\"Mozilla/5.0 (Linux; U; Android 4.3; zh-cn; R8007 Build/JLS36C) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30\",\"app_site_info\":{\"appsite_id\":\"51e71da6-5b46-4d9f-b94f-9ec6a\",\"categories\":[0],\"app_bundle_name\":\"dongfangtoutiao_test\",\"app_name\":\"\"},\"net_type\":2,\"ad_slot_info\":[{\"sid\": 0,\"height\": 220,\"screen_position\": 1,\"loc_id\": \"bf8a85e6-849e-11e6-8c73-a4dcbef43d46\",\"width\": 156,\"ad_num\": 1,\"html_material\": false}],\"id_info\": {\"mac\": \"d8:55:a3:ce:e4:40\",\"idfa\": \"5b7e9e4f42a6635f\"},\"device_info\": {\"orientation\": 2,\"model\": \"MX5\",\"brand\": \"MEIXU\",\"screen_width\": 1080,\"type\": 2,\"screen_height\": 1920},\"user_ip\": \"58.30.22.0\",\"template_id\": [2044],\"channel_id\": 1001}";
-                AdvRequestUtil.requestAdv(NewsInfoActivity.this, new Gson().fromJson(req, AdvRequestBean.class), new IAdvRequestCallback() {
+                AdSlotType slotType = getSlotTypeByChannel(channel);
+                if (slotType == null){
+                    return;
+                }
+//                String req = "{\"id\":\"ebb7fbcb-01da-4255-8c87-98eedbcd2909\",\"user_agent\":\"Mozilla/5.0 (Linux; U; Android 4.3; zh-cn; R8007 Build/JLS36C) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30\",\"app_site_info\":{\"appsite_id\":\"51e71da6-5b46-4d9f-b94f-9ec6a\",\"categories\":[0],\"app_bundle_name\":\"dongfangtoutiao_test\",\"app_name\":\"\"},\"net_type\":2,\"ad_slot_info\":[{\"sid\": 0,\"height\": 220,\"screen_position\": 1,\"loc_id\": \"bf8a85e6-849e-11e6-8c73-a4dcbef43d46\",\"width\": 156,\"ad_num\": 1,\"html_material\": false}],\"id_info\": {\"mac\": \"d8:55:a3:ce:e4:40\",\"idfa\": \"5b7e9e4f42a6635f\"},\"device_info\": {\"orientation\": 2,\"model\": \"MX5\",\"brand\": \"MEIXU\",\"screen_width\": 1080,\"type\": 2,\"screen_height\": 1920},\"user_ip\": \"58.30.22.0\",\"template_id\": [2044],\"channel_id\": 1001}";
+                AdvRequestUtil.requestAdv(NewsInfoActivity.this, AdvRequestUtil.getAdvRequest(NewsInfoActivity.this, slotType), new IAdvRequestCallback() {
                     @Override
                     public void onGetAdvSuccess(String html, int width, int height) {
                         L.e("广告请求成功");
@@ -426,7 +437,7 @@ public class NewsInfoActivity extends BaseActivity {
                             html = html.replaceAll("\\./","file:///android_assets/");
                             FileUtils.writeTextFile(file, html);
                             L.e("adv Html:"+html);
-                            showAdv(Uri.fromFile(file).toString(), height);
+                            showAdv(Uri.fromFile(file).toString(), width, height);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -446,7 +457,7 @@ public class NewsInfoActivity extends BaseActivity {
                             FileUtils.writeTextFile(file, "<p>广告请求失败</p>");
                             L.e("开始显示广告:"+file.getAbsolutePath());
                             L.e("开始显示广告:"+Uri.fromFile(file).toString());
-                            showAdv(Uri.fromFile(file).toString(), 60);
+                            showAdv(Uri.fromFile(file).toString(), js.getPageWidth(), 60);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -456,6 +467,18 @@ public class NewsInfoActivity extends BaseActivity {
             }
         }.start();
 
+    }
+
+    private AdSlotType getSlotTypeByChannel(String channel){
+        String[] channels = this.getResources().getStringArray(R.array.tab_channels);
+        List<AdSlotType> banners = AdSlotType.getBannerList();
+        for (int index = 0; index < channels.length; index++){
+            if (channel.equals(channels[index])){
+                int i = index % banners.size();
+                return banners.get(i);
+            }
+        }
+        return null;
     }
 
     @Override

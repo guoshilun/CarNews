@@ -45,6 +45,7 @@ public class AdvRequestBean {
     private int channel_id;
     private List<AdSlotInfoBean> ad_slot_info;
     private List<Integer> template_id;
+    private GeoInfoBean geo_info;
 
     public AdvRequestBean() {
     }
@@ -61,7 +62,7 @@ public class AdvRequestBean {
 
         IdInfoBean deviceId = new IdInfoBean();
         deviceId.setMac("d8:55:a3:ce:e4:40");
-        deviceId.setIdfa("5b7e9e4f42a6635f");
+        deviceId.setImei("861980034148909");
 
         DeviceInfoBean device = new DeviceInfoBean();
         device.setBrand(DeviceUtils.getBrand());
@@ -76,6 +77,14 @@ public class AdvRequestBean {
         channel_id = channelId;
         template_id = Arrays.asList(type.getTemplateId());
         ad_slot_info = Arrays.asList(setAdSlotInfo(type.getWidth(), type.getHeight()));
+    }
+
+    public GeoInfoBean getGeo_info() {
+        return geo_info;
+    }
+
+    public void setGeo_info(GeoInfoBean geo_info) {
+        this.geo_info = geo_info;
     }
 
     private static AdSlotInfoBean setAdSlotInfo(int width, int height){
@@ -252,11 +261,11 @@ public class AdvRequestBean {
     public static class IdInfoBean {
         /**
          * mac : d8:55:a3:ce:e4:40
-         * idfa : 5b7e9e4f42a6635f
+         * imei : 861980034148909
          */
 
         private String mac;
-        private String idfa;
+        private String imei;
 
         public String getMac() {
             return mac;
@@ -266,12 +275,12 @@ public class AdvRequestBean {
             this.mac = mac;
         }
 
-        public String getIdfa() {
-            return idfa;
+        public String getImei() {
+            return imei;
         }
 
-        public void setIdfa(String idfa) {
-            this.idfa = idfa;
+        public void setImei(String imei) {
+            this.imei = imei;
         }
     }
 
@@ -350,6 +359,7 @@ public class AdvRequestBean {
          * width : 156
          * ad_num : 1
          * html_material : false
+         * product_type : 1
          */
 
         private int sid;
@@ -359,6 +369,7 @@ public class AdvRequestBean {
         private int width;
         private int ad_num;
         private boolean html_material;
+        private List<Integer> product_type;
 
         public int getSid() {
             return sid;
@@ -414,6 +425,35 @@ public class AdvRequestBean {
 
         public void setHtml_material(boolean html_material) {
             this.html_material = html_material;
+        }
+
+        public List<Integer> getProduct_type() {
+            return product_type;
+        }
+
+        public void setProduct_type(List<Integer> product_type) {
+            this.product_type = product_type;
+        }
+    }
+
+    public static class GeoInfoBean{
+        private float longitude;
+        private float latitude;
+
+        public float getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(float longitude) {
+            this.longitude = longitude;
+        }
+
+        public float getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(float latitude) {
+            this.latitude = latitude;
         }
     }
 }

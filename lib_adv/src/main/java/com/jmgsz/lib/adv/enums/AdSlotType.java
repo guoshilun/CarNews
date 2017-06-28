@@ -11,9 +11,9 @@ import java.util.Random;
 
 public enum AdSlotType {
     OPEN_640_960(0, 640, 960, 2033), OPEN_640_960_W(0, 640, 960, 2071), OPEN_1182_1620(0, 1182, 1620, 2030), OPEN_720_1066(0, 720, 1066, 2031), OPEN_480_658(0, 480, 658, 2032), OPEN_640_1136(0, 640, 1136, 2024), OPEN_640_1136_W(0, 640, 1136, 2072),
-    INFO_720_405_W(1, 720, 405, 2039), INFO_800_120_W(1, 800, 120, 2029), INFO_600_300_W(1, 600, 300, 2021),
+    INFO_720_405_W(1, 720, 405, 2039), INFO_800_120_W(1, 800, 120, 45, 45, 2029), INFO_600_300_W(1, 600, 300, 2048),
     BANNER_640_100(2, 640, 100, 2044), BANNER_800_120(2, 800, 120, 2017), BANNER_640_200(2, 640, 200, 2018), BANNER_440_160(2, 440, 160, 2019), BANNER_240_180_W(2, 240, 180, 2003), BANNER_1000_500_W(2, 1000, 500, 2061),
-    INSERT_600_500(3, 600, 500, 2020), INSERT_600_600(3, 600, 600, 2021), INSERT_640_960(3, 640, 960, 2022), INSERT_480_800(3, 480, 800, 2023), INSERT_600_500_W(3, 600, 500, 2004);
+    INSERT_600_500(3, 600, 500, 2020), INSERT_600_600(3, 600, 600, 2021), INSERT_640_960(3, 640, 960, 2022), INSERT_480_800(3, 480, 800, 2023), INSERT_80_80_W(3, 600, 500, 40, 40, 2004);
 
     private static List<AdSlotType> openList;
     private static List<AdSlotType> infoList;
@@ -52,11 +52,21 @@ public enum AdSlotType {
     private int width;
     private int height;
     private int templateId;
+    private int imgW;
+    private int imgH;
 
     AdSlotType(int type, int width, int height, int templateId) {
         this.type = type;
         this.width = width;
         this.height = height;
+        this.templateId = templateId;
+    }
+    AdSlotType(int type, int width, int height, int imgW, int imgH, int templateId) {
+        this.type = type;
+        this.width = width;
+        this.height = height;
+        this.imgW = imgW;
+        this.imgH = imgH;
         this.templateId = templateId;
     }
 
@@ -118,5 +128,37 @@ public enum AdSlotType {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getImgW() {
+        return imgW;
+    }
+
+    public void setImgW(int imgW) {
+        this.imgW = imgW;
+    }
+
+    public int getImgH() {
+        return imgH;
+    }
+
+    public void setImgH(int imgH) {
+        this.imgH = imgH;
+    }
+
+    public static List<AdSlotType> getBannerList() {
+        return bannerList;
+    }
+
+    public static List<AdSlotType> getOpenList() {
+        return openList;
+    }
+
+    public static List<AdSlotType> getInfoList() {
+        return infoList;
+    }
+
+    public static List<AdSlotType> getInsertList() {
+        return insertList;
     }
 }

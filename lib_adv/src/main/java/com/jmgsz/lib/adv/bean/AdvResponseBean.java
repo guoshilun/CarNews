@@ -46,6 +46,7 @@ public class AdvResponseBean {
         private int adid;
         private String landing_page;
         private int sid;
+        private String html_snippet;
 
         public AdMaterialBean getAd_material() {
             return ad_material;
@@ -87,6 +88,14 @@ public class AdvResponseBean {
             this.sid = sid;
         }
 
+        public String getHtml_snippet() {
+            return html_snippet;
+        }
+
+        public void setHtml_snippet(String html_snippet) {
+            this.html_snippet = html_snippet;
+        }
+
         public static class AdMaterialBean {
             /**
              * click_url : http://c.mjmobi.com/cli?info=ChhDTWlLNjZYS0t4Q3VvTUZRR0kzSjRWMD0QACC4Dii82Or7h9uu7cwBMMiK66XKKzoOCJ4gEKzmBBi83gYg_iFA2ARYHmIcaHR0cDovL2N5LnNoZW5qaW5na2UxMjAuY29tL2gBcACAAZcPiAGw6gGQAQGYAQawAekH
@@ -94,9 +103,21 @@ public class AdvResponseBean {
              * show_urls : ["http://s.mjmobi.com/imp?info=ChhDTWlLNjZYS0t4Q3VvTUZRR0kzSjRWMD0QvNjq-4fbru3MARoOCJ4gEKzmBBi83gYg_iEgyIrrpcorKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABsOoByAEB&seqs=0"]
              */
 
+            private String title;
+            private String content;
+            private String desc;
+            private String icon;
+            private String app_name;
+            private String app_pkg_name;
+            private String app_download_url;
+
             private String click_url;
+            private String brand;
+            private String subtitle;
             private List<String> images;
             private List<String> show_urls;
+            private List<String> download_complete_url;
+            private List<String> installed_url;
 
             public String getClick_url() {
                 return click_url;
@@ -120,6 +141,94 @@ public class AdvResponseBean {
 
             public void setShow_urls(List<String> show_urls) {
                 this.show_urls = show_urls;
+            }
+
+            public String getTitle() {
+                return title;
+            }
+
+            public void setTitle(String title) {
+                this.title = title;
+            }
+
+            public String getContent() {
+                return content;
+            }
+
+            public void setContent(String content) {
+                this.content = content;
+            }
+
+            public String getDesc() {
+                return desc;
+            }
+
+            public void setDesc(String desc) {
+                this.desc = desc;
+            }
+
+            public String getIcon() {
+                return icon;
+            }
+
+            public void setIcon(String icon) {
+                this.icon = icon;
+            }
+
+            public String getApp_name() {
+                return app_name;
+            }
+
+            public void setApp_name(String app_name) {
+                this.app_name = app_name;
+            }
+
+            public String getApp_pkg_name() {
+                return app_pkg_name;
+            }
+
+            public void setApp_pkg_name(String app_pkg_name) {
+                this.app_pkg_name = app_pkg_name;
+            }
+
+            public String getApp_download_url() {
+                return app_download_url;
+            }
+
+            public void setApp_download_url(String app_download_url) {
+                this.app_download_url = app_download_url;
+            }
+
+            public String getBrand() {
+                return brand;
+            }
+
+            public void setBrand(String brand) {
+                this.brand = brand;
+            }
+
+            public String getSubtitle() {
+                return subtitle;
+            }
+
+            public void setSubtitle(String subtitle) {
+                this.subtitle = subtitle;
+            }
+
+            public List<String> getDownload_complete_url() {
+                return download_complete_url;
+            }
+
+            public void setDownload_complete_url(List<String> download_complete_url) {
+                this.download_complete_url = download_complete_url;
+            }
+
+            public List<String> getInstalled_url() {
+                return installed_url;
+            }
+
+            public void setInstalled_url(List<String> installed_url) {
+                this.installed_url = installed_url;
             }
         }
     }
