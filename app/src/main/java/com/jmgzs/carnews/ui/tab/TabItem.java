@@ -1,21 +1,29 @@
 package com.jmgzs.carnews.ui.tab;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.StateListDrawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.TextView;
+
+import com.jmgzs.carnews.R;
+import com.jmgzs.lib_network.utils.L;
 
 public class TabItem extends View {
 
-    private int mTextSize = 18;
-    private int mTextColorSelect = 0xff696969;
-    private int mTextColorNormal = 0xff0159a1;
+    private int mTextSize = 16;
+    private int mTextColorSelect = 0x696969;
+    private int mTextColorNormal = 0x0159a1;
     private Paint mTextPaintNormal;
     private Paint mTextPaintSelect;
     private int mViewHeight, mViewWidth;
@@ -41,6 +49,7 @@ public class TabItem extends View {
 
     public TabItem(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setClickable(true);
         initView();
     }
 
@@ -121,9 +130,23 @@ public class TabItem extends View {
         if (!TextUtils.isEmpty(mTextValue)) {
             float x = (mViewWidth - mBoundText.width()) / 2.0f;
             float y = (mViewHeight + (mIconNormal == null ? 0 : mIconNormal.getHeight()) + mBoundText.height()) / 2.0F;
-            canvas.drawText(mTextValue, x, y, getTextPaintNormal());
+            if (isSelected()) {
+                getTextPaintSelect().setAlpha(0xff);
+                getTextPaintNormal().setAlpha(0);
             canvas.drawText(mTextValue, x, y, getTextPaintSelect());
+            } else {
+                getTextPaintSelect().setAlpha(0);
+                getTextPaintNormal().setAlpha(0xff);
+            canvas.drawText(mTextValue, x, y, getTextPaintNormal());
+            }
+            L.i(isSelected() + ",normal:" + getTextPaintNormal().getColor() + "-alpha---" + getTextPaintNormal().getAlpha() + ",select:" + getTextPaintSelect().getAlpha() + "," + getTextPaintSelect().getColor());
         }
+    }
+
+    private void colorListDrawable() {
+        ColorStateList colorStateList = getResources().getColorStateList(R.color.title_text_selector);
+
+
     }
 
     private void drawDot(Canvas canvas) {
@@ -211,18 +234,19 @@ public class TabItem extends View {
     private Paint getTextPaintSelect() {
         if (mTextPaintSelect == null) {
             mTextPaintSelect = new Paint();
+            mTextPaintSelect.setAntiAlias(true);
             mTextPaintSelect.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, mTextSize, getResources().getDisplayMetrics()));
             mTextPaintSelect.setColor(mTextColorSelect);
             mTextPaintSelect.setAntiAlias(true);
             mTextPaintSelect.setAlpha(0);
         }
-
         return mTextPaintSelect;
     }
 
     private Paint getTextPaintNormal() {
         if (mTextPaintNormal == null) {
             mTextPaintNormal = new Paint();
+            mTextPaintNormal.setAntiAlias(true);
             mTextPaintNormal.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, mTextSize, getResources().getDisplayMetrics()));
             mTextPaintNormal.setColor(mTextColorNormal);
             mTextPaintNormal.setAntiAlias(true);

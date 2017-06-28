@@ -63,10 +63,6 @@ import java.util.ArrayList;
 
 public class NewsInfoActivity extends BaseActivity {
 
-    @Override
-    protected int getContent(Bundle save) {
-        return R.layout.activity_news_info;
-    }
 
     private ScrollControlFrameLayout scrollControlView;
     private ScrollableWebView wv;
@@ -90,6 +86,12 @@ public class NewsInfoActivity extends BaseActivity {
     private boolean hasStored = false;
     private NewsDataBean info;
     private ArrayList<String> images;
+
+    @Override
+    protected int getContent(Bundle save) {
+        return R.layout.activity_news_info;
+    }
+
 
     @Override
     protected void initView() {
@@ -116,7 +118,8 @@ public class NewsInfoActivity extends BaseActivity {
 
 //        wv.loadDataWithBaseURL("file:///android_asset/", htmlTemplate, "text/html", "utf-8", null);
     }
-    private void initAnim(){
+
+    private void initAnim() {
         animShareOpen = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_show);
         animShareOpen.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -183,7 +186,7 @@ public class NewsInfoActivity extends BaseActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 tgbtnFav.setEnabled(false);
-                if (isChecked){
+                if (isChecked) {
                     T.toastS("收藏成功");
                     ScaleClickUtils.startScaleSmallAnim(imgFav, new Runnable() {
                         @Override
@@ -203,7 +206,7 @@ public class NewsInfoActivity extends BaseActivity {
                         }
                     });
 
-                }else{
+                } else {
                     T.toastS("已取消收藏");
                     ScaleClickUtils.startScaleSmallAnim(imgFav, new Runnable() {
                         @Override
@@ -253,14 +256,14 @@ public class NewsInfoActivity extends BaseActivity {
         wv.getSettings().setJavaScriptEnabled(true);
         wv.getSettings().setUseWideViewPort(false);
         wv.getSettings().setLoadsImagesAutomatically(true);
-        wv.setWebChromeClient(new WebChromeClient(){
+        wv.setWebChromeClient(new WebChromeClient() {
 
         });
-        wv.setWebViewClient(new WebViewClient(){
+        wv.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                L.e("url:"+url);
-                if (url.startsWith("file")){
+                L.e("url:" + url);
+                if (url.startsWith("file")) {
                     return false;
                 }
                 return true;
@@ -275,9 +278,9 @@ public class NewsInfoActivity extends BaseActivity {
         wv.addJavascriptInterface(js, "carnews");
     }
 
-    private void showAdv(String html, int height){
-        String newHtml = "javascript:showAdv(\""+html+"\", "+height+")";
-        L.e("插入广告html："+newHtml);
+    private void showAdv(String html, int height) {
+        String newHtml = "javascript:showAdv(\"" + html + "\", " + height + ")";
+        L.e("插入广告html：" + newHtml);
         wv.loadUrl(newHtml);
     }
 
@@ -308,7 +311,7 @@ public class NewsInfoActivity extends BaseActivity {
                 if (!ResUtils.processResponse(url, data, this)) {
                     return;
                 }
-                if (data == null || data.getData() == null || data.getData().size() < 1 || (info = data.getData().get(0)) == null){
+                if (data == null || data.getData() == null || data.getData().size() < 1 || (info = data.getData().get(0)) == null) {
                     onFailure(url, NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getCode(), NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getMsg());
                     return;
                 }
@@ -316,7 +319,7 @@ public class NewsInfoActivity extends BaseActivity {
                 //TODO 加载页面
                 String content = info.getContent();
                 try {
-                    String html = FileUtils.readTextInputStream(NewsInfoActivity.this.getAssets().open("info"+ File.separator+"info_template.html"));
+                    String html = FileUtils.readTextInputStream(NewsInfoActivity.this.getAssets().open("info" + File.separator + "info_template.html"));
                     html = html.replace("%1$s", content == null ? "" : content);
                     html = html.replace("%2$s", info.getTitle() == null ? "" : info.getTitle());
                     html = html.replace("%3$s", info.getPublish_source() == null ? "" : info.getPublish_source());
@@ -396,11 +399,11 @@ public class NewsInfoActivity extends BaseActivity {
                     @Override
                     public void onDismiss(boolean isDismiss) {
                         contentCover.clearAnimation();
-                        if (isDismiss){
+                        if (isDismiss) {
                             L.e("开始关闭动画");
                             contentCover.setAnimation(animShareClose);
                             animShareClose.start();
-                        }else{
+                        } else {
                             L.e("开始启动动画");
                             contentCover.setAnimation(animShareOpen);
                             animShareOpen.start();
@@ -425,14 +428,14 @@ public class NewsInfoActivity extends BaseActivity {
                     @Override
                     public void onGetAdvSuccess(String html, int width, int height) {
                         L.e("广告请求成功");
-                        File file = FileUtils.createFile(NewsInfoActivity.this, FileUtils.getCachePath(NewsInfoActivity.this)+File.separator+"info", "info_adv.html");
+                        File file = FileUtils.createFile(NewsInfoActivity.this, FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info", "info_adv.html");
                         try {
-                            if (file == null){
+                            if (file == null) {
                                 return;
                             }
-                            html = html.replaceAll("\\./","file:///android_assets/");
+                            html = html.replaceAll("\\./", "file:///android_assets/");
                             FileUtils.writeTextFile(file, html);
-                            L.e("adv Html:"+html);
+                            L.e("adv Html:" + html);
                             showAdv(Uri.fromFile(file).toString(), height);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -444,15 +447,15 @@ public class NewsInfoActivity extends BaseActivity {
                     @Override
                     public void onGetAdvFailure() {
                         L.e("广告请求失败");
-                        File file = FileUtils.createFile(NewsInfoActivity.this, FileUtils.getCachePath(NewsInfoActivity.this)+File.separator+"info", "info_adv.html");
+                        File file = FileUtils.createFile(NewsInfoActivity.this, FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info", "info_adv.html");
                         try {
-                            if (file == null){
+                            if (file == null) {
                                 L.e("广告缓存文件不存在");
                                 return;
                             }
                             FileUtils.writeTextFile(file, "<p>广告请求失败</p>");
-                            L.e("开始显示广告:"+file.getAbsolutePath());
-                            L.e("开始显示广告:"+Uri.fromFile(file).toString());
+                            L.e("开始显示广告:" + file.getAbsolutePath());
+                            L.e("开始显示广告:" + Uri.fromFile(file).toString());
                             showAdv(Uri.fromFile(file).toString(), 60);
                         } catch (IOException e) {
                             e.printStackTrace();

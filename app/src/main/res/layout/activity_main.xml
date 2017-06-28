@@ -18,7 +18,7 @@
         android:fadingEdge="none"
         android:scrollbars="none"
         app:stl_defaultTabBackground="@color/colorWhite"
-        app:stl_defaultTabTextColor="@color/app_title_normal"
+        app:stl_defaultTabTextColor="@color/title_text_selector"
         app:stl_distributeEvenly="true"
         app:stl_dividerColor="@color/colorTransparent"
         app:stl_dividerThickness="0dp"
@@ -36,7 +36,9 @@
         app:stl_overlineColor="@color/colorTransparent"
         app:stl_overlineThickness="0dp"
         app:stl_underlineColor="@color/divider"
-        app:stl_underlineThickness="2px" />
+        app:stl_underlineThickness="2px"
+
+        />
 
 
     <android.support.v4.view.ViewPager

@@ -225,7 +225,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
             }
         });
         menuDialog.show();
-        menuDialog.setMenuItemTopText(View.VISIBLE, "删除缓存?");
+        menuDialog.setMenuItemTopText(View.VISIBLE, "确定删除所有缓存?");
         menuDialog.setMenuItemMiddle1Text(View.GONE, null);
         menuDialog.setMenuItemMiddle2Text(View.GONE, null);
         menuDialog.setMenuItemBottomText(View.VISIBLE, "确定");

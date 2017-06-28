@@ -364,7 +364,7 @@ public class SmartTabLayout extends HorizontalScrollView {
         textView.setText(title);
         textView.setTextColor(tabViewTextColors);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, tabViewTextSize);
-        textView.setTypeface(Typeface.DEFAULT_BOLD);
+//        textView.setTypeface(Typeface.DEFAULT_BOLD);
         textView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
 
@@ -383,10 +383,11 @@ public class SmartTabLayout extends HorizontalScrollView {
             // If we're running on ICS or newer, enable all-caps to match the Action Bar tab style
             textView.setAllCaps(tabViewTextAllCaps);
         }
+        int padding = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,10f,getResources().getDisplayMetrics());
 
         textView.setPadding(
-                tabViewTextHorizontalPadding, 0,
-                tabViewTextHorizontalPadding, 0);
+                tabViewTextHorizontalPadding, padding,
+                tabViewTextHorizontalPadding, padding);
 
         if (tabViewTextMinWidth > 0) {
             textView.setMinWidth(tabViewTextMinWidth);
