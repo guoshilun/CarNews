@@ -2,10 +2,12 @@ package com.jmgzs.carnews.ui.tab;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 import com.jmgzs.carnews.R;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 public class HomeTabProvider implements SmartTabLayout.TabProvider {
 
     private ArrayList<TabItem> mInfos;
+//    private ArrayList<View> mInfos;
     private int padding;
 
     public HomeTabProvider(Context context) {
@@ -35,12 +38,14 @@ public class HomeTabProvider implements SmartTabLayout.TabProvider {
         tab.setTextValue(adapter.getPageTitle(position).toString());
         tab.setTextColorNormal(R.color.app_title_normal);
         tab.setTextColorSelect(R.color.app_title_selected);
-        if (position == 0) {
+//        tab.setTextSize(16);
+//        if (position == 0) {
 //            tab.setIconText(R.mipmap.icon_feather_gray, R.mipmap.icon_feather_red, null);
-        } else {
+//        } else {
 //            tab.setIconText(R.mipmap.icon_msg_gray, R.mipmap.icon_msg_red, null);
-//            tab.setDot(context.getResources().getColor(R.color.app_red_color), context.getResources().getDimension(R.dimen.home_top_tab_dot_radius));
-        }
+            tab.setDot(context.getResources().getColor(R.color.app_red_color), context.getResources().getDimension(R.dimen.padding_3dp));
+//        }
+//        switch ()
 
         mInfos.add(tab);
 

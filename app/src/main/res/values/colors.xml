@@ -5,8 +5,8 @@
     <color name="colorAccent">#0159a1</color>
 
 
-    <color name="app_title_normal">#ff696969</color>
-    <color name="app_title_selected">#ff0159a1</color>
+    <color name="app_title_normal">#696969</color>
+    <color name="app_title_selected">#0159a1</color>
     <color name="app_bg">#fff0f0f0</color>
     <color name="divider">#ffe0e0e0</color>
     <color name="info_bar_color">#ffececec</color>

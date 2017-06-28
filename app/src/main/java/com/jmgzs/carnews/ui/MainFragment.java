@@ -201,6 +201,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
             in.putStringArrayListExtra("images", new ArrayList<>(dataBean.getImg_list()));
         else
             in.putStringArrayListExtra("images", new ArrayList<String>());
+        in.putExtra("channel" ,getChannel());
         startActivity(in);
 
     }

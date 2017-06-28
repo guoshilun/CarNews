@@ -1,24 +1,31 @@
 package com.jmgzs.carnews.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.google.gson.Gson;
-import com.jmgsz.lib.adv.AdvRequestUtil;
-import com.jmgsz.lib.adv.bean.AdvRequestBean;
-import com.jmgsz.lib.adv.interfaces.IAdvRequestCallback;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.HomeAdapter;
 import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.base.GlideApp;
+import com.jmgzs.carnews.bean.UpdateInfo;
+import com.jmgzs.carnews.network.update.UpdateDownloadListener;
+import com.jmgzs.carnews.ui.dialog.BaseDialog;
+import com.jmgzs.carnews.ui.dialog.UpdateDialog;
 import com.jmgzs.carnews.ui.tab.HomeTabProvider;
+import com.jmgzs.carnews.ui.tab.TabItem;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
+import com.jmgzs.lib_network.network.IRequestCallBack;
+import com.jmgzs.lib_network.network.RequestUtil;
 import com.jmgzs.lib_network.utils.L;
 import com.ogaclejapan.smarttablelayout.SmartTabLayout;
+
+import static android.R.attr.data;
+import static android.R.transition.move;
 
 public class MainActivity extends BaseActivity {
 
@@ -46,7 +53,6 @@ public class MainActivity extends BaseActivity {
         tabProvider = new HomeTabProvider(this);
         SmartTabLayout tab = getView(R.id.pager_tab);
         tab.setCustomTabView(tabProvider);
-//        tab.setCustomTabView(R.layout.tab_item,R.id.tab_item_text);
         tab.setViewPager(vPager);
         tab.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -65,12 +71,11 @@ public class MainActivity extends BaseActivity {
 //                }
 //                float scale = 0.2f;
 //                if (position == 0) {
-//                    // move to left
+////                    // move to left
 //                    float scaleLeft = 1 - (positionOffset) * scale;
 //                    TabItem left = tabProvider.getTabItem(position);
 //                    left.setScaleX(scaleLeft);
 //                    left.setScaleY(scaleLeft);
-//
 //                    float scaleRight = 1 - (1 - positionOffset) * scale;
 //                    TabItem right = tabProvider.getTabItem(position + 1);
 //                    right.setScaleX(scaleRight);
@@ -80,12 +85,24 @@ public class MainActivity extends BaseActivity {
 //                ivTopLeftIcon.setTranslationX(-ivTopLeftIcon.getWidth() * 2 * positionOffset);
 
                 L.i(position + "," + positionOffset + "," + positionOffsetPixels);
+//                changeTextColor(position);
             }
 
             @Override
             public void onPageSelected(int position) {
                 currentPosition = position;
-                tabProvider.getTabItem(position).setTabAlpha(1);
+//                changeTextColor(position);
+            }
+
+            private void changeTextColor(int position) {
+                for (int i = 0, j = adapter.getCount(); i < j; i++) {
+                    if (i == position) {
+                        tabProvider.getTabItem(i).setTabAlpha(1);
+                    } else {
+                        tabProvider.getTabItem(i).setTabAlpha(0);
+
+                    }
+                }
             }
 
             @Override
@@ -112,5 +129,60 @@ public class MainActivity extends BaseActivity {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        checkUpdate();
+    }
+
+    private UpdateDownloadListener updateListener;
+
+    private void checkUpdate() {
+        showUpdateDialog(null);
+        String url = "http://oss.ucdl.pp.uc.cn/fs01/union_pack/Wandoujia_136165_web_inner_referral_binded.apk?x-oss-process=udf%2Fpp-udf%2CJjc3LiMnJ3Bxd353dHM%3D";
+
+        RequestUtil.requestByGetSync(this, url, UpdateInfo.class, new IRequestCallBack<UpdateInfo>() {
+            @Override
+            public void onSuccess(String url, UpdateInfo data) {
+                if (data != null && data.getRsp().getStatus() == 1) showUpdateDialog(data);
+
+            }
+
+            @Override
+            public void onFailure(String url, int errorCode, String msg) {
+
+            }
+
+            @Override
+            public void onCancel(String url) {
+
+            }
+        });
+    }
+
+    private void showUpdateDialog(final UpdateInfo data) {
+        UpdateDialog updateDialog = new UpdateDialog(this);
+        updateDialog.show();
+        updateDialog.setData("1.update\n2.test\n3.重大更新....", 0);
+        updateDialog.setOnDialogClickListener(new BaseDialog.OnDialogClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+//                if (updateListener == null)
+//                    updateListener = new UpdateDownloadListener(MainActivity.this);
+//                updateListener.onDownloadStart(data.getUrl(), "汽车头条v" + data.getVersion_name() + "更新",
+//                        "1.修复若干bug\n2.功能新增");
+
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (updateListener != null) {
+            updateListener.destroy();
+
+        }
+        super.onDestroy();
     }
 }
