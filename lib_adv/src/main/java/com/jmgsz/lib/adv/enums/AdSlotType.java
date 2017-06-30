@@ -86,6 +86,13 @@ public enum AdSlotType {
         return openList.get(position);
     }
 
+    public static AdSlotType getRandomInsertType() {
+        Random random = new Random();
+
+        int position = random.nextInt(insertList.size());
+        return insertList.get(position);
+    }
+
     public static AdSlotType getInfoType(int position) {
         return infoList.get(position);
     }

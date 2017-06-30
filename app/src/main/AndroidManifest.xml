@@ -125,6 +125,13 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.WebViewActivity"
+            android:configChanges="fontScale"
+            android:hardwareAccelerated="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
         <!-- 兼容7.0文件访问 -->
         <provider
             android:name="android.support.v4.content.FileProvider"

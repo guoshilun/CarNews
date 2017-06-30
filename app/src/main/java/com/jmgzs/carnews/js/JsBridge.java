@@ -40,13 +40,16 @@ public class JsBridge {
 
     @JavascriptInterface
     public void toast(final String msg){
-        L.e("Toast:"+msg);
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                T.toastS(msg);
-            }
-        });
+        for (int i = 0; i < msg.length(); i+=200){
+            int last = i + 200 > msg.length() ? msg.length(): i + 200;
+            L.e(msg.substring(i, last));
+        }
+//        activity.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                T.toastS(msg);
+//            }
+//        });
     }
 
     @JavascriptInterface
@@ -62,7 +65,12 @@ public class JsBridge {
     public void setPageWidth(int width) {
         pageWidth = width;
     }
-
+    @JavascriptInterface
+    public void loadFinish() {
+        if (callback != null){
+            callback.loadFinish();
+        }
+    }
     public int getPageWidth() {
         return pageWidth;
     }
@@ -73,5 +81,7 @@ public class JsBridge {
 
     public interface IJsCallback{
         void close();
+
+        void loadFinish();
     }
 }

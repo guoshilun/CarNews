@@ -19,12 +19,6 @@
         p{
             font-size:15px;
         }
-        #adv{
-            width:100%;
-            height:60px;
-            background:#00ff00;
-            display:none;
-        }
     </style>
     <script type="text/javascript">
 function adClick(){
@@ -39,7 +33,6 @@ function adClick(){
         }
         return [nWidth, nHeight]
     }
-    window.carnews.setPageWidth(winWidth);
     var imgs = document.getElementsByTagName('img');
     for (var i=0; i < imgs.length; i++){
         var img = imgs[i];
@@ -54,19 +47,26 @@ function adClick(){
         <!--window.carnews.toast("img宽:"+img.width+"img高："+img.height);-->
     }
     changeFontSize(window.carnews.getFontSize());
+    window.carnews.setPageWidth(window.innerWidth - 18);
+    window.carnews.loadFinish();
 };
 function closeAdv(){
     var target = document.getElementById('adv')
     target.style.display="none";
 };
-function showAdv(html, height){
-    window.carnews.toast('广告html:'+html);
+function printSource(){
+    window.carnews.toast(document.getElementsByTagName('html')[0].innerHTML);
+};
+function showAdv(html, width, height){
+    <!--window.carnews.toast('广告html:'+html);-->
     var body = document.body;
 
     var iframe = document.createElement("iframe");
     iframe.src = html;
-    iframe.id = 'adv';
-    iframe.height = height;
+    <!--iframe.id = 'adv';-->
+    iframe.height = height + "px";
+    iframe.width = width + "px";
+    iframe.scrolling="no";
     iframe.frameBorder = 0;
     iframe.style.margin = 0;
     body.appendChild(iframe);

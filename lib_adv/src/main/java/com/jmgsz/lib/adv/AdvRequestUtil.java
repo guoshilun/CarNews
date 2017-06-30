@@ -3,13 +3,9 @@ package com.jmgsz.lib.adv;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.jmgsz.lib.adv.bean.AdvBean;
 import com.jmgsz.lib.adv.bean.AdvRequestBean;
 import com.jmgsz.lib.adv.bean.AdvResponseBean;
 import com.jmgsz.lib.adv.enums.AdSlotType;
@@ -107,7 +103,14 @@ public class AdvRequestUtil {
         return applicationName;
     }
 
-    public static void requestAdv(final Context context, final AdvRequestBean request, final IAdvRequestCallback callback){
+    /**
+     *
+     * @param context
+     * @param windowWidth 实际webview显示的宽
+     * @param request
+     * @param callback
+     */
+    public static void requestAdv(final Context context, final int windowWidth, final AdvRequestBean request, final IAdvRequestCallback callback){
         //TODO 请求广告数据
         RequestUtil.requestByPostAsy(context, API_ADV, new Gson().toJson(request), AdvResponseBean.class, new IRequestCallBack<AdvResponseBean>() {
             @Override
@@ -131,6 +134,7 @@ public class AdvRequestUtil {
                     onFailure(url, NetworkErrorCode.ERROR_CODE_UNKNOWN.getCode(), "未找到对应的广告位类型的模板");
                     return;
                 }
+                L.e("读取广告宽高:"+width+"\t"+height);
                 //TODO 装载html模板
                 String htmlTemplate;
                 try {
@@ -141,8 +145,16 @@ public class AdvRequestUtil {
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.detail\\s+\\}\\}", adInfoBean.getAd_material().getContent());
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.desc\\s+\\}\\}", adInfoBean.getAd_material().getDesc());
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.url\\s+\\}\\}", adInfoBean.getAd_material().getImages().get(0));
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.width\\s+\\}\\}", ""+type.getWidth());
-                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.height\\s+\\}\\}", "" + type.getHeight());
+                    int advWidth, advHeight;
+                    if (windowWidth <= 0){
+                        advWidth = width;
+                        advHeight = height;
+                    }else{
+                        advWidth = windowWidth;
+                        advHeight = height * windowWidth / width;
+                    }
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.width\\s+\\}\\}", advWidth + "px");
+                    htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.height\\s+\\}\\}", advHeight + "px");
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.url\\s+\\}\\}", adInfoBean.getAd_material().getIcon());
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.w\\s+\\}\\}", ""+type.getImgW());
                     htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.h\\s+\\}\\}", "" + type.getImgH());
@@ -178,6 +190,44 @@ public class AdvRequestUtil {
             }
         });
 
+    }
+
+    public static String getHtmlByResponse(Context context, final int windowWidth, AdSlotType type, String response){
+        final AdvResponseBean.AdInfoBean adInfoBean;
+        AdvResponseBean data = new Gson().fromJson(response, AdvResponseBean.class);
+        adInfoBean = data.getAd_info().get(0);
+        String templateName = getTemplateId(type);
+        int width = type.getWidth();
+        int height = type.getHeight();
+        try {
+            String htmlTemplate = FileUtils.readTextInputStream(context.getAssets().open("axd"+ File.separator+templateName));
+//                    AdvBean htmlData = AdvBean.getDataByStr("{\"exposure_url\":\"http://s.mjmobi.com/imp?info=ChhDTWpvdXZyTEt4Q0tvTUZRR1AzejFwRUIQxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIgyOi6-ssrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\",\"btn_url\":\"http://c.mjmobi.com/cli?info=ChhDTWpvdXZyTEt4Q0tvTUZRR1AzejFwRUIQACC4DijEoKvgu6fY0cgBMMjouvrLKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"image\":{\"url\":\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\",\"width\":\"100%\",\"height\":\"100%\"},\"gl\":{\"logo\":{\"url\":\"file:///android_asset/public/img/wgtt.jpg\",\"w\":40,\"h\":40,\"scale\":2},\"title\":\"中草药高端护肤品牌\",\"detail\":\"喜欢, 是唯一的捷径. 我只管喜欢\",\"desc\":\"我只管喜欢, 不是因为有钱才喜欢, 是因为喜欢才有钱!\"}}");
+            L.e("读取到的html模板:"+htmlTemplate);
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.title\\s+\\}\\}", adInfoBean.getAd_material().getTitle() == null ? "" : adInfoBean.getAd_material().getTitle());
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.detail\\s+\\}\\}", adInfoBean.getAd_material().getDesc() == null ? "" : adInfoBean.getAd_material().getDesc());
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.desc\\s+\\}\\}", adInfoBean.getAd_material().getDesc() == null ? "" : adInfoBean.getAd_material().getDesc());
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.url\\s+\\}\\}", adInfoBean.getAd_material().getImages().get(0) == null ? "" : adInfoBean.getAd_material().getImages().get(0));
+            int advWidth, advHeight;
+            if (windowWidth <= 0){
+                advWidth = width;
+                advHeight = height;
+            }else{
+                advWidth = windowWidth;
+                advHeight = height * windowWidth / width;
+            }
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.width\\s+\\}\\}", advWidth + "px");
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.image.height\\s+\\}\\}", advHeight + "px");
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.url\\s+\\}\\}", adInfoBean.getAd_material().getImages().get(0) == null ? "" : adInfoBean.getAd_material().getImages().get(0));
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.w\\s+\\}\\}", ""+type.getImgW());
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.gl.logo.h\\s+\\}\\}", "" + type.getImgH());
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.btn_url\\s+\\}\\}", adInfoBean.getAd_material().getClick_url() == null ? "" : adInfoBean.getAd_material().getClick_url());
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s+axd.exposure_url\\s+\\}\\}", adInfoBean.getAd_material().getShow_urls().get(0) == null ? "" : adInfoBean.getAd_material().getShow_urls().get(0));
+            L.e("读取到的html模板2:"+htmlTemplate);
+            return htmlTemplate;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     private static String getTemplateId(AdSlotType type){

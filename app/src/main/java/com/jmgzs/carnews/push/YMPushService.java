@@ -50,7 +50,7 @@ public class YMPushService extends UmengMessageService implements IPush {
     public void appInit(final Context context) {
         final PushAgent mPushAgent = PushAgent.getInstance(context);
         mPushAgent.setPushIntentServiceClass(YMPushService.class);
-        mPushAgent.setDebugMode(true);
+//        mPushAgent.setDebugMode(true);
         //注册推送服务，每次调用register方法都会回调该接口
         mPushAgent.register(new IUmengRegisterCallback() {
 
