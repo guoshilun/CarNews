@@ -27,7 +27,7 @@ public class WVDownloadListener implements DownloadListener {
 
     @Override
     public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) || !url.endsWith(".apk")) {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             return;
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
@@ -41,14 +41,21 @@ public class WVDownloadListener implements DownloadListener {
     private void startDownload(String url) {
         String fileName = url.substring(url.lastIndexOf("/") + 1);
         L.e("dlfile==" + fileName);
-        String[] dlFileName = getDownloadedFileName();
-        if (fileName.equalsIgnoreCase(dlFileName[0])) {
-            Intent intent = new Intent(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-            intent.putExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L);
-            intent.putExtra(DownloadManager.COLUMN_LOCAL_URI, dlFileName[1]);
-            ct.sendBroadcast(intent);
-            return;
-        }
+        if (url.contains(".apk")) {
+            fileName = url.substring(0, url.lastIndexOf(".apk") + 4);
+            fileName = fileName.substring(url.lastIndexOf("/") + 1);
+            L.e("dlfile==" + fileName);
+            String[] dlFileName = getDownloadedFileName();
+            if (fileName.equalsIgnoreCase(dlFileName[0])) {
+                Intent intent = new Intent(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+                intent.putExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L);
+                intent.putExtra(DownloadManager.COLUMN_LOCAL_URI, dlFileName[1]);
+                ct.sendBroadcast(intent);
+                return;
+            }
+        } else
+            fileName = url.substring(url.lastIndexOf("/") + 1)+".apk";
+
 
         DownloadManager dm = (DownloadManager) ct.getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(
@@ -60,7 +67,7 @@ public class WVDownloadListener implements DownloadListener {
 
         request.setVisibleInDownloadsUi(true);
         request.setDestinationInExternalFilesDir(ct,
-                Environment.DIRECTORY_DOWNLOADS, url.substring(url.lastIndexOf("/") + 1));
+                Environment.DIRECTORY_DOWNLOADS, fileName);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             request.allowScanningByMediaScanner();

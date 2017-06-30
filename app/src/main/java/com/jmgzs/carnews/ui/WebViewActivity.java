@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.util.WVDownloadListener;
+import com.jmgzs.lib_network.utils.L;
 
 import static com.jmgzs.carnews.R.id.webView;
 
@@ -70,6 +71,7 @@ public class WebViewActivity extends BaseActivity {
     protected void initData() {
         Intent intent = getIntent();
         String url = intent.getStringExtra(INTENT_URL);
+        L.e("广告详情的URL："+url);
         wv.setVisibility(View.INVISIBLE);
         wv.loadUrl(url);
     }
