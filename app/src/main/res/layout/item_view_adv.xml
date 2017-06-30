@@ -8,20 +8,6 @@
     <WebView
         android:id="@+id/item_adv_wv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="100dp" />
-
-    <ImageView
-        android:id="@+id/item_image_close"
-        android:layout_width="@dimen/top_tab_padding"
-        android:layout_height="@dimen/top_tab_padding"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerVertical="true"
-        android:padding="@dimen/padding_8dp"
-        android:scaleType="fitXY"
-        android:src="@mipmap/user_icon" />
-
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

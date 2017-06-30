@@ -34,11 +34,10 @@ import static android.R.attr.author;
 
 /**
  * Created by mac on 17/6/12.
- * Description:
+ * Description:无图或者3图item
  */
 
 public class RCVHolder extends BaseHolder<NewsDataBean> {
-//        implements ListPreloader.PreloadModelProvider<Photo>, ListPreloader.PreloadSizeProvider<Photo> {
 
 
     private ImageView image;
@@ -48,11 +47,9 @@ public class RCVHolder extends BaseHolder<NewsDataBean> {
     private TextView author;
     private TextView time;
 
-    //    private int[] actualSize;
     private LinearLayout contentLayout;
 
     private GlideRequest<Drawable> request;
-    private Key signature;
 
 
     public RCVHolder(ViewGroup parent, @LayoutRes int layout, int w, int h) {
@@ -73,7 +70,6 @@ public class RCVHolder extends BaseHolder<NewsDataBean> {
     @Override
     public void setData(NewsDataBean data) {
         if (data == null) return;
-//        this.dataBean = data;
         title.setText(data.getTitle());
         author.setText(data.getPublish_source());
         time.setText(TimeUtils.getTimeFromDateString(data.getPublish_time()));
@@ -93,18 +89,4 @@ public class RCVHolder extends BaseHolder<NewsDataBean> {
         }
     }
 
-//    private NewsDataBean dataBean;
-
-//    public List<String> getPreloadItems(int position) {
-//        return (dataBean.getImg_list());
-//    }
-//
-//    public RequestBuilder getPreloadRequestBuilder(Photo item) {
-//        return request.clone().signature(signature).load(item);
-//    }
-//
-//    @Nullable
-//    public int[] getPreloadSize(Photo item, int adapterPosition, int perItemPosition) {
-//        return actualSize;
-//    }
 }

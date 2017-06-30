@@ -8,7 +8,7 @@ import java.util.List;
  * Description:
  */
 
-public class NewsDataBean extends BaseInfo {
+public class NewsDataBean extends BaseInfo implements IItemType {
 
     private String title = "Default";
     private int aid = 0;
@@ -110,5 +110,10 @@ public class NewsDataBean extends BaseInfo {
 
     public void setImg_list(List<String> img_list) {
         this.img_list = img_list;
+    }
+
+    @Override
+    public EnumItemType getItemType() {
+        return img_list == null || img_list.size() < 3 ? EnumItemType.IMAGE : EnumItemType.IMAGE3;
     }
 }

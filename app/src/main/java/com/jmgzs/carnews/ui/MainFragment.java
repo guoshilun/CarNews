@@ -177,6 +177,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
 
     protected void lazyLoad1() {
+
         if (adapter == null || adapter.getDataCount() == 0) {
             initAdapter(Urls.getUrlNews(String.valueOf(0), getChannel()), getNewsDataCache(0), false);
             startKey = 0;
@@ -269,6 +270,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
                     headerList.add(list.remove(0));
                 }
             createHeaderAdapter(headerList);
+
             createAdapter(list);
         } else {
             if (startKey == 0) {//下拉刷新
@@ -281,6 +283,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
                         headerList.add(list.remove(0));
                     }
                 headerAdapter.updateData(headerList);
+
                 adapter.fillList(list);
             } else {
                 adapter.appendList(list);

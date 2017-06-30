@@ -7,7 +7,7 @@ package com.jmgzs.carnews.bean;
 
 public class UpdateInfo extends BaseInfo {
 
-    private int version = 2;
+    private int version = 0;
     private String url = "";
     private String msg = "test";
 

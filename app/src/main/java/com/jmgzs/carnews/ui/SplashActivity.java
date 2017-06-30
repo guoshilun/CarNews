@@ -41,8 +41,6 @@ public class SplashActivity extends BaseActivity {
                 });
             }
         }, 2000);
-
-
     }
 
     private void goMain() {

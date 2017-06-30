@@ -34,7 +34,6 @@ public class MainActivity extends BaseActivity {
 
     private HomeTabProvider tabProvider;
     private ViewPager vPager;
-    private int currentPosition = 0;
     private HomeAdapter adapter;
     private RoundedImageView head;
 
@@ -57,60 +56,7 @@ public class MainActivity extends BaseActivity {
         final SmartTabLayout tab = getView(R.id.pager_tab);
         tab.setCustomTabView(tabProvider);
         tab.setViewPager(vPager);
-        tab.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
-        tab.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//                if (positionOffset > 0) {
-//                    tabProvider.getTabItem(position).setTabAlpha(1 - positionOffset);
-//                    tabProvider.getTabItem(position + 1).setTabAlpha(positionOffset);
-//                } else {
-//                    tabProvider.getTabItem(position).setTabAlpha(1 - positionOffset);
-//                }
-//                float scale = 0.2f;
-//                if (position == 0) {
-////                    // move to left
-//                    float scaleLeft = 1 - (positionOffset) * scale;
-//                    TabItem left = tabProvider.getTabItem(position);
-//                    left.setScaleX(scaleLeft);
-//                    left.setScaleY(scaleLeft);
-//                    float scaleRight = 1 - (1 - positionOffset) * scale;
-//                    TabItem right = tabProvider.getTabItem(position + 1);
-//                    right.setScaleX(scaleRight);
-//                    right.setScaleY(scaleRight);
-//                }
-//                ivTopLeftIcon.setAlpha(1 - positionOffset);
-//                ivTopLeftIcon.setTranslationX(-ivTopLeftIcon.getWidth() * 2 * positionOffset);
-
-                L.i(position + "," + positionOffset + "," + positionOffsetPixels);
-//                changeTextColor(position);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                currentPosition = position;
-//                changeTextColor(position);
-//                for (int i = 0, j = adapter.getCount(); i < j; i++) {
-//                    if (i == position) {
-//                        ( (TabItem)tab.getTabAt(position)).setTabAlpha(1);
-//                    }else
-//                        ( (TabItem)tab.getTabAt(i)).setTabAlpha(0);
-//                }
-            }
-
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
         checkUpdate();
-        showUpdateDialog(new UpdateInfo());
-
     }
 
 
