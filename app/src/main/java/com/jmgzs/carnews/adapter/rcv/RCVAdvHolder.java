@@ -22,7 +22,7 @@ import com.jmgzs.lib_network.utils.L;
 public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
 
 
-    private WebView wv ;
+    private WebView wv;
 
 
     public RCVAdvHolder(ViewGroup parent, @LayoutRes int layout, int w, int h) {
@@ -45,9 +45,14 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
                 return true;
             }
         });
-      JsBridge  js = new JsBridge((Activity) getContext(), new JsBridge.IJsCallback() {
+        JsBridge js = new JsBridge((Activity) getContext(), new JsBridge.IJsCallback() {
             @Override
             public void close() {
+
+            }
+
+            @Override
+            public void loadFinish() {
 
             }
         });
@@ -56,8 +61,8 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
 
     @Override
     public void setData(NewsDataBean data) {
-        if (data instanceof AdvDataBean){
-            AdvDataBean adv = (AdvDataBean)data;
+        if (data instanceof AdvDataBean) {
+            AdvDataBean adv = (AdvDataBean) data;
 
             wv.getLayoutParams().width = adv.getAdvW();
             wv.getLayoutParams().height = adv.getAdvH();
