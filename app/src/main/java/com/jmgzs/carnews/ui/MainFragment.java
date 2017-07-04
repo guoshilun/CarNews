@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
+import com.jmgsz.lib.adv.AdvTempList;
+import com.jmgsz.lib.adv.enums.AdSlotType;
 import com.jmgzs.autoviewpager.AutoScrollViewPager;
 import com.jmgzs.autoviewpager.indicator.CircleIndicator;
 import com.jmgzs.carnews.R;
@@ -22,6 +24,7 @@ import com.jmgzs.carnews.adapter.AutoPagerAdapter;
 import com.jmgzs.carnews.adapter.rcv.RCVAdapter;
 import com.jmgzs.carnews.adapter.rcvbase.OnRCVItemClickListener;
 import com.jmgzs.carnews.base.BaseFragment;
+import com.jmgzs.carnews.bean.AdvDataBean;
 import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.bean.NewsListBean;
 
@@ -37,6 +40,13 @@ import com.jmgzs.carnews.util.T;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static android.R.attr.data;
+import static android.R.id.list;
+import static android.media.CamcorderProfile.get;
+import static com.jmgsz.lib.adv.AdvTempList.getList_600_300;
+import static com.umeng.message.proguard.k.A;
+import static com.umeng.message.proguard.k.k;
 
 
 /**
@@ -177,7 +187,15 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
 
     protected void lazyLoad1() {
-
+        //请求广告
+        if (getCurrentPos() == 1) {
+            AdvTempList.requestAdvTempList(getActivity(), 5, AdSlotType.INFO_600_300_W);
+        } else if (getCurrentPos() == 3) {
+            AdvTempList.requestAdvTempList(getActivity(), 5, AdSlotType.INFO_720_405_W);
+        } else if (getCurrentPos() == 5) {
+            AdvTempList.requestAdvTempList(getActivity(), 5, AdSlotType.INFO_800_120_W);
+        }
+        //请求新闻列表
         if (adapter == null || adapter.getDataCount() == 0) {
             initAdapter(Urls.getUrlNews(String.valueOf(0), getChannel()), getNewsDataCache(0), false);
             startKey = 0;
@@ -202,15 +220,9 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
             in.putStringArrayListExtra("images", new ArrayList<>(dataBean.getImg_list()));
         else
             in.putStringArrayListExtra("images", new ArrayList<String>());
-        in.putExtra("channel" ,getChannel());
+        in.putExtra("channel", getChannel());
         startActivity(in);
 
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Bundle args = getArguments();
     }
 
 
@@ -257,9 +269,6 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
         }
         loadAll = false;
         ArrayList<NewsDataBean> list = data.getData();
-        for (NewsDataBean b : list) {
-            L.e(getClass().getSimpleName(), String.valueOf(b.getAid()));
-        }
         if (adapter == null || adapter.getDataCount() == 0) {//第一次
             if (saveCache) ConfigCache.setUrlCache(getContext(), url, data.toString());
             ArrayList<NewsDataBean> headerList = new ArrayList<>();
@@ -269,9 +278,9 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
                 for (int i = 0; i < pageCount; i++) {
                     headerList.add(list.remove(0));
                 }
-            createHeaderAdapter(headerList);
-
-            createAdapter(list);
+            createHeaderAdapter(headerList);//header
+            addAdvsIntoNews(list);//adv
+            createAdapter(list);//列表
         } else {
             if (startKey == 0) {//下拉刷新
                 if (saveCache) ConfigCache.setUrlCache(getContext(), url, data.toString());
@@ -283,7 +292,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
                         headerList.add(list.remove(0));
                     }
                 headerAdapter.updateData(headerList);
-
+                addAdvsIntoNews(list);
                 adapter.fillList(list);
             } else {
                 adapter.appendList(list);
@@ -297,7 +306,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
     private NewsListBean getNewsDataCache(int sk) {
         L.e("使用缓存");
-        String json = ConfigCache.getUrlCache(getContext(), Urls.getUrlNews(String.valueOf(sk), getChannel()));
+        String json = ConfigCache.getUrlCacheDefault(getContext(), Urls.getUrlNews(String.valueOf(sk), getChannel()));
         Gson g = new Gson();
         try {
             NewsListBean dataBean = g.fromJson(json, NewsListBean.class);
@@ -306,5 +315,32 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void addAdvsIntoNews(List<NewsDataBean> data) {
+        int k = 3;
+        for (int i = k; i < data.size(); i += (++k)) {
+            AdvDataBean bean = createAdvItemData();
+            if (bean != null) data.add(i, createAdvItemData());
+
+        }
+    }
+
+    private AdvDataBean createAdvItemData() {
+        AdvDataBean ad = new AdvDataBean();
+        List<AdvTempList.AdvTempBean> cache = null;
+        if (getCurrentPos() == 1) {
+            cache = AdvTempList.getList_600_300();
+        } else if (getCurrentPos() == 3) {
+            cache = AdvTempList.getList_740_405();
+        } else if (getCurrentPos() == 5) {
+            cache = AdvTempList.getList_800_120();
+        }
+        if (cache != null && cache.size() > 0) {
+            ad.setHtml(cache.get(0).getHtml());
+            ad.setAdvW(cache.get(0).getWidth());
+            ad.setAdvH(cache.get(0).getHeight());
+            return ad;
+        } else return null;
     }
 }

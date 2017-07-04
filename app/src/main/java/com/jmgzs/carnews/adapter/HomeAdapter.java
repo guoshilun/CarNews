@@ -38,9 +38,6 @@ public class HomeAdapter extends FragmentStatePagerAdapter {
         Fragment fragment = map.get(titles[position]);
         if (fragment == null) {
             MainFragment mainFragment = new MainFragment();
-            Bundle b = new Bundle();
-            b.putInt("templateId",2048);
-            mainFragment.setArguments(b);
             map.put(titles[position], mainFragment);
             fragment = mainFragment ;
         }else {

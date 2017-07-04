@@ -44,6 +44,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        overridePendingTransition(0, 0);
         head = getView(R.id.btn_right);
         head.setOnClickListener(this);
 

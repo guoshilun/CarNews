@@ -41,7 +41,7 @@ public class AdvResponseBean {
          * sid : 0
          */
 
-        private AdMaterialBean ad_material;
+        private AdMaterialBean ad_material = new AdMaterialBean();
         private int ad_type;
         private int adid;
         private String landing_page;
@@ -106,12 +106,12 @@ public class AdvResponseBean {
             private String title;
             private String content;
             private String desc;
-            private String icon;
+            private String icon="http://img.hb.aicdn.com/e92cb14d3507e32f9a8e5409c0630d575681bcb7e6bab-mbZKoR_fw658";
             private String app_name;
             private String app_pkg_name;
             private String app_download_url;
 
-            private String click_url;
+            private String click_url="http://c.mjmobi.com/cli?info=ChhDTWlLNjZYS0t4Q3VvTUZRR0kzSjRWMD0QACC4Dii82Or7h9uu7cwBMMiK66XKKzoOCJ4gEKzmBBi83gYg_iFA2ARYHmIcaHR0cDovL2N5LnNoZW5qaW5na2UxMjAuY29tL2gBcACAAZcPiAGw6gGQAQGYAQawAekH";
             private String brand;
             private String subtitle;
             private List<String> images;

@@ -30,6 +30,7 @@ public class WebViewActivity extends BaseActivity {
 
     private WebView wv;
     public static final String INTENT_URL = "url";
+    private boolean fromSplash =false;
 
     @Override
     protected int getContent(Bundle b) {
@@ -62,7 +63,7 @@ public class WebViewActivity extends BaseActivity {
         getView(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
             }
         });
 
@@ -71,9 +72,19 @@ public class WebViewActivity extends BaseActivity {
     protected void initData() {
         Intent intent = getIntent();
         String url = intent.getStringExtra(INTENT_URL);
+        fromSplash = intent.getBooleanExtra("fromSplash",false);
         L.e("广告详情的URL："+url);
         wv.setVisibility(View.INVISIBLE);
         wv.loadUrl(url);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fromSplash){
+            Intent in = new Intent(this ,MainActivity.class);
+            startActivity(in);
+        }
+        super.onBackPressed();
     }
 
     @Override

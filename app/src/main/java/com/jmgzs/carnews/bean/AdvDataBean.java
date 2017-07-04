@@ -7,9 +7,9 @@ package com.jmgzs.carnews.bean;
 
 public class AdvDataBean extends NewsDataBean {
 
-    private int advW ;
-    private int advH ;
-    private String html ;
+    private int advW;
+    private int advH;
+    private String html;
 
     public String getHtml() {
         return html;
