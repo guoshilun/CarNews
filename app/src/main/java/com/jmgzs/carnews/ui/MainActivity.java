@@ -57,6 +57,12 @@ public class MainActivity extends BaseActivity {
         final SmartTabLayout tab = getView(R.id.pager_tab);
         tab.setCustomTabView(tabProvider);
         tab.setViewPager(vPager);
+        tab.setOnScrollChangeListener(new SmartTabLayout.OnScrollChangeListener() {
+            @Override
+            public void onScrollChanged(int scrollX, int oldScrollX) {
+
+            }
+        });
         checkUpdate();
     }
 

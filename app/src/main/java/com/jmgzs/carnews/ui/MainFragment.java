@@ -116,9 +116,13 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (RecyclerView.SCROLL_STATE_IDLE == newState) {
-                    if (adapter != null && lastVisibleItem + 1 == adapter.getItemCount() && !loadAll && !isLoading) {
-                        isLoading = !isLoading;
-                        getData(startKey);
+                    if (adapter != null && lastVisibleItem + 1 == adapter.getItemCount() && !isLoading) {
+                        if (loadAll){
+                            T.toastS(getContext(), "暂无更多新闻");
+                        }else {
+                            isLoading = !isLoading;
+                            getData(startKey);
+                        }
                     }
                 }
             }
@@ -188,11 +192,11 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
     protected void lazyLoad1() {
         //请求广告
-        if (getCurrentPos() == 1) {
+        if (getCurrentPos() == 0) {
             AdvTempList.requestAdvTempList(getActivity(), 5, AdSlotType.INFO_600_300_W);
-        } else if (getCurrentPos() == 3) {
+        } else if (getCurrentPos() == 2) {
             AdvTempList.requestAdvTempList(getActivity(), 5, AdSlotType.INFO_720_405_W);
-        } else if (getCurrentPos() == 5) {
+        } else if (getCurrentPos() == 4) {
             AdvTempList.requestAdvTempList(getActivity(), 5, AdSlotType.INFO_800_120_W);
         }
         //请求新闻列表
@@ -318,22 +322,23 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     }
 
     private void addAdvsIntoNews(List<NewsDataBean> data) {
-        int k = 3;
-        for (int i = k; i < data.size(); i += (++k)) {
+        for (int i = 3; i < data.size();) {
             AdvDataBean bean = createAdvItemData();
-            if (bean != null) data.add(i, createAdvItemData());
-
+            if (bean != null) {
+                data.add(i, createAdvItemData());
+                i += 4;
+            } else break;
         }
     }
 
     private AdvDataBean createAdvItemData() {
         AdvDataBean ad = new AdvDataBean();
         List<AdvTempList.AdvTempBean> cache = null;
-        if (getCurrentPos() == 1) {
+        if (getCurrentPos() == 0) {
             cache = AdvTempList.getList_600_300();
-        } else if (getCurrentPos() == 3) {
+        } else if (getCurrentPos() == 2) {
             cache = AdvTempList.getList_740_405();
-        } else if (getCurrentPos() == 5) {
+        } else if (getCurrentPos() == 4) {
             cache = AdvTempList.getList_800_120();
         }
         if (cache != null && cache.size() > 0) {
@@ -341,6 +346,8 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
             ad.setAdvW(cache.get(0).getWidth());
             ad.setAdvH(cache.get(0).getHeight());
             return ad;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 }

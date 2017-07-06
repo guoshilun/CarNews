@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.R.attr.type;
 import static com.jmgsz.lib.adv.AdvUrls.API_ADV;
 
 /**
@@ -107,9 +108,10 @@ public class AdvRequestUtil {
     }
 
     public static void requestOpenAdv(final Context context, final IRequestCallBack<AdvResponseBean.AdInfoBean> callback) {
-//        final AdSlotType type = AdSlotType.OPEN_640_960;
-        final AdSlotType type = AdSlotType.getRandomOpenScreenType();
-        String json = ConfigCache.getUrlCache(context, API_ADV + type.name());
+        final AdSlotType type = AdSlotType.OPEN_640_960;
+        String json = ConfigCache.getUrlCacheDefault(context, API_ADV + type.name());
+//        final AdSlotType type = AdSlotType.getRandomOpenScreenType();
+//        String json = ConfigCache.getUrlCache(context, API_ADV + type.name());
         final Gson gson = new Gson();
         try {
             if (json == null) throw new NullPointerException();

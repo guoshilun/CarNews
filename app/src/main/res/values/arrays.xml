@@ -2,20 +2,39 @@
 <resources>
 
     <array name="tab_titles">
-        <item>推荐</item>
+
+        <item>热点</item>
         <item>新车</item>
+        <!--<item>速读</item>-->
+        <!--<item>图解</item>-->
+        <item>解析</item>
         <item>行业</item>
+        <item>销量</item>
+        <item>动态</item>
         <item>导购</item>
-        <item>用车</item>
-        <item>头条</item>
+        <item>试驾</item>
+        <!--<item>性能</item>-->
+        <item>使用</item>
+        <!--<item>修车</item>-->
+        <!--<item>用车</item>-->
+        <!--<item>技巧</item>-->
     </array>
 
     <array name="tab_channels">
-        <item>"100"</item>
-        <item>"200"</item>
-        <item>"300"</item>
-        <item>"400"</item>
-        <item>"500"</item>
-        <item>"600"</item>
+        <item>"1610"</item>
+        <item>"1500"</item>
+        <!--<item>"1510"</item>-->
+        <!--<item>"1520"</item>-->
+        <item>"1530"</item>
+        <item>"1600"</item>
+        <item>"1620"</item>
+        <item>"1630"</item>
+        <item>"1700"</item>
+        <item>"1710"</item>
+        <!--<item>"1720"</item>-->
+        <item>"1800"</item>
+        <!--<item>"1810"</item>-->
+        <!--<item>"1820"</item>-->
+        <!--<item>"1830"</item>-->
     </array>
 </resources>

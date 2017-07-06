@@ -114,6 +114,6 @@ public class NewsDataBean extends BaseInfo implements IItemType {
 
     @Override
     public EnumItemType getItemType() {
-        return img_list == null || img_list.size() < 3 ? EnumItemType.IMAGE : EnumItemType.IMAGE3;
+        return img_list != null && (img_list.size() >= 3 || img_list.size() == 0) ? EnumItemType.IMAGE3 : EnumItemType.IMAGE;
     }
 }

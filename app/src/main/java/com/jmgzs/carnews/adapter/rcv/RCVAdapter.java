@@ -17,6 +17,7 @@ import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.GlideApp;
 import com.jmgzs.carnews.base.GlideRequest;
 import com.jmgzs.carnews.bean.NewsDataBean;
+import com.jmgzs.carnews.js.JsBridge;
 import com.jmgzs.carnews.network.NetWorkReciver;
 import com.jmgzs.carnews.util.TimeUtils;
 import com.jmgzs.lib_network.utils.L;
@@ -54,13 +55,22 @@ public class RCVAdapter extends RCVBaseAdapter<NewsDataBean, BaseHolder<NewsData
         else if(viewType == 1){
             return new RCVHolder(parent, R.layout.item_view_image3, imageW, imageH);
         }else {
-            return new RCVAdvHolder(parent,R.layout.item_view_adv,imageW,imageH);
+            return new RCVAdvHolder(parent, R.layout.item_view_adv, new JsBridge.IJsCallback() {
+                @Override
+                public void close() {
+                    removeItem(0);
+                }
+
+                @Override
+                public void loadFinish() {
+
+                }
+            });
         }
     }
 
     @Override
     public int getViewType(int position) {
-//            return data != null && data.get(position - 1).getImg_list().size() < 3 ? 0 : 1;
         return data.get(position-1).getItemType().getValue();
     }
 

@@ -20,6 +20,7 @@ import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.base.GlideApp;
 import com.jmgzs.lib_network.network.IRequestCallBack;
+import com.jmgzs.lib_network.network.RequestUtil;
 
 /**
  * Created by mac on 17/6/15.
@@ -93,6 +94,11 @@ public class SplashActivity extends BaseActivity {
                         finish();
                     }
                 });
+                if (data.getAd_material().getShow_urls() != null &&
+                        data.getAd_material().getShow_urls().size() > 0)
+                    RequestUtil.requestByGetAsy(SplashActivity.this,
+                            data.getAd_material().getShow_urls().get(0), Void.class, null);
+
                 return true;
             }
         }).into(imageView);
@@ -111,7 +117,7 @@ public class SplashActivity extends BaseActivity {
 
             @Override
             public void onFinish() {
-//                goMain();
+                goMain();
             }
         };
         countDownTimer.start();

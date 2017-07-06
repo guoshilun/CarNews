@@ -1,8 +1,10 @@
 package com.jmgzs.carnews.adapter.rcv;
 
 import android.app.Activity;
+import android.net.http.SslError;
 import android.support.annotation.LayoutRes;
 import android.view.ViewGroup;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -25,7 +27,7 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
     private WebView wv;
 
 
-    public RCVAdvHolder(ViewGroup parent, @LayoutRes int layout, int w, int h) {
+    public RCVAdvHolder(ViewGroup parent, @LayoutRes int layout, final JsBridge.IJsCallback callback) {
         super(parent, layout);
         wv = getView(R.id.item_adv_wv);
 
@@ -44,16 +46,26 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
                 }
                 return true;
             }
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();//接受证书
+//                handler.cancel();//默认方式,白页
+            }
         });
         JsBridge js = new JsBridge((Activity) getContext(), new JsBridge.IJsCallback() {
             @Override
             public void close() {
-
+                if (callback !=null){
+                    callback.close();
+                }
             }
 
             @Override
             public void loadFinish() {
-
+                if (callback !=null){
+                    callback.loadFinish();
+                }
             }
         });
         wv.addJavascriptInterface(js, "carnews");
@@ -66,6 +78,7 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
 
             wv.getLayoutParams().width = adv.getAdvW();
             wv.getLayoutParams().height = adv.getAdvH();
+//            wv.loadUrl("https://www.baidu.com");
             wv.loadUrl(adv.getHtml());
         }
 
