@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <corners android:radius="@dimen/activity_horizontal_margin" />
+            <solid android:color="@color/bg_60" />
+            <padding android:bottom="@dimen/padding_5dp" android:left="@dimen/top_tab_padding" android:right="@dimen/top_tab_padding" android:top="@dimen/padding_5dp" />
+        </shape>
+    </item>
+</selector>

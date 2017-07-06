@@ -2,6 +2,7 @@ package com.jmgzs.carnews.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.bean.UpdateInfo;
 import com.jmgzs.carnews.util.T;
+
+import io.reactivex.annotations.NonNull;
 
 
 /**
@@ -48,13 +51,13 @@ public class UpdateDialog extends BaseDialog {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.update_id_ok:
-                if (mOnDialogClickListener !=null){
-                    mOnDialogClickListener.onClick(this,0);
+                if (mOnDialogClickListener != null) {
+                    mOnDialogClickListener.onClick(this, 0);
+                    dismiss();
                 }
-                dismiss();
                 break;
             case R.id.update_id_cancel:
-                if (force == 0)
+                if (!force)
                     dismiss();
                 else T.toastS("本次有重大更新,需升级后才能继续使用。");
                 break;
@@ -63,9 +66,17 @@ public class UpdateDialog extends BaseDialog {
         }
     }
 
-    private int force = 0 ;
+    @Override
+    public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK)
+            return true;
+        else
+            return super.dispatchKeyEvent(event);
+    }
 
-    public void setData(String msg , int force){
+    private boolean force = false;
+
+    public void setData(String msg, boolean force) {
         updateMsgTv.setText(msg);
         this.force = force;
     }

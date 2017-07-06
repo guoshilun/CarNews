@@ -6,6 +6,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jmgzs.carnews.bean.EnumItemType;
 import com.jmgzs.carnews.bean.NewsDataBean;
 
 import java.util.ArrayList;
@@ -83,6 +84,7 @@ public abstract class RCVBaseAdapter<D, T extends BaseHolder> extends RecyclerVi
                 holder.setData(data.get(position));
         }
         if (itemClickListener != null) {
+//            if (getViewType(position+getHeadersCount()) != EnumItemType.ADV.getValue())
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -252,29 +254,6 @@ public abstract class RCVBaseAdapter<D, T extends BaseHolder> extends RecyclerVi
         };
     }
 
-    //adv  begin----
-    private final List<FixedViewInfo> mAdvViewInfoList = new ArrayList<>();
-    private static final int BASE_ADV_VIEW_TYPE = -1 << 12;
-
-    public void addAdvView(View view) {
-        if (null == view) {
-            throw new IllegalArgumentException("the view to add must not be null");
-        }
-        final FixedViewInfo info = new FixedViewInfo();
-        info.view = view;
-        info.viewType = BASE_ADV_VIEW_TYPE + mAdvViewInfoList.size();
-        mAdvViewInfoList.add(info);
-        notifyDataSetChanged();
-    }
-
-    public void setAdvVisibility(boolean shouldShow) {
-        for (FixedViewInfo fvi : mAdvViewInfoList) {
-            fvi.view.setVisibility(shouldShow ? View.VISIBLE : View.GONE);
-        }
-        notifyDataSetChanged();
-    }
-
-    //adv end-----
 
     public void setmIsStaggeredGrid(boolean isStaggeredGrid) {
         mIsStaggeredGrid = isStaggeredGrid;
@@ -364,7 +343,13 @@ public abstract class RCVBaseAdapter<D, T extends BaseHolder> extends RecyclerVi
         notifyItemRangeChanged(0, list.size());
     }
 
-    public List<D> getData(){
+    public D removeItem(int position) {
+        D d = data.remove(position);
+        notifyItemRemoved(position);
+        return d;
+    }
+
+    public List<D> getData() {
         return data;
     }
 }

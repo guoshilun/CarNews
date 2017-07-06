@@ -26,13 +26,16 @@ import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.base.GlideApp;
+import com.jmgzs.carnews.bean.UpdateBean;
 import com.jmgzs.carnews.bean.UpdateInfo;
+import com.jmgzs.carnews.network.Urls;
 import com.jmgzs.carnews.network.update.UpdateDownloadListener;
 import com.jmgzs.carnews.ui.dialog.BaseDialog;
 import com.jmgzs.carnews.ui.dialog.DialogMenu;
 import com.jmgzs.carnews.ui.dialog.IMenuItemClickListerer;
 import com.jmgzs.carnews.ui.dialog.UpdateDialog;
 import com.jmgzs.carnews.ui.view.SettingItemView;
+import com.jmgzs.carnews.util.AppUtils;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.FileProvider7;
 import com.jmgzs.carnews.util.GetPathFromUri4kitkat;
@@ -164,6 +167,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
             case R.id.setting_cache:
                 if (!TextUtils.isEmpty(itemCache.getTextState()))
                     showCacheMenu();
+
                 break;
             case R.id.setting_textsize:
                 showTextMenu();
@@ -192,6 +196,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
     private void clearGlideCache() {
         GlideCacheUtil.getInstance().clearImageDiskCache(this);
         itemCache.setTextState("");
+        FileUtils.deleteFile(FileUtils.getAppBaseFile(this));
     }
 
     private void showPhotoMenu() {
@@ -303,20 +308,18 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
     }
 
     private void checkUpdate() {
-        showUpdateDialog(null);
-        String url = "http://oss.ucdl.pp.uc.cn/fs01/union_pack/Wandoujia_136165_web_inner_referral_binded.apk?x-oss-process=udf%2Fpp-udf%2CJjc3LiMnJ3Bxd353dHM%3D";
-
-        RequestUtil.requestByGetSync(this, url, UpdateInfo.class, new IRequestCallBack<UpdateInfo>() {
+        RequestUtil.requestByGetAsy(this, Urls.getUpdateUrl(), UpdateBean.class, new IRequestCallBack<UpdateBean>() {
             @Override
-            public void onSuccess(String url, UpdateInfo data) {
-                if (data != null && data.getRsp().getStatus() == 1) showUpdateDialog(data);
-                else T.toastS("当前为最新版");
+            public void onSuccess(String url, UpdateBean data) {
+                if (data != null && data.getRsp().getStatus() == 1)
+                    showUpdateDialog(data.getData());
+                else T.toastS("当前版本为最新版!");
 
             }
 
             @Override
             public void onFailure(String url, int errorCode, String msg) {
-                T.toastS("未知异常");
+                T.toastS("服务器异常,请稍后重试。");
             }
 
             @Override
@@ -327,16 +330,18 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
     }
 
     private void showUpdateDialog(final UpdateInfo data) {
+        if (data == null) return;
         UpdateDialog updateDialog = new UpdateDialog(this);
         updateDialog.show();
-        updateDialog.setData("1.update\n2.test\n3.重大更新....", 0);
+        updateDialog.setData(data.getMsg(), data.isForce());
         updateDialog.setOnDialogClickListener(new BaseDialog.OnDialogClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
-//                if (updateListener == null)
-//                    updateListener = new UpdateDownloadListener(MainActivity.this);
-//                updateListener.onDownloadStart(data.getUrl(), "汽车头条v" + data.getVersion_name() + "更新",
-//                        "1.修复若干bug\n2.功能新增");
+                if (updateListener == null)
+                    updateListener = new UpdateDownloadListener(UserSettingActivity.this);
+                updateListener.onDownloadStart(data.getUrl(),
+                        AppUtils.getAppName() + "v" + AppUtils.getVersionName() + "." + data.getVersion() + "更新",
+                        data.getMsg());
 
             }
         });

@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
+import com.jmgzs.lib_network.utils.NetworkUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +16,8 @@ public class ConfigCache {
     private static final String TAG = ConfigCache.class.getName();
 
     public static final int CONFIG_CACHE_MOBILE_TIMEOUT = 3600000; // 1 hour
-    public static final int CONFIG_CACHE_WIFI_TIMEOUT = 300000; // 5 minute
-    public static final int CONFIG_CACHE_DAY_TIMEOUT = 3600000 * 12; // 0.5 day ms
+    public static final int CONFIG_CACHE_WIFI_TIMEOUT = 300000 * 6; // 30 minute
+    public static final int CONFIG_CACHE_DAY_TIMEOUT = 3600000 * 24; // 0.5 day ms
 
     public static String getUrlCache(Context context, String url) {
         if (url == null) {
@@ -30,14 +31,13 @@ public class ConfigCache {
             // 1. in case the system time is incorrect (the time is turn back
             // long ago)
             // 2. when the network is invalid, you can only read the cache
-//            mNetWorkState = NetworkUtils.getNetworkType(AppApplication.getInstance());
-//            if (mNetWorkState != NetworkUtils.NETWORN_NONE && expiredTime < 0) {
-//                return null;
-//            }
-//            if (mNetWorkState == NetworkUtils.NETWORN_WIFI && expiredTime > CONFIG_CACHE_WIFI_TIMEOUT) {
-//                return null;
-//            } else
-            if ( expiredTime > CONFIG_CACHE_DAY_TIMEOUT) {
+            int  mNetWorkState = NetworkUtils.getNetworkState(context.getApplicationContext());
+            if (mNetWorkState != NetworkUtils.NETWORN_NONE && expiredTime > CONFIG_CACHE_MOBILE_TIMEOUT) {
+                return null;
+            }
+            if (mNetWorkState == NetworkUtils.NETWORN_WIFI && expiredTime > CONFIG_CACHE_WIFI_TIMEOUT) {
+                return null;
+            } else if (expiredTime > CONFIG_CACHE_DAY_TIMEOUT) {
                 return null;
             }
             try {
@@ -48,7 +48,7 @@ public class ConfigCache {
                 e.printStackTrace();
             }
         }
-        L.syso("cache :"+result);
+        L.i("cache :"+result);
         return result;
     }
 
@@ -73,7 +73,7 @@ public class ConfigCache {
                 e.printStackTrace();
             }
         }
-        L.syso("default cache :"+result);
+        L.i("default cache :"+result);
         return result;
     }
 

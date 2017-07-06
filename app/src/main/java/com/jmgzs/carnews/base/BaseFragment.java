@@ -74,6 +74,10 @@ public abstract class BaseFragment extends Fragment {
         L.e("update new pos:" + currentPos);
     }
 
+    public int getCurrentPos() {
+        return currentPos;
+    }
+
     protected String getChannel() {
         if (currentPos < 0 || currentPos > channels.length)
             currentPos = 0;

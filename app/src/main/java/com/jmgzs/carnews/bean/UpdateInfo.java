@@ -7,20 +7,12 @@ package com.jmgzs.carnews.bean;
 
 public class UpdateInfo extends BaseInfo {
 
-    private String version_name;
-    private String url;
-    private String msg;
+    private int version = 0;
+    private String url = "";
+    private String msg = "test";
 
-    private int force;
-    private StatusBean rsp;
+    private boolean force = false;
 
-    public String getVersion_name() {
-        return version_name;
-    }
-
-    public void setVersion_name(String version_name) {
-        this.version_name = version_name;
-    }
 
     public String getUrl() {
         return url;
@@ -38,19 +30,19 @@ public class UpdateInfo extends BaseInfo {
         this.msg = msg;
     }
 
-    public int getForce() {
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public boolean isForce() {
         return force;
     }
 
-    public void setForce(int force) {
+    public void setForce(boolean force) {
         this.force = force;
-    }
-
-    public StatusBean getRsp() {
-        return rsp;
-    }
-
-    public void setRsp(StatusBean rsp) {
-        this.rsp = rsp;
     }
 }

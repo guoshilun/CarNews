@@ -16,21 +16,18 @@ import java.util.HashMap;
 
 public class HomeAdapter extends FragmentStatePagerAdapter {
 
-    private final static int PAGE_COUNT = 6;
-    private   String[] titles = null ;
+    private String[] titles = null;
     private HashMap<String, Fragment> map;
 
     public HomeAdapter(FragmentManager fm, Context ct) {
         super(fm);
         map = new HashMap<>();
         titles = ct.getResources().getStringArray(R.array.tab_titles);
-        if (null == titles)
-            titles=new String[]{"推荐", "新车", "行业", "导购", "用车", "头条"};
     }
 
     @Override
     public int getCount() {
-        return PAGE_COUNT;
+        return titles.length;
     }
 
     @Override
@@ -38,15 +35,12 @@ public class HomeAdapter extends FragmentStatePagerAdapter {
         Fragment fragment = map.get(titles[position]);
         if (fragment == null) {
             MainFragment mainFragment = new MainFragment();
-            Bundle b = new Bundle();
-            b.putInt("templateId",2048);
-            mainFragment.setArguments(b);
             map.put(titles[position], mainFragment);
-            fragment = mainFragment ;
-        }else {
-            L.e("重用fragment pos:"+position);
+            fragment = mainFragment;
+        } else {
+            L.e("重用fragment pos:" + position);
         }
-        ((BaseFragment)fragment).updatePosition(position);
+        ((BaseFragment) fragment).updatePosition(position);
         return fragment;
     }
 
@@ -60,8 +54,8 @@ public class HomeAdapter extends FragmentStatePagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         super.destroyItem(container, position, object);
-        map.put(titles[position],(Fragment)object);
-        L.e("缓存一个fragment pos:"+position);
+        map.put(titles[position], (Fragment) object);
+        L.e("缓存一个fragment pos:" + position);
     }
 
 //    @Override

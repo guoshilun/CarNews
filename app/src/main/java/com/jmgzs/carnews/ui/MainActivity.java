@@ -12,7 +12,9 @@ import com.jmgzs.carnews.adapter.HomeAdapter;
 import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.base.GlideApp;
+import com.jmgzs.carnews.bean.UpdateBean;
 import com.jmgzs.carnews.bean.UpdateInfo;
+import com.jmgzs.carnews.network.Urls;
 import com.jmgzs.carnews.network.update.UpdateDownloadListener;
 import com.jmgzs.carnews.ui.dialog.AdvDialog;
 import com.jmgzs.carnews.ui.dialog.BaseDialog;
@@ -20,6 +22,7 @@ import com.jmgzs.carnews.ui.dialog.UpdateDialog;
 import com.jmgzs.carnews.ui.tab.HomeTabProvider;
 import com.jmgzs.carnews.ui.tab.TabItem;
 import com.jmgzs.carnews.util.InsertAdvUtil;
+import com.jmgzs.carnews.util.AppUtils;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
@@ -33,7 +36,6 @@ public class MainActivity extends BaseActivity {
 
     private HomeTabProvider tabProvider;
     private ViewPager vPager;
-    private int currentPosition = 0;
     private HomeAdapter adapter;
     private RoundedImageView head;
 
@@ -44,6 +46,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        overridePendingTransition(0, 0);
         head = getView(R.id.btn_right);
         head.setOnClickListener(this);
 
@@ -56,57 +59,13 @@ public class MainActivity extends BaseActivity {
         final SmartTabLayout tab = getView(R.id.pager_tab);
         tab.setCustomTabView(tabProvider);
         tab.setViewPager(vPager);
-        tab.setOnTouchListener(new View.OnTouchListener() {
+        tab.setOnScrollChangeListener(new SmartTabLayout.OnScrollChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
+            public void onScrollChanged(int scrollX, int oldScrollX) {
+
             }
         });
-        tab.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//                if (positionOffset > 0) {
-//                    tabProvider.getTabItem(position).setTabAlpha(1 - positionOffset);
-//                    tabProvider.getTabItem(position + 1).setTabAlpha(positionOffset);
-//                } else {
-//                    tabProvider.getTabItem(position).setTabAlpha(1 - positionOffset);
-//                }
-//                float scale = 0.2f;
-//                if (position == 0) {
-////                    // move to left
-//                    float scaleLeft = 1 - (positionOffset) * scale;
-//                    TabItem left = tabProvider.getTabItem(position);
-//                    left.setScaleX(scaleLeft);
-//                    left.setScaleY(scaleLeft);
-//                    float scaleRight = 1 - (1 - positionOffset) * scale;
-//                    TabItem right = tabProvider.getTabItem(position + 1);
-//                    right.setScaleX(scaleRight);
-//                    right.setScaleY(scaleRight);
-//                }
-//                ivTopLeftIcon.setAlpha(1 - positionOffset);
-//                ivTopLeftIcon.setTranslationX(-ivTopLeftIcon.getWidth() * 2 * positionOffset);
-
-                L.i(position + "," + positionOffset + "," + positionOffsetPixels);
-//                changeTextColor(position);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                currentPosition = position;
-//                changeTextColor(position);
-//                for (int i = 0, j = adapter.getCount(); i < j; i++) {
-//                    if (i == position) {
-//                        ( (TabItem)tab.getTabAt(position)).setTabAlpha(1);
-//                    }else
-//                        ( (TabItem)tab.getTabAt(i)).setTabAlpha(0);
-//                }
-            }
-
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
+        checkUpdate();
     }
 
 
@@ -117,7 +76,7 @@ public class MainActivity extends BaseActivity {
             GlideApp.with(this).asBitmap().centerInside().
                     placeholder(R.mipmap.user_head_default).error(R.mipmap.user_head_default).load(App.headPath).into(head);
 
-    }
+        }
 
     @Override
     public void onClick(View view) {
@@ -149,13 +108,11 @@ public class MainActivity extends BaseActivity {
     private UpdateDownloadListener updateListener;
 
     private void checkUpdate() {
-        showUpdateDialog(null);
-        String url = "http://oss.ucdl.pp.uc.cn/fs01/union_pack/Wandoujia_136165_web_inner_referral_binded.apk?x-oss-process=udf%2Fpp-udf%2CJjc3LiMnJ3Bxd353dHM%3D";
-
-        RequestUtil.requestByGetSync(this, url, UpdateInfo.class, new IRequestCallBack<UpdateInfo>() {
+        RequestUtil.requestByGetAsy(this, Urls.getUpdateUrl(), UpdateBean.class, new IRequestCallBack<UpdateBean>() {
             @Override
-            public void onSuccess(String url, UpdateInfo data) {
-                if (data != null && data.getRsp().getStatus() == 1) showUpdateDialog(data);
+            public void onSuccess(String url, UpdateBean data) {
+                if (data != null && data.getRsp().getStatus() == 1)
+                    showUpdateDialog(data.getData());
 
             }
 
@@ -172,16 +129,18 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showUpdateDialog(final UpdateInfo data) {
+        if (data == null) return;
         UpdateDialog updateDialog = new UpdateDialog(this);
         updateDialog.show();
-        updateDialog.setData("1.update\n2.test\n3.重大更新....", 0);
+        updateDialog.setData(data.getMsg(), data.isForce());
         updateDialog.setOnDialogClickListener(new BaseDialog.OnDialogClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
-//                if (updateListener == null)
-//                    updateListener = new UpdateDownloadListener(MainActivity.this);
-//                updateListener.onDownloadStart(data.getUrl(), "汽车头条v" + data.getVersion_name() + "更新",
-//                        "1.修复若干bug\n2.功能新增");
+                if (updateListener == null)
+                    updateListener = new UpdateDownloadListener(MainActivity.this);
+                updateListener.onDownloadStart(data.getUrl(),
+                        AppUtils.getAppName() + "v" + AppUtils.getVersionName() + "." + data.getVersion() + "更新",
+                        data.getMsg());
 
             }
         });
