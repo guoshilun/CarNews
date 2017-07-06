@@ -8,15 +8,18 @@
           content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <style type="text/css">
         #title{
+            text-indent: 0em;
             font-weight:bolder;
             font-size:20px;
             color:#000000;
         }
         #desc{
+            text-indent: 0em;
             font-size:12px;
             color:#a8a8a8;
         }
         p{
+            text-indent: 2em;
             font-size:15px;
         }
     </style>
@@ -51,7 +54,7 @@ function adClick(){
     window.carnews.loadFinish();
 };
 function closeAdv(){
-    var target = document.getElementById('adv')
+    var target = document.getElementById('adv_page')
     target.style.display="none";
 };
 function printSource(){
@@ -63,7 +66,7 @@ function showAdv(html, width, height){
 
     var iframe = document.createElement("iframe");
     iframe.src = html;
-    <!--iframe.id = 'adv';-->
+    iframe.id = 'adv_page';
     iframe.height = height + "px";
     iframe.width = width + "px";
     iframe.scrolling="no";
@@ -104,6 +107,13 @@ function changeFontSize(fontSize){
         tag.style.fontSize = size + "px";
      }
 };
+function showAdvPage(){
+    document.getElementById('adv_page').contentWindow.show();
+};
+function loadAdvFinish(){
+    window.carnews.loadAdvFinish();
+};
+
     </script>
 </head>
 <body onload="adClick()">

@@ -54,6 +54,11 @@ public class ScrollableWebView extends WebView {
         }
     }
 
+    @Override
+    public void flingScroll(int vx, int vy) {
+        super.flingScroll(vx, vy);
+    }
+
     public void setScrollListener(IWebViewScrollListener scrollListener) {
         this.scrollListener = scrollListener;
     }

@@ -48,7 +48,9 @@ public class AdvTempList {
             list_740_405 = new ArrayList<>();
             return data;
         }else{
-            return list_740_405.subList(0, count);
+            List<AdvTempBean> data = list_740_405.subList(0, count);
+            list_740_405.removeAll(data);
+            return data;
         }
     }
 
@@ -58,7 +60,9 @@ public class AdvTempList {
             list_800_120 = new ArrayList<>();
             return data;
         }else{
-            return list_800_120.subList(0, count);
+            List<AdvTempBean> data = list_800_120.subList(0, count);
+            list_800_120.removeAll(data);
+            return data;
         }
     }
 
@@ -68,7 +72,9 @@ public class AdvTempList {
             list_600_300 = new ArrayList<>();
             return data;
         }else{
-            return list_600_300.subList(0, count);
+            List<AdvTempBean> data = list_600_300.subList(0, count);
+            list_600_300.removeAll(data);
+            return data;
         }
     }
 

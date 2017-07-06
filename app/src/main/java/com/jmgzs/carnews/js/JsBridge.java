@@ -71,6 +71,19 @@ public class JsBridge {
             callback.loadFinish();
         }
     }
+    @JavascriptInterface
+    public void loadAdvFinish() {
+        if (callback != null){
+            callback.loadAdvFinish();
+        }
+    }
+    @JavascriptInterface
+    public void getAdvWidthHeight(int width, int height) {
+        if (callback != null){
+            callback.getAdvWidthHeight(width, height);
+        }
+    }
+
     public int getPageWidth() {
         return pageWidth;
     }
@@ -83,5 +96,9 @@ public class JsBridge {
         void close();
 
         void loadFinish();
+
+        void loadAdvFinish();
+
+        void getAdvWidthHeight(int width, int height);
     }
 }
