@@ -9,7 +9,8 @@ import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.util.T;
 import com.jmgzs.lib_network.utils.L;
 
-/**js回调类
+/**
+ * js回调类
  * Created by Wxl on 2017/6/15.
  */
 
@@ -20,15 +21,15 @@ public class JsBridge {
     private float fontSize;
     private int pageWidth;
 
-    public JsBridge(Activity activity, IJsCallback callback){
+    public JsBridge(Activity activity, IJsCallback callback) {
         this.activity = activity;
         this.callback = callback;
     }
 
     @JavascriptInterface
-    public void close(){
+    public void close() {
         L.e("广告关闭");
-        if (callback != null){
+        if (callback != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -39,9 +40,9 @@ public class JsBridge {
     }
 
     @JavascriptInterface
-    public void toast(final String msg){
-        for (int i = 0; i < msg.length(); i+=200){
-            int last = i + 200 > msg.length() ? msg.length(): i + 200;
+    public void toast(final String msg) {
+        for (int i = 0; i < msg.length(); i += 200) {
+            int last = i + 200 > msg.length() ? msg.length() : i + 200;
             L.e(msg.substring(i, last));
         }
 //        activity.runOnUiThread(new Runnable() {
@@ -53,9 +54,10 @@ public class JsBridge {
     }
 
     @JavascriptInterface
-    public float toast(){
+    public float toast() {
         return fontSize;
     }
+
     @JavascriptInterface
     public float getFontSize() {
         return fontSize;
@@ -65,22 +67,40 @@ public class JsBridge {
     public void setPageWidth(int width) {
         pageWidth = width;
     }
+
     @JavascriptInterface
     public void loadFinish() {
-        if (callback != null){
-            callback.loadFinish();
+        if (callback != null) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    callback.loadFinish();
+                }
+            });
         }
     }
+
     @JavascriptInterface
     public void loadAdvFinish() {
-        if (callback != null){
-            callback.loadAdvFinish();
+        if (callback != null) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    callback.loadAdvFinish();
+                }
+            });
         }
     }
+
     @JavascriptInterface
-    public void getAdvWidthHeight(int width, int height) {
-        if (callback != null){
-            callback.getAdvWidthHeight(width, height);
+    public void getAdvWidthHeight(final int width, final int height) {
+        if (callback != null) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    callback.getAdvWidthHeight(width, height);
+                }
+            });
         }
     }
 
@@ -92,7 +112,7 @@ public class JsBridge {
         this.fontSize = fontSize;
     }
 
-    public interface IJsCallback{
+    public interface IJsCallback {
         void close();
 
         void loadFinish();

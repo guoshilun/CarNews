@@ -81,16 +81,14 @@ public class InsertAdvUtil {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        float scaleX, scaleY;
+                        float scale;
                         if (mAdvDialog.getScale() > 0) {
-                            scaleX = mAdvDialog.getScale();
-                            scaleY = mAdvDialog.getScale();
+                            scale = mAdvDialog.getScale();
                         }else{
-                            scaleX = mWv.getScale();
-                            scaleY = mWv.getScale();
+                            scale = mWv.getScale();
                         }
-                        L.e("设置的插屏广告宽高：" + (mAdvW * scaleX) + "\t" + (mAdvH * scaleY));
-                        mAdvDialog.changeWidthHeight((int) (mAdvW * scaleX), (int) (mAdvH * scaleY));
+                        L.e("设置的插屏广告宽高：" + (mAdvW * scale) + "\t" + (mAdvH * scale));
+                        mAdvDialog.changeWidthHeight((int) (mAdvW * scale), (int) (mAdvH * scale));
                     }
                 });
 

@@ -156,7 +156,8 @@ public class AdvDialog extends BaseDialog {
         getWindow().setAttributes(lp);
         mWv.getLayoutParams().width = lp.width;
         mWv.getLayoutParams().height = lp.height;
-    }
+        mWv.invalidate();
+}
 
     @Override
     public void show() {

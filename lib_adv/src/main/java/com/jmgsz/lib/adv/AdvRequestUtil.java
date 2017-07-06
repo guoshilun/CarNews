@@ -234,9 +234,12 @@ public class AdvRequestUtil {
     }
 
     public static String getHtmlByResponse(Context context, final int pageWidth, final int imgWidth, final int imgHeight, final int iconWidth, final int iconHeight, AdSlotType type, String response){
-        final AdvResponseBean.AdInfoBean adInfoBean;
         AdvResponseBean data = new Gson().fromJson(response, AdvResponseBean.class);
-        adInfoBean = data.getAd_info().get(0);
+        return getHtmlByResponseObject(context, pageWidth, imgWidth, imgHeight, iconWidth, iconHeight, type, data);
+    }
+
+    public static String getHtmlByResponseObject(Context context, final int pageWidth, final int imgWidth, final int imgHeight, final int iconWidth, final int iconHeight, AdSlotType type, AdvResponseBean resObj){
+        final AdvResponseBean.AdInfoBean adInfoBean = resObj.getAd_info().get(0);
         String templateName = getTemplateId(type);
         try {
             String htmlTemplate = FileUtils.readTextInputStream(context.getAssets().open("axd" + File.separator + templateName));
