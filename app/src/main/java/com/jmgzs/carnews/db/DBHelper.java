@@ -197,6 +197,23 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean checkNews() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        if (db == null) {
+            return false;
+        }
+
+        Cursor cr = db.query(true, TABLE_NEWS, null, COLUMN_DEL + "=?", new String[]{"0"}, null, null, COLUMN_ID + " desc", null);
+        try {
+            return cr != null && cr.getCount() > 0;
+        } finally {
+            if (cr != null)
+                cr.close();
+            db.close();
+        }
+    }
+
     /**
      * 检测是否已经收藏过,收藏过update del为0,否则新增一条数据
      *
@@ -207,7 +224,7 @@ public class DBHelper extends SQLiteOpenHelper {
         int aid = info.getAid();
         SQLiteDatabase db = getReadableDatabase();
         if (db != null) {
-            Cursor cr = db.query(TABLE_NEWS, new String[]{COLUMN_AID,COLUMN_DEL}, COLUMN_AID + "=?",
+            Cursor cr = db.query(TABLE_NEWS, new String[]{COLUMN_AID, COLUMN_DEL}, COLUMN_AID + "=?",
                     new String[]{String.valueOf(aid)}, null, null, null);
             try {
                 if (cr != null && cr.getCount() > 0) {
@@ -246,15 +263,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private List<String> strToArray(String str) {
         if (TextUtils.isEmpty(str)) return null;
-        L.e(getClass().getSimpleName(),str);
+        L.e(getClass().getSimpleName(), str);
 
         String[] array = str.split(",");
         return Arrays.asList(array);
     }
 
     private String arrayToStr(List list) {
-        String ss =  list == null || list.size() == 0 ? "" : list.toString().replace("[", "").replace("]", "").replaceAll("\\s","");
-        L.e(getClass().getSimpleName(),ss);
+        String ss = list == null || list.size() == 0 ? "" : list.toString().replace("[", "").replace("]", "").replaceAll("\\s", "");
+        L.e(getClass().getSimpleName(), ss);
         return ss;
     }
 }
