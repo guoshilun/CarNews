@@ -12,7 +12,15 @@ public class UpdateInfo extends BaseInfo {
     private String msg = "test";
 
     private boolean force = false;
+    private boolean has_ad = false;
 
+    public boolean isHas_ad() {
+        return has_ad;
+    }
+
+    public void setHas_ad(boolean has_ad) {
+        this.has_ad = has_ad;
+    }
 
     public String getUrl() {
         return url;
