@@ -1,7 +1,10 @@
 package com.jmgzs.carnews.ui;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
@@ -13,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.CompoundButton;
@@ -27,7 +31,6 @@ import com.google.gson.Gson;
 import com.jmgsz.lib.adv.AdvRequestUtil;
 import com.jmgsz.lib.adv.bean.AdvRequestBean;
 import com.jmgsz.lib.adv.enums.AdSlotType;
-import com.jmgsz.lib.adv.interfaces.IAdvRequestCallback;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.App;
@@ -52,10 +55,13 @@ import com.jmgzs.lib_network.network.NetworkErrorCode;
 import com.jmgzs.lib_network.network.RequestUtil;
 import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
+import com.jmgzs.lib_network.utils.NetworkUtils;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -249,9 +255,12 @@ public class NewsInfoActivity extends BaseActivity {
         wv.getSettings().setJavaScriptEnabled(true);
         wv.getSettings().setUseWideViewPort(false);
         wv.getSettings().setLoadsImagesAutomatically(true);
-        if (Build.VERSION.SDK_INT >= 16) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             wv.getSettings().setAllowFileAccessFromFileURLs(true);
             wv.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
         }
         wv.setWebChromeClient(new WebChromeClient() {
 
@@ -274,6 +283,25 @@ public class NewsInfoActivity extends BaseActivity {
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 handler.proceed();
             }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+//                L.e("资源url:"+url);
+                if (App.isMobile && !url.contains("mj-img") && !url.startsWith("file://")){
+                    int networkState = NetworkUtils.getNetworkState(NewsInfoActivity.this);
+                    if (networkState == NetworkUtils.NETWORN_MOBILE_2G || networkState == NetworkUtils.NETWORN_MOBILE_3G || networkState == NetworkUtils.NETWORN_MOBILE_4G){
+                        try {
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            ((BitmapDrawable)NewsInfoActivity.this.getResources().getDrawable(R.mipmap.app_default_middle)).getBitmap().compress(Bitmap.CompressFormat.PNG, 100, baos);
+                            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                            return new WebResourceResponse("image/png", "utf-8", bais);
+                        } catch (Resources.NotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                return super.shouldInterceptRequest(view, url);
+            }
         });
         js = new JsBridge(this, new JsBridge.IJsCallback() {
             @Override
@@ -288,17 +316,31 @@ public class NewsInfoActivity extends BaseActivity {
 
             @Override
             public void loadAdvFinish() {
+                L.e("广告加载完成");
                 NewsInfoActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        wv.loadUrl("javascript:showAdvPage()");
+                        wv.loadUrl("javascript:showAdvPage()");//详情页面显示广告iframe
+                        App.getInstance().runOnUiThread(2000, new Runnable() {
+                            @Override
+                            public void run() {
+                                L.e("原始开始获取广告宽高");
+                                wv.loadUrl("javascript:getAdvRealWidthHeight()");//广告页获取页面宽高
+                            }
+                        });
                     }
                 });
             }
 
             @Override
-            public void getAdvWidthHeight(int width, int height) {
-
+            public void getAdvWidthHeight(final int width, final int height) {
+                L.e("收到广告位宽高回调");
+                NewsInfoActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        wv.loadUrl("javascript:setAdvWidthHeight("+width+","+height+")");//广告页获取页面宽高
+                    }
+                });
             }
         });
         wv.addJavascriptInterface(js, "carnews");
@@ -309,6 +351,12 @@ public class NewsInfoActivity extends BaseActivity {
         String newHtml = "javascript:showAdv(\""+html+"\", "+js.getPageWidth()+","+newHeight+")";
         L.e("插入广告html："+newHtml);
         wv.loadUrl(newHtml);
+        App.getInstance().runOnUiThread(1000, new Runnable() {
+            @Override
+            public void run() {
+                wv.loadUrl("javascript:setIFrameParentWindow()");//调用后js会自动回调loadAdvFinish()方法
+            }
+        });
         new Thread(){
             @Override
             public void run() {
@@ -320,7 +368,7 @@ public class NewsInfoActivity extends BaseActivity {
                 NewsInfoActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        wv.loadUrl("javascript:printSource()");
+//                        wv.loadUrl("javascript:printSource()");
                     }
                 });
 
@@ -551,7 +599,7 @@ public class NewsInfoActivity extends BaseActivity {
             File parent = file.getParentFile();
             html = html.replaceAll("file:///android_assets", Uri.fromFile(parent).toString());
             FileUtils.writeTextFile(file, html);
-            FileUtils.releaseAssets(NewsInfoActivity.this, "axd",FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info");
+            FileUtils.releaseAssets(NewsInfoActivity.this, "axd", FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info");
             L.e("adv Html:"+html);
             showAdv(Uri.fromFile(file).toString(), width, height);
         } catch (IOException e) {
