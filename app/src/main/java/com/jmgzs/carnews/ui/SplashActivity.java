@@ -20,6 +20,8 @@ import com.jmgsz.lib.adv.bean.AdvResponseBean;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.base.GlideApp;
+import com.jmgzs.carnews.util.Const;
+import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
 
@@ -58,7 +60,9 @@ public class SplashActivity extends BaseActivity {
         AdvRequestUtil.requestOpenAdv(this, new IRequestCallBack<AdvResponseBean.AdInfoBean>() {
             @Override
             public void onSuccess(String url, final AdvResponseBean.AdInfoBean data) {
-                loadImage(data);
+                if (SPBase.getBoolean(Const.SPKey.OPEN_ADV, false))
+                    loadImage(data);
+                else delayGoMain();
             }
 
             @Override
