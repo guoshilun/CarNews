@@ -40,6 +40,7 @@ import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.FileProvider7;
 import com.jmgzs.carnews.util.GetPathFromUri4kitkat;
 import com.jmgzs.carnews.util.GlideCacheUtil;
+import com.jmgzs.carnews.util.LoaderUtil;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.carnews.util.T;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
@@ -79,6 +80,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
     private String cropPath = null;
     private String[] textSizeTitle = {"小", "标准", "大"};
     private int type = 1;
+    private boolean isStoreListNotNull = false;
 
     @Override
     protected int getContent(Bundle save) {
@@ -143,6 +145,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemPush.setChecked(App.isRecptPush);
         type = SPBase.getInt(Const.SPKey.TEXT_SIZE, 1);
         itemTextSize.setTextState(textSizeTitle[type]);
+        isStoreListNotNull = LoaderUtil.get().hasStored(this);
     }
 
     @Override
@@ -156,7 +159,9 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
                 showPhotoMenu();
                 break;
             case R.id.setting_store:
-                startActivity(new Intent(this, NewsStoreActivity.class));
+                if (isStoreListNotNull)
+                    startActivity(new Intent(this, NewsStoreActivity.class));
+                else T.toastS("尚未收藏任何新闻");
                 break;
             case R.id.setting_update:
                 checkUpdate();

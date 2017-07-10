@@ -23,6 +23,8 @@ import com.jmgzs.carnews.ui.tab.HomeTabProvider;
 import com.jmgzs.carnews.ui.tab.TabItem;
 import com.jmgzs.carnews.util.InsertAdvUtil;
 import com.jmgzs.carnews.util.AppUtils;
+import com.jmgzs.carnews.util.Const;
+import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
@@ -144,6 +146,7 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+        SPBase.getBoolean(Const.SPKey.OPEN_ADV,data.isHas_ad());
     }
 
     @Override

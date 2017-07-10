@@ -99,6 +99,11 @@ public class LoaderUtil {
 
     }
 
+    public boolean hasStored(Context ct){
+        DBHelper dh = getHelper(ct);
+        return dh.checkNews();
+    }
+
     private DBHelper getHelper(Context ct){
         return DBHelper.getInstance(ct);
     }

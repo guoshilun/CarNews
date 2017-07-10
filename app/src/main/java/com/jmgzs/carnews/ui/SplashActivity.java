@@ -2,6 +2,7 @@ package com.jmgzs.carnews.ui;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -19,8 +20,12 @@ import com.jmgsz.lib.adv.bean.AdvResponseBean;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.base.GlideApp;
+import com.jmgzs.carnews.util.Const;
+import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
+
+import retrofit2.http.Url;
 
 /**
  * Created by mac on 17/6/15.
@@ -55,7 +60,9 @@ public class SplashActivity extends BaseActivity {
         AdvRequestUtil.requestOpenAdv(this, new IRequestCallBack<AdvResponseBean.AdInfoBean>() {
             @Override
             public void onSuccess(String url, final AdvResponseBean.AdInfoBean data) {
-                loadImage(data);
+                if (SPBase.getBoolean(Const.SPKey.OPEN_ADV, false))
+                    loadImage(data);
+                else delayGoMain();
             }
 
             @Override
@@ -65,6 +72,8 @@ public class SplashActivity extends BaseActivity {
 
             @Override
             public void onCancel(String url) {
+                if (url != null && url.startsWith("http"))
+                    GlideApp.with(SplashActivity.this).downloadOnly().load(url);
                 delayGoMain();
             }
         });

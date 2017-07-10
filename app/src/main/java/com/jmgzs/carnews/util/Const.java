@@ -15,6 +15,7 @@ public class Const {
         public static final String PUSH = "openPush";
         public static final String HEAD_PATH="headPath";
         public static final String TEXT_SIZE="defaultTextSize";
+        public static final String OPEN_ADV="openAdv";
     }
 
     public static class PhotoCode{

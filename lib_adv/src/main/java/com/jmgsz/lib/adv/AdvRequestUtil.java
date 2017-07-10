@@ -131,6 +131,7 @@ public class AdvRequestUtil {
                             return;
                         }
                         ConfigCache.setUrlCache(context, API_ADV + type.name(), gson.toJson(data.getAd_info().get(0)));
+                        callback.onCancel(data.getAd_info().get(0).getAd_material().getImages().get(0));
                     }
 
                     @Override

@@ -26,7 +26,7 @@ public class Urls {
     }
 
     public static String getUpdateUrl() {
-        return String.format(URL_UPDATE, AppUtils.getMD5BundleId(), AppUtils.getVersionNum()+1);
+        return String.format(URL_UPDATE, AppUtils.getMD5BundleId(), AppUtils.getVersionNum());
     }
 
 }
