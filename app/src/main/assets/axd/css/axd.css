@@ -32,8 +32,8 @@
 }
 .axd_ax {
     position: absolute;
-    bottom: 0;
-    left: 0;
+    bottom: 13px;
+    left: 10px;
     color: #fff;
     font-style: normal;
     text-shadow: 0 0 2px #000;
@@ -41,6 +41,7 @@
     transform: scale(.5);
     /*-webkit-transform-origin: 0% 100%;*/
     transform-origin: 0% 100%;
+    z-index: 999;
 }
 
 /*****************GL*****************/

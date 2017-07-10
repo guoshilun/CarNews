@@ -5,7 +5,7 @@
     <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport"
-          content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <style type="text/css">
         #title{
             text-indent: 0em;
@@ -18,16 +18,18 @@
             font-size:12px;
             color:#a8a8a8;
         }
-        p{
+        .info_p{
             text-indent: 2em;
             font-size:15px;
+        }
+        .info_img{
+            width:100%;
+            text-indent: 0;
         }
     </style>
     <script type="text/javascript">
 function adClick(){
-    <!--window.carnews.close();-->
     var winWidth = window.innerWidth;
-	<!--window.carnews.toast('屏幕宽:'+winWidth);-->
     function getImgNaturalStyle(img) {
         var nWidth, nHeight
         if (img.naturalWidth) { // 现代浏览器
@@ -39,15 +41,7 @@ function adClick(){
     var imgs = document.getElementsByTagName('img');
     for (var i=0; i < imgs.length; i++){
         var img = imgs[i];
-        var width, height;
-        var imgNatural = getImgNaturalStyle(img);
-        width = imgNatural[0];
-        height = imgNatural[1];
-        <!--window.carnews.toast("img1宽:"+width+"img1高："+height);-->
-        height = Math.round(height);
-        img.height = Math.round(height * (winWidth - 18) / width);
-        img.width = winWidth - 18;
-        <!--window.carnews.toast("img宽:"+img.width+"img高："+img.height);-->
+        img.className = 'info_img';
     }
     changeFontSize(window.carnews.getFontSize());
     window.carnews.setPageWidth(window.innerWidth - 18);
@@ -68,32 +62,33 @@ function showAdv(html, width, height){
     iframe.src = html;
     iframe.id = 'adv_page';
     iframe.height = height + "px";
-    iframe.width = width + "px";
+    iframe.width = width + 'px';
     iframe.scrolling="no";
     iframe.frameBorder = 0;
     iframe.style.margin = 0;
     body.appendChild(iframe);
-    iframe.style.display="block";
-    if (window.navigator.userAgent.indexOf('IE') == -1) { //非IE的浏览器
-        iframe.onload = setIframe;
-    } else {
-        iframe.onreadystatechange = function() { //IE浏览器
-            if (iframe.readyState == 'complete') { //判断状态
-                setIframe();
-            }
-        }
-    }
+    <!--iframe.style.display="none";-->
+
+    <!--if (window.navigator.userAgent.indexOf('IE') == -1) { //非IE的浏览器-->
+        <!--iframe.onload = setIframe;-->
+    <!--} else {-->
+        <!--iframe.onreadystatechange = function() { //IE浏览器-->
+            <!--if (iframe.readyState == 'complete') { //判断状态-->
+                <!--setIframe();-->
+            <!--}-->
+        <!--}-->
+    <!--}-->
 
 };
+function setIFrameParentWindow(){
+    document.getElementById('adv_page').contentWindow.setParentWindow(window);
+};
 function changeFontSize(fontSize){
-    <!--window.carnews.toast("字体大小:"+fontSize);-->
     var size = parseInt(fontSize * 22);
-    <!--window.carnews.toast("title 字体大小:"+size);-->
     var title = document.getElementById('title');
     title.style.fontSize = size + "px";
     var desc = document.getElementById('desc');
     size = parseInt(fontSize * 12);
-    <!--window.carnews.toast("desc 字体大小:"+size);-->
     desc.style.fontSize = size + "px";
     // 获取节点对象
     var tags = document.getElementsByTagName("p");
@@ -102,9 +97,16 @@ function changeFontSize(fontSize){
         if (tag.id == 'title' || tag.id == 'desc'){
             continue;
         }
-        size = parseInt(fontSize * 15);
-        <!--window.carnews.toast("p 字体大小:"+size);-->
-        tag.style.fontSize = size + "px";
+        var imgs = tag.getElementsByTagName('img');
+        if ((!imgs) || imgs.length < 1){
+            tag.className = 'info_p';
+            size = parseInt(fontSize * 15);
+            tag.style.fontSize = size + "px";
+        }else{
+            window.carnews.toast("图片节点："+tag);
+            tag.className = "info_img";
+            tag.style.textIndent = 0;
+        }
      }
 };
 function showAdvPage(){
@@ -114,6 +116,21 @@ function loadAdvFinish(){
     window.carnews.loadAdvFinish();
 };
 
+function getAdvRealWidthHeight(){
+    <!--window.carnews.toast("开始获取到宽高");-->
+    document.getElementById('adv_page').contentWindow.getWidthHeight();
+};
+
+function callbackAdvWidthHeight(w, h){
+    <!--window.carnews.toast("获取到宽高"+w+"\t"+h);-->
+    window.carnews.getAdvWidthHeight(w, h);
+};
+function setAdvWidthHeight(width, height){
+    <!--window.carnews.toast("设置宽高"+width+"\t"+height);-->
+    var adv = document.getElementById('adv_page');
+    adv.width = width;
+    adv.height = height;
+};
     </script>
 </head>
 <body onload="adClick()">
