@@ -21,6 +21,26 @@
             font-weight: 400;
         }
     </style>
+    <script type="text/javascript">
+        function loadFinish(){
+            window.carnews.toast('浏览器宽高：'+document.getElementsByClassName('axd_container')[0].clientWidth+'\t'+document.getElementsByClassName('axd_container')[0].clientHeight);
+            window.carnews.loadAdvFinish();
+            if (window.parent){
+                window.parent.loadAdvFinish();
+            }
+        };
+
+        function getWidthHeight(){
+            var w = document.getElementsByClassName('axd_container')[0].clientWidth;
+            var h = document.getElementsByClassName('axd_container')[0].clientHeight;
+            window.carnews.getAdvWidthHeight(w, h);
+        };
+
+        function show(){
+            document.getElementById('adv_body').style.display="block";
+        };
+        window.addEventListener('DomContentLoaded', function(){document.getElementById('adv_body').style.display="none";}, false);
+    </script>
 </head>
 
 <body>
@@ -41,7 +61,7 @@
             </div>
             <div class="axd_container_bg">
                 <a href="{{ axd.btn_url }}" target="_blank">
-                    <img src="{{ axd.image.url }}" width="{{ axd.image.width }}" alt="">
+                    <img src="{{ axd.image.url }}" width="100%" alt="">
                 </a>
             </div>
             <!-- 图文内容 -->

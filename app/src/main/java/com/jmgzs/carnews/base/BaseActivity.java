@@ -1,6 +1,10 @@
 package com.jmgzs.carnews.base;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -9,6 +13,8 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +26,7 @@ import com.jmgzs.carnews.R;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
+import com.jmgzs.carnews.util.InsertAdvUtil;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.lib_network.utils.L;
 
@@ -40,6 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setTheme();
         translucentStatusBar();
+        this.registerReceiver(mHomeKeyEventReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         L.setTag(getClass().getSimpleName());
         PushUtil.getPush().activityInit(this);
         root = new LinearLayout(this);
@@ -159,5 +167,48 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    private InsertAdvUtil insertAdvReq;
+    private boolean isBackHome = false;
+
+    private BroadcastReceiver mHomeKeyEventReceiver = new BroadcastReceiver() {
+        String SYSTEM_REASON = "reason";
+        String SYSTEM_HOME_KEY = "homekey";
+        String SYSTEM_HOME_KEY_LONG = "recentapps";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
+                String reason = intent.getStringExtra(SYSTEM_REASON);
+                if (TextUtils.equals(reason, SYSTEM_HOME_KEY)) {
+                    //表示按了home键,程序到了后台
+                    isBackHome = true;
+                }else if(TextUtils.equals(reason, SYSTEM_HOME_KEY_LONG)){
+                    //表示长按home键,显示最近使用的程序列表
+                }
+            }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isBackHome){
+            if (insertAdvReq == null){
+                insertAdvReq = new InsertAdvUtil(this);
+            }
+            if (!insertAdvReq.isDialogShown()){
+                insertAdvReq.requestAdv();
+            }
+            isBackHome = false;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        this.unregisterReceiver(mHomeKeyEventReceiver);
+        super.onDestroy();
     }
 }

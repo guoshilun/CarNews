@@ -65,6 +65,16 @@ public class RCVAdapter extends RCVBaseAdapter<NewsDataBean, BaseHolder<NewsData
                 public void loadFinish() {
 
                 }
+
+                @Override
+                public void loadAdvFinish() {
+
+                }
+
+                @Override
+                public void getAdvWidthHeight(int width, int height) {
+
+                }
             });
         }
     }

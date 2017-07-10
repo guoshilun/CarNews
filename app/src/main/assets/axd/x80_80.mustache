@@ -9,7 +9,7 @@
     <meta content="yes" name="apple-touch-fullscreen">
     <meta content="telephone=no,email=no" name="format-detection">
     <meta name="App-Config" content="fullscreen=yes,useHistoryState=yes,transition=yes">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width={{width}}, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=0">
     <meta name="renderer" content="webkit">
     <meta name="referrer" content="always" />
     <link rel="shortcut icon" href="file:///android_assets/axd/favicon.ico">
@@ -33,9 +33,29 @@
             max-width: 200px;
         }
     </style>
+    <script type="text/javascript">
+        function loadFinish(){
+            window.carnews.toast('浏览器宽高：'+document.getElementsByClassName('axd_container')[0].clientWidth+'\t'+document.getElementsByClassName('axd_container')[0].clientHeight);
+            window.carnews.loadAdvFinish();
+            if (window.parent){
+                window.parent.loadAdvFinish();
+            }
+        };
+
+        function getWidthHeight(){
+            var w = document.getElementsByClassName('axd_container')[0].clientWidth;
+            var h = document.getElementsByClassName('axd_container')[0].clientHeight;
+            window.carnews.getAdvWidthHeight(w, h);
+        };
+
+        function show(){
+            document.getElementById('adv_body').style.display="block";
+        };
+        window.addEventListener('DomContentLoaded', function(){document.getElementById('adv_body').style.display="none";}, false);
+    </script>
 </head>
 
-<body>
+<body id="adv_body" onload="loadFinish()">
     <div class="axd_container axd_container_top">
         <!-- 曝光 -->
         <div class="axd_expose">
@@ -50,7 +70,7 @@
             <div class="axd_container_content">
                 <div class="clearfix">
                     <div class="brand_logo fl">
-                        <img src="{{ axd.gl.logo.url }}" alt="" width="{{ axd.gl.logo.w }}" height="{{ axd.gl.logo.h }}" />
+                        <img id="brand_logo_img" src="{{ axd.gl.logo.url }}" alt="" width="{{ axd.gl.logo.w }}" height="{{ axd.gl.logo.h }}" />
                     </div>
                     <div class="brand_content fl">
                         <span class="brand_title">{{ axd.gl.title }}</span>

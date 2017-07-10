@@ -3,6 +3,7 @@ package com.jmgzs.carnews.ui;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -268,6 +270,10 @@ public class NewsInfoActivity extends BaseActivity {
                 }
                 return true;
             }
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
+            }
         });
         js = new JsBridge(this, new JsBridge.IJsCallback() {
             @Override
@@ -278,6 +284,21 @@ public class NewsInfoActivity extends BaseActivity {
             @Override
             public void loadFinish() {
                 requestAdv();
+            }
+
+            @Override
+            public void loadAdvFinish() {
+                NewsInfoActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        wv.loadUrl("javascript:showAdvPage()");
+                    }
+                });
+            }
+
+            @Override
+            public void getAdvWidthHeight(int width, int height) {
+
             }
         });
         wv.addJavascriptInterface(js, "carnews");
@@ -480,7 +501,7 @@ public class NewsInfoActivity extends BaseActivity {
                     L.e("100*500先不调");
                     return;
                 }
-                html = AdvRequestUtil.getHtmlByResponse(NewsInfoActivity.this, js.getPageWidth(), slotType, response);
+                html = AdvRequestUtil.getHtmlByResponse(NewsInfoActivity.this, js.getPageWidth(), slotType.getImgW(), slotType.getImgH(), slotType.getIconW(), slotType.getIconH(), slotType, response);
                 final String finalHtml = html;
                 NewsInfoActivity.this.runOnUiThread(new Runnable() {
                     @Override

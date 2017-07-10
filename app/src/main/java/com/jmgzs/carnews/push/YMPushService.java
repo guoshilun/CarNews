@@ -106,18 +106,19 @@ public class YMPushService extends UmengMessageService implements IPush {
             L.e(msg.custom);
             L.e(pushBean.toString());
             L.e("推送大图："+pushBean.getImg());
-            App.getInstance().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    GlideApp.with(context).asBitmap().fitCenter().load(pushBean.getImg()).into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                            L.e("推送大图下载成功");
-                            showNotification(context, pushBean, resource);
-                        }
-                    });
-                }
-            });
+//            App.getInstance().runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    GlideApp.with(context).asBitmap().fitCenter().load(pushBean.getImg()).into(new SimpleTarget<Bitmap>() {
+//                        @Override
+//                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+//                            L.e("推送大图下载成功");
+//
+//                        }
+//                    });
+//                }
+//            });
+            showNotification(context, pushBean);
             // 对完全自定义消息的处理方式，点击或者忽略
             boolean isClickOrDismissed = true;
             if (isClickOrDismissed) {
@@ -157,9 +158,7 @@ public class YMPushService extends UmengMessageService implements IPush {
         }
     }
 
-    private static int id = 1;
-
-    private void showNotification(Context context, PushBean pushBean, Bitmap largeIcon){
+    private void showNotification(Context context, PushBean pushBean){
         //获取NotificationManager实例
         NotificationManager notifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(context, NewsInfoActivity.class);
@@ -184,6 +183,6 @@ public class YMPushService extends UmengMessageService implements IPush {
                 ;
 //        RemoteViews expandedView = new RemoteViews(getPackageName(), R.layout.);
 //        builder.setCustomBigContentView(expandedView);
-        notifyManager.notify(id++, builder.build());
+        notifyManager.notify(""+pushBean.getAid(), 1, builder.build());
     }
 }

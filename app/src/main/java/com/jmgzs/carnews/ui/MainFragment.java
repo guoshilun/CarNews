@@ -1,5 +1,6 @@
 package com.jmgzs.carnews.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import com.google.gson.Gson;
 import com.jmgsz.lib.adv.AdvTempList;
 import com.jmgsz.lib.adv.enums.AdSlotType;
+import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.autoviewpager.AutoScrollViewPager;
 import com.jmgzs.autoviewpager.indicator.CircleIndicator;
 import com.jmgzs.carnews.R;
@@ -192,12 +194,14 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
     protected void lazyLoad1() {
         //请求广告
+        Activity activity = getActivity();
+        int width = DensityUtils.getScreenWidthPixels(activity) - DensityUtils.dip2px(activity, 8 * 2);
         if (getCurrentPos() == 0) {
-            AdvTempList.requestAdvTempList(getActivity(), 5, AdSlotType.INFO_600_300_W);
+            AdvTempList.requestAdvTempList(activity, width, 5, AdSlotType.INFO_600_300_W);
         } else if (getCurrentPos() == 2) {
-            AdvTempList.requestAdvTempList(getActivity(), 5, AdSlotType.INFO_720_405_W);
+            AdvTempList.requestAdvTempList(activity, width, 5, AdSlotType.INFO_720_405_W);
         } else if (getCurrentPos() == 4) {
-            AdvTempList.requestAdvTempList(getActivity(), 5, AdSlotType.INFO_800_120_W);
+            AdvTempList.requestAdvTempList(activity, width, 5, AdSlotType.INFO_800_120_W);
         }
         //请求新闻列表
         if (adapter == null || adapter.getDataCount() == 0) {
@@ -325,7 +329,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
         for (int i = 3; i < data.size();) {
             AdvDataBean bean = createAdvItemData();
             if (bean != null) {
-                data.add(i, createAdvItemData());
+                data.add(i, bean);
                 i += 4;
             } else break;
         }
@@ -337,7 +341,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
         if (getCurrentPos() == 0) {
             cache = AdvTempList.getList_600_300();
         } else if (getCurrentPos() == 2) {
-            cache = AdvTempList.getList_740_405();
+            cache = AdvTempList.getList_720_405();
         } else if (getCurrentPos() == 4) {
             cache = AdvTempList.getList_800_120();
         }
