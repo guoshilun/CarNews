@@ -9,7 +9,7 @@
     <meta content="yes" name="apple-touch-fullscreen">
     <meta content="telephone=no,email=no" name="format-detection">
     <meta name="App-Config" content="fullscreen=yes,useHistoryState=yes,transition=yes">
-    <meta name="viewport" content="width={{width}}, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=0">
+    <meta name="viewport" content="width={{width}}, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <meta name="renderer" content="webkit">
     <meta name="referrer" content="always" />
     <link rel="shortcut icon" href="file:///android_assets/axd/favicon.ico">
@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="file:///android_assets/axd/css/axd.css" />
     <style>
         .clearfix {
-            padding: 4px;
+            padding: 10px 5px 10px 15px;
             background-color: #4881B9;
         }
         .brand_content button.btn-success {
@@ -30,14 +30,16 @@
         }
         .brand_title,
         .brand_detail {
-            max-width: 200px;
+            /*max-width: 200px;*/
+            margin-left: 10px;
         }
     </style>
-    <script src="file:///android_assets/axd/js/{{ axd.js }}"></script>
+	<script src="file:///android_assets/axd/js/{{ axd.js }}"></script>
     <!--axd_root.js-->
 </head>
 
 <body id="adv_body" onload="loadFinish()">
+<!-- 2004: 80 * 80 -->
     <div class="axd_container axd_container_top">
         <!-- 曝光 -->
         <div class="axd_expose">
@@ -48,33 +50,33 @@
         <!-- 广告标识 -->
         <em class="axd_ax">广告</em>
         <div>
-            <!-- 图文内容 -->
-            <div class="axd_container_content">
-                <div class="clearfix">
-                    <div class="brand_logo fl">
-                        <img id="brand_logo_img" src="{{ axd.gl.logo.url }}" alt="" width="{{ axd.gl.logo.w }}" height="{{ axd.gl.logo.h }}" />
+            <a id="lp_url" href="{{ axd.btn_url }}" target="_blank">
+                <!-- 图文内容 -->
+                <div class="axd_container_content">
+                    <div class="clearfix">
+                        <div class="brand_logo fl">
+                            <img src="{{ axd.gl.logo.url }}" alt="" width="{{ axd.gl.logo.w }}" height="{{ axd.gl.logo.h }}" />
+                        </div>
+                        <div class="brand_content fl">
+                            <span class="brand_title" style="margin-top: 15px;">{{ axd.gl.title }}</span>
+                            <span class="brand_detail" style="margin-top: 10px;">{{ axd.gl.detail }}</span>
+                        </div>
                     </div>
-                    <div class="brand_content fl">
-                        <span class="brand_title">{{ axd.gl.title }}</span>
-                        <span class="brand_detail">{{ axd.gl.detail }}</span>
+                    <div class="brand_content">
+                        <span class="brand_desc">{{ axd.gl.desc }}</span>
+                        <button class="btn btn-success">了解更多</button>
                     </div>
                 </div>
-                <div class="brand_content">
-                    <span class="brand_desc">{{ axd.gl.desc }}</span>
-                    <button class="btn btn-success">了解更多</button>
-                </div>
-            </div>
+            </a>
         </div>
     </div>
     <script src="file:///android_assets/axd/js/jquery.js"></script>
     <script type="text/javascript">
     $(".axd_cl").click(function( event ) {
-        // event.preventDefault();
         event.stopPropagation();
-        console.log("axd_container_bg preventDefault");
     });
     $('.axd_container').click(function() {
-        var $href = $('.axd_container_bg a').attr('href');
+        var $href = $('#lp_url').attr('href');
         window.location.href = $href;
     });
     </script>

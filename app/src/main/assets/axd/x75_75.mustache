@@ -9,7 +9,7 @@
     <meta content="yes" name="apple-touch-fullscreen">
     <meta content="telephone=no,email=no" name="format-detection">
     <meta name="App-Config" content="fullscreen=yes,useHistoryState=yes,transition=yes">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width={{width}}, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <meta name="renderer" content="webkit">
     <meta name="referrer" content="always" />
     <link rel="shortcut icon" href="file:///android_assets/axd/favicon.ico">
@@ -33,12 +33,12 @@
             max-width: 200px;
         }
     </style>
-    <script src="file:///android_assets/axd/js/{{ axd.js }}"></script>
+	<script src="file:///android_assets/axd/js/{{ axd.js }}"></script>
     <!--axd_iframe.js-->
 </head>
 <!-- 2001: 75 * 75 -->
 <body id="adv_body" onload="loadFinish()">
-    <div class="axd_container axd_container_top">
+<div class="axd_container axd_container_top">
         <!-- 曝光 -->
         <div class="axd_expose">
             <img src="{{ axd.exposure_url }}" alt="">
@@ -47,20 +47,22 @@
         <a class="axd_cl" href="mjapp://close" onclick="window.carnews.close()">x</a>
         <!-- 广告标识 -->
         <em class="axd_ax">广告</em>
-        <div><a id="lp_url" href="{{ axd.btn_url }}" target="_blank">
-            <!-- 图文内容 -->
-            <div class="axd_container_content">
-                <div class="clearfix">
-                    <div class="brand_logo fl">
-                        <img src="{{ axd.gl.logo.url }}" alt="" width="{{ axd.gl.logo.w }}" height="{{ axd.gl.logo.h }}" />
-                    </div>
-                    <div class="brand_content fl">
-                        <span class="brand_title">{{ axd.gl.title }}</span>
-                        <span class="brand_detail">{{ axd.gl.desc }}</span>
+        <div>
+            <a id="lp_url" href="{{ axd.btn_url }}" target="_blank">
+                <!-- 图文内容 -->
+                <div class="axd_container_content">
+                    <div class="clearfix">
+                        <div class="brand_logo fl">
+                            <img src="{{ axd.gl.logo.url }}" alt="" width="{{ axd.gl.logo.w }}" height="{{ axd.gl.logo.h }}" />
+                        </div>
+                        <div class="brand_content fl">
+                            <span class="brand_title">{{ axd.gl.title }}</span>
+                            <span class="brand_detail">{{ axd.gl.desc }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </a></div>
+            </a>
+        </div>
     </div>
     <script src="file:///android_assets/axd/js/jquery.js"></script>
     <script type="text/javascript">

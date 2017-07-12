@@ -9,38 +9,20 @@
     <meta content="yes" name="apple-touch-fullscreen">
     <meta content="telephone=no,email=no" name="format-detection">
     <meta name="App-Config" content="fullscreen=yes,useHistoryState=yes,transition=yes">
-    <meta name="viewport" content="width={{width}}, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=0">
+    <meta name="viewport" content="width={{width}}, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"> -->
     <meta name="renderer" content="webkit">
     <meta name="referrer" content="always" />
     <link rel="shortcut icon" href="file:///android_assets/axd/favicon.ico">
     <link rel="stylesheet" href="file:///android_assets/axd/css/bootstrap.css" />
     <link rel="stylesheet" href="file:///android_assets/axd/css/common.css" />
     <link rel="stylesheet" href="file:///android_assets/axd/css/axd.css" />
-    <style>
-        * {
-        margin: 0;
-        padding:
-        }
-    </style>
-    <!--<script type="text/javascript">-->
-        <!--function loadFinish(){-->
-            <!--window.carnews.loadAdvFinish();-->
-            <!--if (window.parent){-->
-                <!--window.parent.loadAdvFinish();-->
-            <!--}-->
-        <!--};-->
-
-        <!--function show(){-->
-            <!--document.getElementById('adv_body').style.display="block";-->
-        <!--};-->
-        <!--window.addEventListener('DomContentLoaded', function(){document.getElementById('adv_body').style.display="none";}, false);-->
-    <!--</script>-->
-    <script src="file:///android_assets/axd/js/{{ axd.js }}"></script>
+	<script src="file:///android_assets/axd/js/{{ axd.js }}"></script>
     <!--axd_root.js-->
 </head>
 
 <body id="adv_body" onload="loadFinish()">
-    <div class="axd_container axd_container_top">
+<div class="axd_container axd_container_top">
         <!-- 曝光 -->
         <div class="axd_expose">
             <img src="{{ axd.exposure_url }}" alt="">
@@ -50,9 +32,9 @@
         <!-- 广告标识 -->
         <em class="axd_ax">广告</em>
         <div>
-            <div class="axd_container_bg" >
+            <div class="axd_container_bg">
                 <a href="{{ axd.btn_url }}" target="_blank">
-                    <img id="axd-img" src="{{ axd.image.url }}" width="100%" alt="">
+                    <img id="axd-img" src="{{ axd.image.url }}" width="100%"alt="">
                 </a>
             </div>
         </div>
@@ -68,5 +50,4 @@
     });
     </script>
 </body>
-
 </html>
