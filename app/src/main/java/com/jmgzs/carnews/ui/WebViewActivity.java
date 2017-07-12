@@ -69,6 +69,11 @@ public class WebViewActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected String getUmengKey() {
+        return null;
+    }
+
     protected void initData() {
         Intent intent = getIntent();
         String url = intent.getStringExtra(INTENT_URL);

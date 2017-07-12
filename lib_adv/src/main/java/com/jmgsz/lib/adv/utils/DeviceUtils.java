@@ -10,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -51,7 +52,7 @@ public class DeviceUtils {
             L.i("IMEI标识(DeviceId)：" + imei + ",androidid:" + androidid + ",simNum:" + simNum +
                     " , uuid:" + uuid.toString());
             return uuid.toString();
-        }else{
+        } else {
             return "";
         }
     }
@@ -95,6 +96,7 @@ public class DeviceUtils {
 
     /**
      * 获取系统版本名
+     *
      * @return
      */
     public static String getOSName() {
@@ -212,10 +214,10 @@ public class DeviceUtils {
                     .getSystemService(Context.TELEPHONY_SERVICE);
             String imei = telecomManager.getDeviceId();//可能为15个0
             if (imei == null || imei.equals("000000000000000"))
-                imei = "";
+                imei = "0";
             return imei;
-        }else{
-            return "";
+        } else {
+            return "0";
         }
     }
 
@@ -270,7 +272,7 @@ public class DeviceUtils {
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             L.i("info", "landscape");
             return false;
-        }else{
+        } else {
             return true;
         }
     }
@@ -294,42 +296,10 @@ public class DeviceUtils {
      *
      * @return [lat lng]
      */
-    public static double[] getLocation(Context context) {
+    public static double[] getLocation(final Context context) {
         final LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        // 获得最好的定位效果
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setAltitudeRequired(true);
-        criteria.setBearingRequired(true);
-        criteria.setCostAllowed(false);
-        // 使用省电模式
-        criteria.setPowerRequirement(Criteria.POWER_LOW);
-        String provider = locationManager.getBestProvider(criteria, true);
-        if (provider != null && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(provider, 5 * 3600 * 1000L,
-                    1000f, new LocationListener() {
-
-                        @Override
-                        public void onStatusChanged(String provider, int status,
-                                                    Bundle extras) {
-
-                        }
-
-                        @Override
-                        public void onProviderEnabled(String provider) {
-
-                        }
-
-                        @Override
-                        public void onProviderDisabled(String provider) {
-
-                        }
-
-                        @Override
-                        public void onLocationChanged(Location location) {
-                            L.i("system  location change");
-                        }
-                    });
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             Location lastKnownLocation = locationManager
                     .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -337,6 +307,7 @@ public class DeviceUtils {
                 lastKnownLocation = locationManager
                         .getLastKnownLocation(LocationManager.GPS_PROVIDER);
             }
+
             if (lastKnownLocation == null) {
                 lastKnownLocation = locationManager
                         .getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
@@ -350,11 +321,11 @@ public class DeviceUtils {
                 // return new double[] { lat, lng };
             }
         }
-        return new double[]{0,0};
-
+        return new double[]{0, 0};
     }
 
-    public static String getLanguage(Context context){
+
+    public static String getLanguage(Context context) {
         return context.getResources().getConfiguration().locale.getLanguage();
     }
 
@@ -375,11 +346,11 @@ public class DeviceUtils {
     /**
      * CMCC 中国移动, CUCC 中国联通， CTCC 中国电信
      */
-    public enum Carrier{
+    public enum Carrier {
         CMCC, CUCC, CTCC, UNKNOWN;
     }
 
-    public static long getCarrierValue(Context context){
+    public static long getCarrierValue(Context context) {
         TelephonyManager telManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
         try {
@@ -390,19 +361,19 @@ public class DeviceUtils {
         }
     }
 
-    public static Carrier getCarrier(Context context){
+    public static Carrier getCarrier(Context context) {
         TelephonyManager telManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
         String operator = telManager.getSimOperator();
         Carrier result = Carrier.UNKNOWN;
-        if(operator != null){
-            if(operator.equals("46000") || operator.equals("46002")|| operator.equals("46007")){
+        if (operator != null) {
+            if (operator.equals("46000") || operator.equals("46002") || operator.equals("46007")) {
                 //中国移动
                 result = Carrier.CMCC;
-            }else if(operator.equals("46001")){
+            } else if (operator.equals("46001")) {
                 //中国联通
                 result = Carrier.CUCC;
-            }else if(operator.equals("46003")){
+            } else if (operator.equals("46003")) {
                 //中国电信
                 result = Carrier.CTCC;
             }

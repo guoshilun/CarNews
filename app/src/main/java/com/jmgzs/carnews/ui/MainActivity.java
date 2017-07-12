@@ -25,6 +25,7 @@ import com.jmgzs.carnews.util.InsertAdvUtil;
 import com.jmgzs.carnews.util.AppUtils;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.SPBase;
+import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
@@ -49,6 +50,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initView() {
         overridePendingTransition(0, 0);
+        checkUpdate();
         head = getView(R.id.btn_right);
         head.setOnClickListener(this);
 
@@ -67,9 +69,12 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        checkUpdate();
     }
 
+    @Override
+    protected String getUmengKey() {
+        return UmengUtil.U_MAIN;
+    }
 
     @Override
     protected void onResume() {
@@ -96,7 +101,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-//        checkUpdate();
         super.onBackPressed();
         if (insertAdvReq == null){
             insertAdvReq = new InsertAdvUtil(this);
@@ -146,7 +150,7 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        SPBase.getBoolean(Const.SPKey.OPEN_ADV,data.isHas_ad());
+        SPBase.putBoolean(Const.SPKey.OPEN_ADV,data.isHas_ad());
     }
 
     @Override

@@ -22,6 +22,7 @@ import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.base.GlideApp;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.SPBase;
+import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
 
@@ -50,6 +51,12 @@ public class SplashActivity extends BaseActivity {
         timeTv = getView(R.id.text_time);
         showAdv();
     }
+
+    @Override
+    protected String getUmengKey() {
+        return UmengUtil.U_SPLASH;
+    }
+
 
     @Override
     protected void addPaddingAboveContentView() {

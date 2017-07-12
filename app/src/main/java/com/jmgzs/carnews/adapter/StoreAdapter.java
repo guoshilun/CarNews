@@ -45,7 +45,7 @@ public class StoreAdapter extends BaseAdapter {
     private volatile int imageW = 90;
     private volatile int imageH = 70;
 
-    public StoreAdapter(Context ct, ArrayList<NewsDataBean> dataList) {
+    public StoreAdapter(Context ct, List<NewsDataBean> dataList) {
         this.ct = ct;
         this.dataList = dataList;
 
@@ -101,9 +101,8 @@ public class StoreAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        int size = getItem(position).getImg_list().size();
-//        int size = position % 3;
-        return size == 0 ? TYPE0 : (size == 3 ? TYPE2 : TYPE1);
+        List<String> images = getItem(position).getImg_list();
+        return images == null || images.size() == 0 ? TYPE0 : (images.size() == 3 ? TYPE2 : TYPE1);
     }
 
     private interface ISetData {
@@ -180,7 +179,7 @@ public class StoreAdapter extends BaseAdapter {
             title.setText(data.getTitle());
             source.setText(data.getPublish_source());
             publishTime.setText(TimeUtils.getTimeFromDateString(data.getPublish_time()));
-            if (data.getImg_list().size() < 3) {
+            if (data.getImg_list() == null || data.getImg_list().size() < 3) {
                 imagesLayout.setVisibility(View.GONE);
             } else {
                 imagesLayout.setVisibility(View.VISIBLE);
@@ -199,7 +198,7 @@ public class StoreAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void clear(){
+    public void clear() {
         dataList.clear();
         notifyDataSetChanged();
     }

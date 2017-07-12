@@ -43,6 +43,7 @@ import com.jmgzs.carnews.util.GlideCacheUtil;
 import com.jmgzs.carnews.util.LoaderUtil;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.carnews.util.T;
+import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
@@ -89,6 +90,7 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
 
     @Override
     protected void initView() {
+
         TextView title = getView(R.id.titleInfo_tv_title);
         title.setText(R.string.user_setting);
         getView(R.id.titleInfo_img_more).setVisibility(View.INVISIBLE);
@@ -108,6 +110,12 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
 
 
     }
+
+    @Override
+    protected String getUmengKey() {
+        return UmengUtil.U_SETTING;
+    }
+
 
     private void showRightSetting() {
         itemStore.show(false, false, false, true);
@@ -157,8 +165,10 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
 
             case R.id.user_head:
                 showPhotoMenu();
+                UmengUtil.event(this,UmengUtil.U_SETTING_HEAD);
                 break;
             case R.id.setting_store:
+                UmengUtil.event(this,UmengUtil.U_SETTING_STORE);
                 if (isStoreListNotNull)
                     startActivity(new Intent(this, NewsStoreActivity.class));
                 else T.toastS("尚未收藏任何新闻");

@@ -164,6 +164,7 @@ public class YMPushService extends UmengMessageService implements IPush {
         Intent intent = new Intent(context, NewsInfoActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(NewsInfoActivity.INTENT_AID, pushBean.getAid());
+        intent.putExtra("fromNotify", true);
         ArrayList<String> imgList = new ArrayList<>();
         imgList.add(pushBean.getImg());
         intent.putStringArrayListExtra(NewsInfoActivity.INTENT_IMAGES, imgList);

@@ -2,20 +2,25 @@ package com.jmgzs.carnews.network.update;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.Settings;
 import android.webkit.MimeTypeMap;
 
 import com.jmgzs.carnews.util.GetPathFromUri4kitkat;
 import com.jmgzs.lib_network.utils.L;
 
 import java.io.File;
+
+import static com.umeng.analytics.pro.x.P;
 
 
 /**
@@ -50,7 +55,7 @@ public class UpdateDownloadListener {
         if (url.contains(".apk")) {
             fileName = url.substring(0, url.lastIndexOf(".apk") + 4);
             fileName = fileName.substring(url.lastIndexOf("/") + 1);
-            L.e("dlfile==" + fileName);
+            L.e("dlfile==" + fileName + ",title=" + title);
             String[] dlFileName = getDownloadedFileName();
             if (fileName.equalsIgnoreCase(dlFileName[0])
                     || (title != null && title.length() > 0 && title.equals(dlFileName[0]))) {
@@ -63,12 +68,13 @@ public class UpdateDownloadListener {
         } else
             fileName = url.substring(url.lastIndexOf("/") + 1) + ".apk";
 
+        L.e("filename=" + fileName);
+
         DownloadManager dm = (DownloadManager) ct.getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         String mtm = mimeTypeMap.getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(url));//"application/vnd.android.package-archive"
         request.setMimeType(mtm);
-        L.e(mtm);
         request.setTitle(title);
         request.setDescription(des);
         request.setVisibleInDownloadsUi(true);
@@ -79,10 +85,25 @@ public class UpdateDownloadListener {
             request.allowScanningByMediaScanner();
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         }
-        long enqueue = dm.enqueue(request);
-        L.e(enqueue + "");
-        observer = new DownloadChangeObserver(null, enqueue);
-        ct.getContentResolver().registerContentObserver(CONTENT, true, observer);
+        //检测是否开启系统下载服务
+        String sysPkg = "com.android.providers.downloads";
+        int state = ct.getApplicationContext().getPackageManager().getApplicationEnabledSetting(sysPkg);
+        if (state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                || state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER
+                || state == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED) {
+            try {
+                Intent in = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                in.setData(Uri.parse("package:" + sysPkg));
+                ct.startActivity(in);
+            } catch (ActivityNotFoundException e) {
+                Intent in2 = new Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS);
+                ct.startActivity(in2);
+            }
+        } else {
+            long enqueue = dm.enqueue(request);
+            observer = new DownloadChangeObserver(null, enqueue);
+            ct.getContentResolver().registerContentObserver(CONTENT, true, observer);
+        }
 
     }
 
@@ -109,7 +130,7 @@ public class UpdateDownloadListener {
                 fileName = "";
             }
         }
-        L.e(fileName + ",uri =" + uri);
+        L.e("download: filename=" + fileName + ",uri =" + uri);
         return new String[]{fileName, uri};
     }
 

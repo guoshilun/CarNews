@@ -68,10 +68,6 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     private CircleIndicator headerIndicator;
 
     private int lastVisibleItem = 0;
-    private boolean isPrepared = false;
-    //    private ArrayList<NewsDataBean> list;
-//    private ArrayList<NewsDataBean> headerList = new ArrayList<>();
-
 
     private static final int pageCount = 5;
     private boolean loadAll = false;
@@ -82,12 +78,6 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
         initView(v);
-        isPrepared = true;
-//        if (savedInstanceState != null) {
-//            currentPos = savedInstanceState.getInt("pos");
-//            startKey = savedInstanceState.getInt("sk");
-//        }
-        L.e("oncreate view----" + currentPos + ",sk:" + startKey);
         lazyLoad1();
         return v;
     }

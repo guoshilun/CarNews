@@ -1,12 +1,17 @@
 package com.jmgzs.carnews.base;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.jmgzs.carnews.R;
+import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib_network.utils.L;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public abstract class BaseFragment extends Fragment {
@@ -17,15 +22,15 @@ public abstract class BaseFragment extends Fragment {
     protected String[] titles;
     protected String[] channels;
 
-//    protected boolean isFirstVisible = true;
-
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        titles = getResources().getStringArray(R.array.tab_titles);
-        channels = getResources().getStringArray(R.array.tab_channels);
-        super.onCreate(savedInstanceState);
-        L.setTag(this.getClass().getSimpleName());
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        initRes();
+    }
 
+    private void initRes() {
+        titles = getContext().getResources().getStringArray(R.array.tab_titles);
+        channels = getContext().getResources().getStringArray(R.array.tab_channels);
     }
 
     @Override
@@ -55,7 +60,7 @@ public abstract class BaseFragment extends Fragment {
 //            currentPos = savedInstanceState.getInt("pos");
 //            startKey = savedInstanceState.getInt("sk");
 //        }
-        L.e("restored  position:" + currentPos + ", sk:" + startKey);
+//        L.e("restored  position:" + currentPos + ", sk:" + startKey);
     }
 
     protected void onVisible() {
@@ -67,6 +72,49 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected void lazyLoad() {
+        Map<String, String> map = new HashMap<>();
+        if (getContext() != null)
+            map.put(UmengUtil.U_CHANNEL_NAME, getChannel());
+        else {
+            String channel = null;
+            switch (currentPos) {
+                case 0:
+                    channel = "热点";
+                    break;
+                case 1:
+                    channel = "新车";
+                    break;
+                case 2:
+                    channel = "解析";
+                    break;
+                case 3:
+                    channel = "行业";
+                    break;
+                case 4:
+                    channel = "销量";
+                    break;
+                case 5:
+                    channel = "动态";
+                    break;
+                case 6:
+                    channel = "导购";
+                    break;
+                case 7:
+                    channel = "试驾";
+                    break;
+                case 8:
+                    channel = "使用";
+                    break;
+                default:
+                    channel = "unknown";
+                    break;
+            }
+            map.put(UmengUtil.U_CHANNEL_NAME, channel);
+
+        }
+        map.put(UmengUtil.U_CHANNEL_COUNT, "1");
+        UmengUtil.event(getContext(), UmengUtil.U_CHANNEL, map);
+
     }
 
     public void updatePosition(int position) {
@@ -79,6 +127,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected String getChannel() {
+        if (channels == null) initRes();
         if (currentPos < 0 || currentPos > channels.length)
             currentPos = 0;
         return channels[currentPos];

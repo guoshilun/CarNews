@@ -58,7 +58,7 @@ public class RCVAdapter extends RCVBaseAdapter<NewsDataBean, BaseHolder<NewsData
             return new RCVAdvHolder(parent, R.layout.item_view_adv, new JsBridge.IJsCallback() {
                 @Override
                 public void close() {
-                    removeItem(0);
+//                    removeItem(0);
                 }
 
                 @Override
@@ -83,7 +83,4 @@ public class RCVAdapter extends RCVBaseAdapter<NewsDataBean, BaseHolder<NewsData
     public int getViewType(int position) {
         return data.get(position-1).getItemType().getValue();
     }
-
-
-
 }
