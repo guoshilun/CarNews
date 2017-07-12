@@ -1,6 +1,5 @@
 package com.jmgzs.carnews.base;
 
-import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +13,6 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +20,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import com.jmgzs.carnews.R;
 import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.InsertAdvUtil;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.lib_network.utils.L;
-
-import static com.umeng.message.proguard.k.A;
 
 /**
  * Created by mac on 17/6/5.
@@ -50,10 +46,10 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         this.registerReceiver(mHomeKeyEventReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         L.setTag(getClass().getSimpleName());
         PushUtil.getPush().activityInit(this);
-        root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
         ViewGroup parent = (ViewGroup) findViewById(android.R.id.content);
         parent.removeAllViews();
+        root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
         parent.addView(root, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         setContentView(getContent(savedInstanceState));
         initView();
@@ -122,7 +118,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         ViewGroup parent = root;
         root.removeAllViews();
         LayoutInflater.from(this).inflate(layoutResID, parent, true);
-        addPaddingAboveContentView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//有透明状态栏的版本才添加顶部paddingView
+            addPaddingAboveContentView();
+        }
     }
 
     @Override
@@ -130,7 +128,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         ViewGroup parent = root;
         root.removeAllViews();
         parent.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        addPaddingAboveContentView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//有透明状态栏的版本才添加顶部paddingView
+            addPaddingAboveContentView();
+        }
     }
 
     @Override
@@ -138,7 +138,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         ViewGroup parent = root;
         root.removeAllViews();
         parent.addView(view, params);
-        addPaddingAboveContentView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//有透明状态栏的版本才添加顶部paddingView
+            addPaddingAboveContentView();
+        }
     }
 
     @Override

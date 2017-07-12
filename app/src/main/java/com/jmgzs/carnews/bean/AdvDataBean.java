@@ -10,6 +10,7 @@ public class AdvDataBean extends NewsDataBean {
     private int advW;
     private int advH;
     private String html;
+    private String file;//html文件
 
     public String getHtml() {
         return html;
@@ -33,6 +34,15 @@ public class AdvDataBean extends NewsDataBean {
 
     public void setAdvH(int advH) {
         this.advH = advH;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    public String getFile() {
+
+        return file;
     }
 
     @Override

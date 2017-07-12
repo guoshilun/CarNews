@@ -59,9 +59,6 @@ public class AdvDialog extends BaseDialog {
         mWv = getView(R.id.dialogInsertAdv_wv);
         mWv.getSettings().setJavaScriptEnabled(true);
         mWv.getSettings().setUseWideViewPort(true);
-        if (Build.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT){
-            mWv.setWebContentsDebuggingEnabled(true);
-        }
 
         mWv.getSettings().setLoadWithOverviewMode(true);
         mWv.setHorizontalScrollBarEnabled(false);

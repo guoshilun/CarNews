@@ -87,6 +87,44 @@ public class FileUtils {
         }
     }
 
+//    public static boolean isReleaseAssetsOk(Context context, String assetsDir,
+//                                            String releaseDir){
+//        AssetManager assets = context.getAssets();
+//        int assetsLength = 0;
+//        try {
+//            String[] fileNames = assets.list(assetsDir);//只能获取到文件(夹)名,所以还得判断是文件夹还是文件
+//            if (fileNames.length > 0) {// is dir
+//                for (String name : fileNames) {
+//                    if (!TextUtils.isEmpty(assetsDir)) {
+//                        name = assetsDir + File.separator + name;//补全assets资源路径
+//                    }
+//    //                    Log.i(, brian name= + name);
+//                    String[] childNames = assets.list(name);//判断是文件还是文件夹
+//                    if (!TextUtils.isEmpty(name) && childNames.length > 0) {
+//                        checkFolderExists(releaseDir + File.separator + name);
+//                        releaseAssets(context, name, releaseDir);//递归, 因为资源都是带着全路径,
+//                        //所以不需要在递归是设置目标文件夹的路径
+//                    } else {
+//                        InputStream is = assets.open(name);
+//    //                        FileUtil.writeFile(releaseDir + File.separator + name, is);
+//                        writeFile(releaseDir + File.separator + name, is);
+//                    }
+//                }
+//            } else {// is file
+//                InputStream is = assets.open(assetsDir);
+//                // 写入文件前, 需要提前级联创建好路径, 下面有代码贴出
+//    //                FileUtil.writeFile(releaseDir + File.separator + assetsDir, is);
+//                writeFile(releaseDir + File.separator + assetsDir, is);
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+//    private static int getFileLength(){
+//
+//    }
+
     public static void releaseAssets(Context context, String assetsDir,
                                      String releaseDir) {
         if (TextUtils.isEmpty(releaseDir)) {
@@ -219,11 +257,12 @@ public class FileUtils {
     }
 
     // 创建文件夹
-    public static void createDir(String dir) {
+    public static File createDir(String dir) {
         File folderDir = new File(dir);
         if (!folderDir.exists()) {
             folderDir.mkdirs();
         }
+        return folderDir;
     }
 
     // 创建文件
