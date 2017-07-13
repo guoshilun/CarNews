@@ -168,7 +168,8 @@ public class AdvRequestUtil {
      */
     private static Map<Integer, Integer> tempFileIndexMap;
 
-    private synchronized static int getTempFileIndex(int type) {
+    private synchronized static int getTempFileIndex(final String tempDir, int type) {
+        initTempHtmlFileIndex(tempDir);
         int id = tempFileIndexMap.get(type);
         tempFileIndexMap.put(type, id >= 1000 ? 0 : id + 1);
         return id;
@@ -209,7 +210,11 @@ public class AdvRequestUtil {
                         continue;
                     }
                 }
-
+            }
+        }
+        for (int type : AdSlotType.getAdTypeList()){
+            if (tempFileIndexMap.get(type) == null){
+                tempFileIndexMap.put(type, 0);
             }
         }
     }
@@ -258,7 +263,7 @@ public class AdvRequestUtil {
                     @Override
                     public void run() {
                         String htmlTemplate = getHtmlByResponseObject(context, pageWidth, type, data, isIFrame);
-                        final File tempFile = new File(tempDir, type.getType() + "_" + getTempFileIndex(type.getType()) + ".html'");
+                        final File tempFile = new File(tempDir, type.getType() + "_" + getTempFileIndex(tempDir, type.getType()) + ".html'");
                         htmlTemplate = transferHtmlToLocal(context, tempFile, htmlTemplate);
                         final String finalHtmlTemplate = htmlTemplate;
                         ((Activity) context).runOnUiThread(new Runnable() {
@@ -306,7 +311,6 @@ public class AdvRequestUtil {
                 return "";
             }
             String parentDirPath = localFile.getParentFile().getAbsolutePath();
-            initTempHtmlFileIndex(parentDirPath);
             FileUtils.releaseAssets(context, "axd", parentDirPath);
             FileUtils.createFile(context, localFile.getParentFile().getAbsolutePath(), localFile.getName());
             File parent = localFile.getParentFile();

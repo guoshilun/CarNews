@@ -84,3 +84,7 @@
 .brand_logo a {
     border-radius: 8px;
 }
+.axd_expose img {
+    width: 0;
+    height: 0;
+}

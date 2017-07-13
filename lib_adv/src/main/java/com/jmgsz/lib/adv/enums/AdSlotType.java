@@ -19,6 +19,7 @@ public enum AdSlotType {
     private static List<AdSlotType> infoList;
     private static List<AdSlotType> bannerList;
     private static List<AdSlotType> insertList;
+    private static volatile List<Integer> typeList;
 
     public static final int TYPE_OPEN = 0;
     public static final int TYPE_INFO = 1;
@@ -143,6 +144,17 @@ public enum AdSlotType {
 
         int position = random.nextInt(insertList.size());
         return insertList.get(position);
+    }
+
+    public synchronized static List<Integer> getAdTypeList(){
+        if (typeList == null){
+            typeList = new ArrayList<>();
+            typeList.add(TYPE_OPEN);
+            typeList.add(TYPE_INFO);
+            typeList.add(TYPE_BANNER);
+            typeList.add(TYPE_INSERT);
+        }
+        return typeList;
     }
 
     public static AdSlotType getInfoType(int position) {
