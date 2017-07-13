@@ -54,12 +54,12 @@ function closeAdv(){
 function printSource(){
     window.carnews.toast(document.getElementsByTagName('html')[0].innerHTML);
 };
-function showAdv(html, width, height){
+function showAdv(htmlSrc, width, height){
     <!--window.carnews.toast('广告html:'+html);-->
     var body = document.body;
 
     var iframe = document.createElement("iframe");
-    iframe.src = html;
+    iframe.src = htmlSrc;
     iframe.id = 'adv_page';
     iframe.height = height + "px";
     iframe.width = width + 'px';
@@ -80,9 +80,7 @@ function showAdv(html, width, height){
     <!--}-->
 
 };
-function setIFrameParentWindow(){
-    document.getElementById('adv_page').contentWindow.setParentWindow(window);
-};
+
 function changeFontSize(fontSize){
     var size = parseInt(fontSize * 22);
     var title = document.getElementById('title');
@@ -109,29 +107,9 @@ function changeFontSize(fontSize){
         }
      }
 };
-function showAdvPage(){
-    document.getElementById('adv_page').contentWindow.show();
-};
-function loadAdvFinish(){
-    window.carnews.loadAdvFinish();
-};
 
-function getAdvRealWidthHeight(){
-    <!--window.carnews.toast("开始获取到宽高");-->
-    document.getElementById('adv_page').contentWindow.getWidthHeight();
-};
-
-function callbackAdvWidthHeight(w, h){
-    <!--window.carnews.toast("获取到宽高"+w+"\t"+h);-->
-    window.carnews.getAdvWidthHeight(w, h);
-};
-function setAdvWidthHeight(width, height){
-    <!--window.carnews.toast("设置宽高"+width+"\t"+height);-->
-    var adv = document.getElementById('adv_page');
-    adv.width = width;
-    adv.height = height;
-};
     </script>
+    <script src="file:///android_assets/axd/js/axd_parent.js"></script>
 </head>
 <body onload="adClick()">
 <div>

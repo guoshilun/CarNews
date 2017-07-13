@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 
+import com.jmgsz.lib.adv.AdvRequestUtil;
 import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
 import com.jmgsz.lib.adv.utils.DensityUtils;
@@ -63,6 +64,8 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
         instance = this;
         if (shouldInit())
             init();
+
+        AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, true));
     }
 
     private void initPush() {

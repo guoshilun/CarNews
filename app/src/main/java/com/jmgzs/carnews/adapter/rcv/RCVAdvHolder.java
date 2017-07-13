@@ -92,6 +92,7 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
 
             @Override
             public void loadAdvFinish() {
+//                L.e("广告加载完成");
                 wv.loadUrl("javascript:getWidthHeight()");
                 App.getInstance().runOnUiThread(500, new Runnable() {
                     @Override
@@ -100,6 +101,7 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
                         if (callback !=null){
                             callback.loadFinish();
                         }
+                        wv.loadUrl("javascript:show()");
                     }
                 });
             }
@@ -111,13 +113,12 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
                 if (scale <= 0) {
                     scale = wv.getScale();
                 }
+//                L.e("原始广告宽高："+width+"\t"+height);
                 setAdvWidthHeight(width, height, scale);
             }
         });
         wv.addJavascriptInterface(js, "carnews");
     }
-
-    private int tempId = 0;//广告缓存文件id
 
     @Override
     public void setData(NewsDataBean data) {
@@ -127,28 +128,11 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
             wv.getLayoutParams().width = adv.getAdvW();
             wv.getLayoutParams().height = adv.getAdvH();
 //            wv.loadUrl("https://www.baidu.com");
-            if (tempId >= 1000){
-                tempId = 0;
-            }
-            File file = FileUtils.createFile(getContext(), FileUtils.getCachePath(getContext()) + File.separator + "info", "info_stream_adv_"+tempId+++".html");
-            try {
-                if (file == null) {
-                    return;
-                }
-                File parent = file.getParentFile();
-                String htmlNew = html;
-                htmlNew = htmlNew.replaceAll("file:///android_assets", Uri.fromFile(parent).toString());
-                FileUtils.writeTextFile(file, htmlNew);
-                FileUtils.releaseAssets(getContext(), "axd", FileUtils.getCachePath(getContext()) + File.separator + "info");
-                L.e("adv Html:");
-                for (int i = 0; i < htmlNew.length(); i += 200) {
-                    int last = i + 200 > htmlNew.length() ? htmlNew.length() : i + 200;
-                    L.e(htmlNew.substring(i, last));
-                }
-                wv.loadDataWithBaseURL(Uri.fromFile(parent).toString(), htmlNew, "text/html", "utf-8", null);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            File file = new File(adv.getFile());
+            L.e("文件路径:"+Uri.fromFile(file.getParentFile()).toString());
+            L.e("html:"+html);
+            wv.loadDataWithBaseURL(Uri.fromFile(file.getParentFile()).toString(), html, "text/html", "utf-8", null);
         }
 
     }
@@ -157,5 +141,6 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
         wv.getLayoutParams().width = (int) (width * scale);
         wv.getLayoutParams().height = (int) (height * scale);
         wv.invalidate();
+//        L.e("缩放后广告webview宽高："+(int) (width * scale)+"\t"+(int) (height * scale));
     }
 }

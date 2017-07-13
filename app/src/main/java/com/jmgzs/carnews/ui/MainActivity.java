@@ -1,12 +1,16 @@
 package com.jmgzs.carnews.ui;
 
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebView;
 
+import com.jmgsz.lib.adv.AdvRequestUtil;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.HomeAdapter;
 import com.jmgzs.carnews.base.App;
@@ -47,10 +51,16 @@ public class MainActivity extends BaseActivity {
         return R.layout.activity_main;
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void initView() {
         overridePendingTransition(0, 0);
         checkUpdate();
+        //开启WebView调试模式
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
         head = getView(R.id.btn_right);
         head.setOnClickListener(this);
 
@@ -151,6 +161,7 @@ public class MainActivity extends BaseActivity {
             }
         });
         SPBase.putBoolean(Const.SPKey.OPEN_ADV,data.isHas_ad());
+        AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, false));
     }
 
     @Override

@@ -373,7 +373,22 @@ public class L {
 	 */
 	public static int e(String tag, String msg, Throwable e) {
 		if (CURRENT_LOG_LEVEL >= LOG_LEVEL_ERROR && !TextUtils.isEmpty(tag)) {
-			return Log.e(tag, msg, e);
+            int returnCode = 0;
+            int pageSize = 4000;
+			if (msg.length() > pageSize){
+                int count = 0;
+				while (count < msg.length()){
+                    int lastIndex = count + pageSize > msg.length() ? msg.length() : count + pageSize;
+                    returnCode = Log.e(tag, msg.substring(count, lastIndex), e);
+                    count = lastIndex;
+                }
+                if (count == 0){
+                    Log.e(tag, "", e);
+                }
+			}else{
+                returnCode = Log.e(tag, msg, e);
+			}
+			return returnCode;
 		} else {
 			return LOG_LEVEL_DEFAULT_RETURN;
 		}

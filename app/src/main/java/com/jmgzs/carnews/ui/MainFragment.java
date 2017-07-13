@@ -339,6 +339,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
             ad.setHtml(cache.get(0).getHtml());
             ad.setAdvW(cache.get(0).getWidth());
             ad.setAdvH(cache.get(0).getHeight());
+            ad.setFile(cache.get(0).getFile());
             return ad;
         } else {
             return null;

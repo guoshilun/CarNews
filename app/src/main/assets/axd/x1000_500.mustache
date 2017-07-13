@@ -17,17 +17,16 @@
     <link rel="stylesheet" href="file:///android_assets/axd/css/common.css" />
     <link rel="stylesheet" href="file:///android_assets/axd/css/axd.css" />
     <style>
-    .brand_title,
-    .brand_desc {
-        text-align: center;
-    }
+        .brand_content span {
+            font-weight: 400;
+        }
     </style>
 	<script src="file:///android_assets/axd/js/{{ axd.js }}"></script>
-    <!--axd_root.js-->
+    <!--axd_iframe.js-->
 </head>
 
 <body id="adv_body" onload="loadFinish()">
-<!-- 2010: 600 * 300 -->
+<!-- 2061: 1000 * 500 -->
     <div class="axd_container axd_container_top">
         <!-- 曝光 -->
         <div class="axd_expose">
@@ -38,16 +37,20 @@
         <!-- 广告标识 -->
         <em class="axd_ax">广告</em>
         <div>
+            <div class="axd_container_content">
+                <div class="brand_content">
+                    <span class="brand_title">{{ axd.gl.title }}</span>
+                </div>
+            </div>
             <div class="axd_container_bg">
                 <a href="{{ axd.btn_url }}" target="_blank">
-                    <img src="{{ axd.image.url }}" width="{{ axd.image.width }}" alt="">
+                    <img class="tt_t" src="{{ axd.image.url }}" width="{{ axd.image.width }}" alt="">
                 </a>
             </div>
             <!-- 图文内容 -->
             <div class="axd_container_content">
                 <div class="brand_content">
-                    <p class="brand_title">{{ axd.gl.title }}</p>
-                    <p class="brand_desc">{{ axd.gl.detail }}</p>
+                    <span class="brand_desc">{{ axd.gl.detail }}</span>
                 </div>
             </div>
         </div>
