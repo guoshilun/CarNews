@@ -80,3 +80,7 @@
     font-size: 12px;
     text-align: left; 
 }
+
+.brand_logo a {
+    border-radius: 8px;
+}

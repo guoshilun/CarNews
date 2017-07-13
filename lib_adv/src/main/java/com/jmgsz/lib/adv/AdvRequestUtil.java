@@ -42,7 +42,8 @@ import static com.jmgsz.lib.adv.AdvUrls.API_ADV;
 public class AdvRequestUtil {
     //广告开关
     private static volatile boolean isOpenAdv = true;
-    public static void setAdvOpen(boolean isOpen){
+
+    public static void setAdvOpen(boolean isOpen) {
 //        isOpenAdv = isOpen;
     }
 
@@ -120,7 +121,7 @@ public class AdvRequestUtil {
     }
 
     public static void requestOpenAdv(final Context context, final IRequestCallBack<AdvResponseBean.AdInfoBean> callback) {
-        if (!isOpenAdv){
+        if (!isOpenAdv) {
             callback.onFailure(null, 0, "cache is null");
             return;
         }
@@ -167,40 +168,40 @@ public class AdvRequestUtil {
      */
     private static Map<Integer, Integer> tempFileIndexMap;
 
-    private synchronized static int getTempFileIndex(int type){
+    private synchronized static int getTempFileIndex(int type) {
         int id = tempFileIndexMap.get(type);
-        tempFileIndexMap.put(type, id >= 1000 ? 0 : id+1);
+        tempFileIndexMap.put(type, id >= 1000 ? 0 : id + 1);
         return id;
     }
 
-    private synchronized static void initTempHtmlFileIndex(final String tempDir){
-        if (tempFileIndexMap == null){
+    private synchronized static void initTempHtmlFileIndex(final String tempDir) {
+        if (tempFileIndexMap == null) {
             tempFileIndexMap = new HashMap<>();
-        }else{
+        } else {
             return;
         }
         File dir = new File(tempDir);
         File[] files = dir.listFiles();
-        for (int index = 0; index < files.length; index++){
+        for (int index = 0; index < files.length; index++) {
             File tempFile = files[index];
             String name = tempFile.getName();
             String regex = "(\\d{1,2})_(\\d+)\\.html";
             Matcher matcher = Pattern.compile(regex).matcher(name);
-            if (matcher.find()){
+            if (matcher.find()) {
                 String[] typeIndex = name.replaceAll(regex, "$1_$2").split("_");
-                if (typeIndex != null && typeIndex.length == 2){
+                if (typeIndex != null && typeIndex.length == 2) {
                     String typeStr = typeIndex[0];
                     String indexStr = typeIndex[1];
                     try {
                         int type = Integer.parseInt(typeStr);
                         int id = Integer.parseInt(indexStr);
                         Integer indexNum = tempFileIndexMap.get(type);
-                        if (indexNum != null){
+                        if (indexNum != null) {
                             int oldId = indexNum;
-                            if (id > oldId){
+                            if (id > oldId) {
                                 tempFileIndexMap.put(type, id);
                             }
-                        }else{
+                        } else {
                             tempFileIndexMap.put(type, id);
                         }
                     } catch (NumberFormatException e) {
@@ -212,20 +213,24 @@ public class AdvRequestUtil {
             }
         }
     }
+
     /**
      * 请求广告
+     *
      * @param context
      * @param pageWidth WebView的宽度
-     * @param isIFrame 是否为嵌入的iframe
-     * @param request 请求
-     * @param callback 回调
+     * @param isIFrame  是否为嵌入的iframe
+     * @param request   请求
+     * @param callback  回调
      */
     public static void requestAdv(final Context context, final int pageWidth, final boolean isIFrame, final AdvRequestBean request, final String tempDir, final IAdvRequestCallback callback) {
-        if (!isOpenAdv){
+        if (!isOpenAdv) {
             return;
         }
+        String req = new Gson().toJson(request);
+        L.e("广告请求：" + req);
         //TODO 请求广告数据
-        RequestUtil.requestByPostAsy(context, API_ADV, new Gson().toJson(request), AdvResponseBean.class, new IRequestCallBack<AdvResponseBean>() {
+        RequestUtil.requestByPostAsy(context, API_ADV, req, AdvResponseBean.class, new IRequestCallBack<AdvResponseBean>() {
             @Override
             public void onSuccess(String url, final AdvResponseBean data) {
                 L.e("广告请求接口成功返回");
@@ -249,18 +254,17 @@ public class AdvRequestUtil {
                 }
                 L.e("读取广告宽高:" + width + "\t" + height);
                 //TODO 装载html模板
-                new Thread(){
+                new Thread() {
                     @Override
                     public void run() {
                         String htmlTemplate = getHtmlByResponseObject(context, pageWidth, type, data, isIFrame);
-                        initTempHtmlFileIndex(tempDir);
                         final File tempFile = new File(tempDir, type.getType() + "_" + getTempFileIndex(type.getType()) + ".html'");
                         htmlTemplate = transferHtmlToLocal(context, tempFile, htmlTemplate);
                         final String finalHtmlTemplate = htmlTemplate;
-                        ((Activity)context).runOnUiThread(new Runnable() {
+                        ((Activity) context).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (TextUtils.isEmpty(finalHtmlTemplate)){
+                                if (TextUtils.isEmpty(finalHtmlTemplate)) {
                                     if (callback != null) {
                                         callback.onGetAdvFailure();
                                     }
@@ -296,17 +300,20 @@ public class AdvRequestUtil {
 
     }
 
-    public synchronized static String transferHtmlToLocal(Context context, File localFile, String html){
+    public synchronized static String transferHtmlToLocal(Context context, File localFile, String html) {
         try {
             if (localFile == null) {
                 return "";
             }
+            String parentDirPath = localFile.getParentFile().getAbsolutePath();
+            initTempHtmlFileIndex(parentDirPath);
+            FileUtils.releaseAssets(context, "axd", parentDirPath);
             FileUtils.createFile(context, localFile.getParentFile().getAbsolutePath(), localFile.getName());
             File parent = localFile.getParentFile();
             html = html.replaceAll("file:///android_assets", Uri.fromFile(parent).toString());
             FileUtils.writeTextFile(localFile, html);
-            FileUtils.releaseAssets(context, "axd", FileUtils.getCachePath(context) + File.separator + "info");
-            L.e("adv Html:"+html);
+
+            L.e("adv Html:" + html);
             return html;
         } catch (IOException e) {
             e.printStackTrace();
@@ -314,32 +321,32 @@ public class AdvRequestUtil {
         }
     }
 
-    public static String getHtmlByResponse(Context context, final int pageWidth, AdSlotType type, String response, boolean isIFrame){
+    public static String getHtmlByResponse(Context context, final int pageWidth, AdSlotType type, String response, boolean isIFrame) {
         AdvResponseBean data = new Gson().fromJson(response, AdvResponseBean.class);
         return getHtmlByResponseObject(context, pageWidth, type, data, isIFrame);
     }
 
-    public static String getHtmlByResponseObject(Context context, final int pageWidth, AdSlotType type, AdvResponseBean resObj, boolean isIFrame){
+    public static String getHtmlByResponseObject(Context context, final int pageWidth, AdSlotType type, AdvResponseBean resObj, boolean isIFrame) {
         final AdvResponseBean.AdInfoBean adInfoBean = resObj.getAd_info().get(0);
         String templateName = getTemplateId(type);
         try {
             String htmlTemplate = FileUtils.readTextInputStream(context.getAssets().open("axd" + File.separator + templateName));
 //                    AdvBean htmlData = AdvBean.getDataByStr("{\"exposure_url\":\"http://s.mjmobi.com/imp?info=ChhDTWpvdXZyTEt4Q0tvTUZRR1AzejFwRUIQxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIgyOi6-ssrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\",\"btn_url\":\"http://c.mjmobi.com/cli?info=ChhDTWpvdXZyTEt4Q0tvTUZRR1AzejFwRUIQACC4DijEoKvgu6fY0cgBMMjouvrLKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"image\":{\"url\":\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\",\"width\":\"100%\",\"height\":\"100%\"},\"gl\":{\"logo\":{\"url\":\"file:///android_asset/public/img/wgtt.jpg\",\"w\":40,\"h\":40,\"scale\":2},\"title\":\"中草药高端护肤品牌\",\"detail\":\"喜欢, 是唯一的捷径. 我只管喜欢\",\"desc\":\"我只管喜欢, 不是因为有钱才喜欢, 是因为喜欢才有钱!\"}}");
-            L.e("读取到的html模板:"+htmlTemplate);
+            L.e("读取到的html模板:" + htmlTemplate);
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.gl.title\\s*\\}\\}", adInfoBean.getAd_material().getTitle() == null ? "" : adInfoBean.getAd_material().getTitle());
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.gl.detail\\s*\\}\\}", adInfoBean.getAd_material().getContent() == null ? "" : adInfoBean.getAd_material().getContent());
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.gl.desc\\s*\\}\\}", adInfoBean.getAd_material().getDesc() == null ? "" : adInfoBean.getAd_material().getDesc());
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.image.url\\s*\\}\\}", adInfoBean.getAd_material().getImages().get(0) == null ? "" : adInfoBean.getAd_material().getImages().get(0));
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.image.width\\s*\\}\\}", type.getImgW() + "");
-            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*width\\s*\\}\\}", pageWidth+"");
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*width\\s*\\}\\}", pageWidth + "");
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.image.height\\s*\\}\\}", type.getImgH() + "");
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.gl.logo.url\\s*\\}\\}", adInfoBean.getAd_material().getImages().get(0) == null ? "" : adInfoBean.getAd_material().getImages().get(0));
-            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.gl.logo.w\\s*\\}\\}", ""+type.getIconW());
+            htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.gl.logo.w\\s*\\}\\}", "" + type.getIconW());
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.gl.logo.h\\s*\\}\\}", "" + type.getIconH());
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.btn_url\\s*\\}\\}", adInfoBean.getAd_material().getClick_url() == null ? "" : adInfoBean.getAd_material().getClick_url());
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.exposure_url\\s*\\}\\}", adInfoBean.getAd_material().getShow_urls().get(0) == null ? "" : adInfoBean.getAd_material().getShow_urls().get(0));
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.js\\s*\\}\\}", isIFrame ? "axd_iframe.js" : "axd_root.js");
-            L.e("读取到的html模板2:"+htmlTemplate);
+            L.e("读取到的html模板2:" + htmlTemplate);
             return htmlTemplate;
         } catch (IOException e) {
             e.printStackTrace();

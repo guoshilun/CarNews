@@ -111,13 +111,15 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (insertAdvReq == null) {
-            insertAdvReq = new InsertAdvUtil(this);
-        }
+//        checkUpdate();
         if (!isAdvShow) {
+            if (insertAdvReq == null) {
+                insertAdvReq = new InsertAdvUtil(this);
+            }
             insertAdvReq.requestAdv();
             isAdvShow = true;
+        } else {
+            super.onBackPressed();
         }
     }
 

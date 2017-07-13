@@ -1,5 +1,8 @@
 package com.jmgzs.carnews.ui;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -68,6 +71,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -611,10 +615,23 @@ public class NewsInfoActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
+        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        if (am != null) {
+            List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(9999);
+            if (tasks != null && tasks.size() > 0) {
+                for (ActivityManager.RunningTaskInfo task : tasks) {
+                    if (task != null && this.getPackageName().equals(task.baseActivity.getPackageName())) {
+                        if (NewsInfoActivity.class.getName().equals(task.baseActivity.getClassName())) {
+                            Intent intent = new Intent(this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(intent);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
         finish();
     }
 }
