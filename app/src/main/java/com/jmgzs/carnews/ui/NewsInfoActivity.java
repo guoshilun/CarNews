@@ -1,5 +1,8 @@
 package com.jmgzs.carnews.ui;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -66,6 +69,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -133,7 +137,8 @@ public class NewsInfoActivity extends BaseActivity {
 
 //        wv.loadDataWithBaseURL("file:///android_asset/", htmlTemplate, "text/html", "utf-8", null);
     }
-    private void initAnim(){
+
+    private void initAnim() {
         animShareOpen = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_show);
         animShareClose = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_hide);
         animShareClose.setAnimationListener(new Animation.AnimationListener() {
@@ -147,7 +152,7 @@ public class NewsInfoActivity extends BaseActivity {
                     @Override
                     public void run() {
                         contentCover.setVisibility(View.GONE);
-                        ((ViewGroup)contentCover.getParent().getParent()).invalidate();
+                        ((ViewGroup) contentCover.getParent().getParent()).invalidate();
                     }
                 });
             }
@@ -271,13 +276,14 @@ public class NewsInfoActivity extends BaseActivity {
                 if (url.startsWith("file")) {
                     return false;
                 }
-                if (url.startsWith("http")){
+                if (url.startsWith("http")) {
                     Intent intent = new Intent(NewsInfoActivity.this, WebViewActivity.class);
                     intent.putExtra(WebViewActivity.INTENT_URL, url);
                     startActivity(intent);
                 }
                 return true;
             }
+
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 handler.proceed();
@@ -286,12 +292,12 @@ public class NewsInfoActivity extends BaseActivity {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
 //                L.e("资源url:"+url);
-                if (App.isMobile && !url.contains("mj-img") && !url.startsWith("file://")){
+                if (App.isMobile && !url.contains("mj-img") && !url.startsWith("file://")) {
                     int networkState = NetworkUtils.getNetworkState(NewsInfoActivity.this);
-                    if (networkState == NetworkUtils.NETWORN_MOBILE_2G || networkState == NetworkUtils.NETWORN_MOBILE_3G || networkState == NetworkUtils.NETWORN_MOBILE_4G){
+                    if (networkState == NetworkUtils.NETWORN_MOBILE_2G || networkState == NetworkUtils.NETWORN_MOBILE_3G || networkState == NetworkUtils.NETWORN_MOBILE_4G) {
                         try {
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            ((BitmapDrawable)NewsInfoActivity.this.getResources().getDrawable(R.mipmap.app_default_middle)).getBitmap().compress(Bitmap.CompressFormat.PNG, 100, baos);
+                            ((BitmapDrawable) NewsInfoActivity.this.getResources().getDrawable(R.mipmap.app_default_middle)).getBitmap().compress(Bitmap.CompressFormat.PNG, 100, baos);
                             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
                             return new WebResourceResponse("image/png", "utf-8", bais);
                         } catch (Resources.NotFoundException e) {
@@ -338,7 +344,7 @@ public class NewsInfoActivity extends BaseActivity {
                 NewsInfoActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        wv.loadUrl("javascript:setAdvWidthHeight("+width+","+height+")");//广告页获取页面宽高
+                        wv.loadUrl("javascript:setAdvWidthHeight(" + width + "," + height + ")");//广告页获取页面宽高
                     }
                 });
             }
@@ -346,10 +352,10 @@ public class NewsInfoActivity extends BaseActivity {
         wv.addJavascriptInterface(js, "carnews");
     }
 
-    private void showAdv(String htmlPath, int width, int height){
+    private void showAdv(String htmlPath, int width, int height) {
         int newHeight = width <= 0 ? height : (js.getPageWidth() * height / width);
-        String newHtml = "javascript:showAdv(\""+htmlPath+"\", "+js.getPageWidth()+","+newHeight+")";
-        L.e("插入广告html："+newHtml);
+        String newHtml = "javascript:showAdv(\"" + htmlPath + "\", " + js.getPageWidth() + "," + newHeight + ")";
+        L.e("插入广告html：" + newHtml);
         wv.loadUrl(newHtml);
         App.getInstance().runOnUiThread(2000, new Runnable() {
             @Override
@@ -357,7 +363,7 @@ public class NewsInfoActivity extends BaseActivity {
                 wv.loadUrl("javascript:setIFrameParentWindow()");//调用后js会自动回调loadAdvFinish()方法
             }
         });
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 try {
@@ -385,9 +391,9 @@ public class NewsInfoActivity extends BaseActivity {
         scrollControlView = (ScrollControlFrameLayout) findViewById(R.id.newsInfo_scf);
         content = findViewById(R.id.newsInfo_content);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             ((LinearLayout.LayoutParams) statusBar.getLayoutParams()).height = DensityUtils.getStatusBarHeight(this);
-        }else{
+        } else {
             statusBar.setVisibility(View.GONE);
         }
         top.measure(View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenWidthPixels(this), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenHeightPixels(this), View.MeasureSpec.AT_MOST));
@@ -422,11 +428,11 @@ public class NewsInfoActivity extends BaseActivity {
                     html = html.replace("%4$s", info.getPublish_time() == null ? "" : info.getPublish_time());
                     L.e(html);
                     float size = (SPBase.getInt(Const.SPKey.TEXT_SIZE, 1) - 1) * 0.2f + 1;
-                    L.e("字体大小："+size);
+                    L.e("字体大小：" + size);
                     js.setFontSize(size);
                     File tempFile = new File(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info", "info.html");
                     html = AdvRequestUtil.transferHtmlToLocal(NewsInfoActivity.this, tempFile, html);
-                    L.e("aaaa:"+Uri.fromFile(tempFile.getParentFile()).toString());
+                    L.e("aaaa:" + Uri.fromFile(tempFile.getParentFile()).toString());
                     wv.loadDataWithBaseURL(Uri.fromFile(tempFile.getParentFile()).toString(), html, "text/html", "utf-8", null);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -476,7 +482,7 @@ public class NewsInfoActivity extends BaseActivity {
                 break;
             case R.id.bottomBar_img_share://分享
             case R.id.titleInfo_img_more:
-                if (info == null){
+                if (info == null) {
                     return;
                 }
                 shareUtils.shareUrl(NewsInfoActivity.this, bottomBar, "http://www.baidu.com", info.getTitle(), info.getContent(), R.mipmap.car_title_logo, new UMShareListener() {
@@ -502,13 +508,13 @@ public class NewsInfoActivity extends BaseActivity {
                 }, new ShareBoardView.IOnBoardDismissListener() {
                     @Override
                     public void onDismiss(boolean isDismiss) {
-                        if (isDismiss){
+                        if (isDismiss) {
                             contentCover.setAnimation(animShareClose);
                             contentCover.invalidate();
                             animShareClose.startNow();
-                        }else{
+                        } else {
                             contentCover.setVisibility(View.VISIBLE);
-                            ((ViewGroup)contentCover.getParent().getParent()).invalidate();
+                            ((ViewGroup) contentCover.getParent().getParent()).invalidate();
                             contentCover.setAnimation(animShareOpen);
                             contentCover.invalidate();
                             animShareOpen.startNow();
@@ -520,15 +526,15 @@ public class NewsInfoActivity extends BaseActivity {
     }
 
     private void requestAdv() {
-        if (TextUtils.isEmpty(channel)){
+        if (TextUtils.isEmpty(channel)) {
             return;
         }
         final AdSlotType slotType = getSlotTypeByChannel(channel);
-        if (slotType == null){
+        if (slotType == null) {
             return;
         }
         AdvRequestBean req = AdvRequestUtil.getAdvRequest(NewsInfoActivity.this, slotType);
-        L.e("广告请求："+new Gson().toJson(req));
+        L.e("广告请求：" + new Gson().toJson(req));
         final int advWidth = js.getPageWidth();
         final int advHeight = slotType.getHeight() * advWidth / slotType.getWidth();
         File dir = FileUtils.createDir(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info");
@@ -544,21 +550,21 @@ public class NewsInfoActivity extends BaseActivity {
                 L.e("广告请求失败");
                 String html = "";
                 String response = "";
-                if (slotType == AdSlotType.BANNER_800_120){
+                if (slotType == AdSlotType.BANNER_800_120) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
-                }else if (slotType == AdSlotType.BANNER_440_160){
+                } else if (slotType == AdSlotType.BANNER_440_160) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
-                }else if (slotType == AdSlotType.BANNER_640_100){
+                } else if (slotType == AdSlotType.BANNER_640_100) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
-                }else if (slotType == AdSlotType.BANNER_640_200){
+                } else if (slotType == AdSlotType.BANNER_640_200) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
-                }else if (slotType == AdSlotType.BANNER_240_180_W){
+                } else if (slotType == AdSlotType.BANNER_240_180_W) {
                     response = "{\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\",\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDT2J5OEpiUEt4Q3dvTUZRR0p6NW9qMD0QACDIECjbiJr5prH4mTMw5vLwls8rOg4I9iEQ_egEGMTiAyCFJEDYBFgxYnZodHRwczovL21lbmdqdS1zdGMtaDUud2VpbW9iLmNvbS9wL29ubGluZS9kMmUzZDQzYjhlMzNmNTc2MjRkYmIyZDkwNzNjMWJjOS8wLmh0bWw_Y2hhbm5lbFNvdXJjZT1jcGMtNDgzMjUxNTU5Jm1qX3NpZD0xaAFwAIAByBCIAej-ApABAZgBBrAB6Qc=\",\"desc\": \"\\u6c34\\u679c\\u7f51\\u8d2d\\u9996\\u9009\\uff0c\\u54c1\\u8d28\\u4fdd\\u8bc1\\uff0c\\u65b0\\u9c9c\\u5230\\u5bb6\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/1b69463d-2798-46b1-9091-aab2ba209b17.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDT2J5OEpiUEt4Q3dvTUZRR0p6NW9qMD0Q24ia-aax-JkzGg4I9iEQ_egEGMTiAyCFJCDm8vCWzyso2AQ4yBBAyBCYAQaoAekHsAEBuAEAwAHo_gLIAQE=&seqs=0\"],\"title\": \"\\u590f\\u5b63\\u6c34\\u679c\\u9c9c\\u6ecb\\u5473\\uff0c\\u9650\\u65f6\\u6298\\u4e0a\\u6298\"},\"ad_type\": 2,\"adid\": 4613,\"landing_page\":\"https://mengju-stc-h5.weimob.com/p/online/d2e3d43b8e33f57624dbb2d9073c1bc9/0.html?channelSource=cpc-483251559&mj_sid=1\"}]}";
-                }else if (slotType == AdSlotType.BANNER_1000_500_W){
+                } else if (slotType == AdSlotType.BANNER_1000_500_W) {
                     response = "{\"id\":ebb7fbcb-01da-4255-8c87-98eedbcd2909,\"ad_info\":[{\"ad_material\":{\"app_download_url\":\"http://mj-public.weimob.com/wd/mengdian_360_4.5.3_signed_Aligned.apk\",\"app_name\":\"\\u840c\\u5e97\",\"app_pkg_name\":\"com.hs.yjseller\",\"brand\":\"\\u5fae\\u76df\\u840c\\u5e97\",\"click_url\":\"http://c.mjmobi.com/cli?info=ChhDTEtaNFpmUEt4Q3dvTUZRR0lDYS1qMD0QACC4DijbiJr5prH4mTMwspnhl88rOg4I8yEQyt0EGMTiAyD7I0C8BVgxYkRodHRwOi8vbWotcHVibGljLndlaW1vYi5jb20vd2QvbWVuZ2RpYW5fMzYwXzQuNS4zX3NpZ25lZF9BbGlnbmVkLmFwa2gBcACAAZcPiAHo_gKQAQGYAQawAQY=\",\"desc\":\"\\u708e\\u708e\\u9177\\u6691\\u4e2d\\u7684\\u590f\\u5b63\\u6e05\\u51c9\\u6c34\\u679c\\uff0c\\u4fbf\\u5b9c\\u53c8\\u65b0\\u9c9c\",\"icon\":\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/36cee647-e6ec-49fa-8d42-e12915d2d28f.png\",\"images\":[\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/ad3d10bb-f5e7-4abe-88e2-e3d1103df186.jpg\"],\"show_urls\":[\"http://s.mjmobi.com/imp?info=ChhDTEtaNFpmUEt4Q3dvTUZRR0lDYS1qMD0Q24ia-aax-JkzGg4I8yEQyt0EGMTiAyD7IyCymeGXzysovAU4lw9AuA6YAQaoAQawAQG4AQDAAej-AsgBAQ==&seqs=0\"],\"title\":\"\\u590f\\u5b63\\u6c34\\u679c\\u9c9c\\u6ecb\\u5473\\uff0c\\u9650\\u65f6\\u6298\\u4e0a\\u6298\"},\"ad_type\":1,\"adid\":4603,\"landing_page\":\"http://mj-public.weimob.com/wd/mengdian_360_4.5.3_signed_Aligned.apk\"}]}";
-                }else if (slotType == AdSlotType.BANNER_640_100_W){
+                } else if (slotType == AdSlotType.BANNER_640_100_W) {
                     response = "{\"id\":\"ebb7fbcb-01da-4255-8c87-98eedbcd2909\",\"ad_info\":[{\"ad_material\":{\"click_url\":\"http://c.mjmobi.com/cli?info=ChhDT3JjNnBiUEt4Q3VvTUZRR0p5V25qMD0QACDIECjbiJr5prH4mTMw6tzqls8rOg4I9iEQ_egEGMTiAyCEJEDYBFgxYnZodHRwczovL21lbmdqdS1zdGMtaDUud2VpbW9iLmNvbS9wL29ubGluZS9kMmUzZDQzYjhlMzNmNTc2MjRkYmIyZDkwNzNjMWJjOS8wLmh0bWw_Y2hhbm5lbFNvdXJjZT1jcGMtNDgzMjUxNTU5Jm1qX3NpZD0xaAFwAIABxxCIAej-ApABAZgBBrAB6Qc=\",\"desc\":\"\\u6c34\\u679c\\u7f51\\u8d2d\\u9996\\u9009\\uff0c\\u54c1\\u8d28\\u4fdd\\u8bc1\\uff0c\\u65b0\\u9c9c\\u5230\\u5bb6\",\"images\":[\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/db62fa82-dd7e-4d32-bb13-3ecb8c790035.jpg\"],\"show_urls\":[\"http://s.mjmobi.com/imp?info=ChhDT3JjNnBiUEt4Q3VvTUZRR0p5V25qMD0Q24ia-aax-JkzGg4I9iEQ_egEGMTiAyCEJCDq3OqWzyso2AQ4xxBAyBCYAQaoAekHsAEBuAEAwAHo_gLIAQE=&seqs=0\"],\"title\":\"\\u590f\\u5b63\\u6c34\\u679c\\u9c9c\\u6ecb\\u5473\\uff0c\\u9650\\u65f6\\u6298\\u4e0a\\u6298\"},\"ad_type\":2,\"adid\":4612,\"landing_page\":\"https://mengju-stc-h5.weimob.com/p/online/d2e3d43b8e33f57624dbb2d9073c1bc9/0.html?channelSource=cpc-483251559&mj_sid=1\"}]}";
-                }else{
+                } else {
                     return;
                 }
                 html = AdvRequestUtil.getHtmlByResponse(NewsInfoActivity.this, js.getPageWidth(), slotType, response, true);
@@ -575,17 +581,17 @@ public class NewsInfoActivity extends BaseActivity {
 
     }
 
-    private void processAdvData(String html, int width, int height){
+    private void processAdvData(String html, int width, int height) {
         File file = FileUtils.createFile(NewsInfoActivity.this, FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info", "info_adv.html");
         AdvRequestUtil.transferHtmlToLocal(NewsInfoActivity.this, file, html);
         showAdv(Uri.fromFile(file).toString(), width, height);
     }
 
-    private AdSlotType getSlotTypeByChannel(String channel){
+    private AdSlotType getSlotTypeByChannel(String channel) {
         String[] channels = this.getResources().getStringArray(R.array.tab_channels);
         List<AdSlotType> banners = AdSlotType.getBannerList();
-        for (int index = 0; index < channels.length; index++){
-            if (channel.equals(channels[index])){
+        for (int index = 0; index < channels.length; index++) {
+            if (channel.equals(channels[index])) {
                 int i = index % banners.size();
                 return banners.get(i);
             }
@@ -595,10 +601,23 @@ public class NewsInfoActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
+        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        if (am != null) {
+            List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(9999);
+            if (tasks != null && tasks.size() > 0) {
+                for (ActivityManager.RunningTaskInfo task : tasks) {
+                    if (task != null && this.getPackageName().equals(task.baseActivity.getPackageName())) {
+                        if (NewsInfoActivity.class.getName().equals(task.baseActivity.getClassName())) {
+                            Intent intent = new Intent(this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(intent);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
         finish();
     }
 }

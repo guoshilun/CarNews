@@ -69,7 +69,7 @@ public class AdvTempList {
                             if (tempId >= 1000) {
                                 tempId = 0;
                             }
-                            File f = FileUtils.createFile(context, FileUtils.getCachePath(context) + File.separator + "info", "list_"+(tempId++)+"_adv.html");
+                            File f = FileUtils.createFile(context, FileUtils.getCachePath(context) + File.separator + "info", "list_" + (tempId++) + "_adv.html");
                             if (TextUtils.isEmpty(html) || f == null) {
                                 isOnceRequestFinished = true;
                                 return;
@@ -110,26 +110,32 @@ public class AdvTempList {
                             if (tempId >= 1000) {
                                 tempId = 0;
                             }
-                            File f = FileUtils.createFile(context, FileUtils.getCachePath(context) + File.separator + "info", "list_"+(tempId++)+"_adv.html");
+                            final File f = FileUtils.createFile(context, FileUtils.getCachePath(context) + File.separator + "info", "list_" + (tempId++) + "_adv.html");
                             final int height = slotType.getHeight() * width / slotType.getWidth();
-                            String html = AdvRequestUtil.getHtmlByResponse(context, width, slotType, response, false);
-                            html = AdvRequestUtil.transferHtmlToLocal(context, f, html);
-                            if (TextUtils.isEmpty(html) || f == null) {
-                                isOnceRequestFinished = true;
-                                return;
-                            }
-                            //缓存广告对象
-                            if (AdSlotType.INFO_720_405_W == slotType) {
-                                list_720_405.add(new AdvTempBean(html, width, height, f.getAbsolutePath()));
-                            } else if (AdSlotType.INFO_600_300_W == slotType) {
-                                list_600_300.add(new AdvTempBean(html, width, height, f.getAbsolutePath()));
-                            } else if (AdSlotType.INFO_800_120_W == slotType) {
-                                list_800_120.add(new AdvTempBean(html, width, height, f.getAbsolutePath()));
-                            } else {
-                                isOnceRequestFinished = true;
-                                return;
-                            }
-                            isOnceRequestFinished = true;
+                            final String html = AdvRequestUtil.getHtmlByResponse(context, width, slotType, response, false);
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    String htmlNew = AdvRequestUtil.transferHtmlToLocal(context, f, html);
+                                    if (TextUtils.isEmpty(htmlNew) || f == null) {
+                                        isOnceRequestFinished = true;
+                                        return;
+                                    }
+                                    //缓存广告对象
+                                    if (AdSlotType.INFO_720_405_W == slotType) {
+                                        list_720_405.add(new AdvTempBean(htmlNew, width, height, f.getAbsolutePath()));
+                                    } else if (AdSlotType.INFO_600_300_W == slotType) {
+                                        list_600_300.add(new AdvTempBean(htmlNew, width, height, f.getAbsolutePath()));
+                                    } else if (AdSlotType.INFO_800_120_W == slotType) {
+                                        list_800_120.add(new AdvTempBean(htmlNew, width, height, f.getAbsolutePath()));
+                                    } else {
+                                        isOnceRequestFinished = true;
+                                        return;
+                                    }
+                                    isOnceRequestFinished = true;
+                                }
+                            }.start();
+
                         }
                     });
                     while (!isOnceRequestFinished) {

@@ -88,7 +88,7 @@ public class MainActivity extends BaseActivity {
             GlideApp.with(this).asBitmap().centerInside().
                     placeholder(R.mipmap.user_head_default).error(R.mipmap.user_head_default).load(App.headPath).into(head);
 
-        }
+    }
 
     @Override
     public void onClick(View view) {
@@ -107,13 +107,14 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
 //        checkUpdate();
-        super.onBackPressed();
-        if (insertAdvReq == null){
-            insertAdvReq = new InsertAdvUtil(this);
-        }
-        if (!isAdvShow){
+        if (!isAdvShow) {
+            if (insertAdvReq == null) {
+                insertAdvReq = new InsertAdvUtil(this);
+            }
             insertAdvReq.requestAdv();
             isAdvShow = true;
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -156,7 +157,7 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        SPBase.getBoolean(Const.SPKey.OPEN_ADV,data.isHas_ad());
+        SPBase.getBoolean(Const.SPKey.OPEN_ADV, data.isHas_ad());
         AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, false));
     }
 
