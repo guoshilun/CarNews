@@ -26,6 +26,8 @@ import com.jmgzs.lib_network.utils.L;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by mac on 17/6/12.
@@ -38,6 +40,7 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
     private WebView wv;
     private float scale;
     private int advWidth, advHeight;
+    private Map<String, Integer> mAdSlotTypeMap = new HashMap<>();//广告与点击类型映射
 
     public RCVAdvHolder(ViewGroup parent, @LayoutRes int layout, final JsBridge.IJsCallback callback) {
         super(parent, layout);
@@ -56,9 +59,15 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
                         return false;
                     }
                     if (url.startsWith("http")){
-                        Intent intent = new Intent(getContext(), WebViewActivity.class);
-                        intent.putExtra(WebViewActivity.INTENT_URL, url);
-                        getContext().startActivity(intent);
+                        Integer type;
+                        if ((type = mAdSlotTypeMap.get(url)) != null && type == 1){//下载
+                            return false;
+                        }else{//外链
+                            Intent intent = new Intent(getContext(), WebViewActivity.class);
+                            intent.putExtra(WebViewActivity.INTENT_URL, url);
+                            getContext().startActivity(intent);
+                            return true;
+                        }
                     }
                     return true;
                 }
@@ -128,7 +137,7 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
             wv.getLayoutParams().width = adv.getAdvW();
             wv.getLayoutParams().height = adv.getAdvH();
 //            wv.loadUrl("https://www.baidu.com");
-
+            mAdSlotTypeMap.put(adv.getLandingPageUrl(), adv.getAdType());
             File file = new File(adv.getFile());
             L.e("文件路径:"+Uri.fromFile(file.getParentFile()).toString());
             L.e("html:"+html);

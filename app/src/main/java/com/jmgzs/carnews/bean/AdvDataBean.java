@@ -11,6 +11,8 @@ public class AdvDataBean extends NewsDataBean {
     private int advH;
     private String html;
     private String file;//html文件
+    private String landingPageUrl;//landingPage
+    private int adType;
 
     public String getHtml() {
         return html;
@@ -41,8 +43,23 @@ public class AdvDataBean extends NewsDataBean {
     }
 
     public String getFile() {
-
         return file;
+    }
+
+    public String getLandingPageUrl() {
+        return landingPageUrl;
+    }
+
+    public void setLandingPageUrl(String landingPageUrl) {
+        this.landingPageUrl = landingPageUrl;
+    }
+
+    public int getAdType() {
+        return adType;
+    }
+
+    public void setAdType(int adType) {
+        this.adType = adType;
     }
 
     @Override

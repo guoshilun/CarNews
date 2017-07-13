@@ -278,7 +278,7 @@ public class AdvRequestUtil {
 
                                 //TODO 返回数据
                                 if (callback != null) {
-                                    callback.onGetAdvSuccess(finalHtmlTemplate, tempFile, width, height);
+                                    callback.onGetAdvSuccess(finalHtmlTemplate, tempFile, width, height, data.getAd_info().get(0).getAd_material().getShow_urls().get(0) == null ? "" : data.getAd_info().get(0).getAd_material().getShow_urls().get(0),data.getAd_info().get(0).getAd_type());
                                 }
                             }
                         });
@@ -336,7 +336,7 @@ public class AdvRequestUtil {
         try {
             String htmlTemplate = FileUtils.readTextInputStream(context.getAssets().open("axd" + File.separator + templateName));
 //                    AdvBean htmlData = AdvBean.getDataByStr("{\"exposure_url\":\"http://s.mjmobi.com/imp?info=ChhDTWpvdXZyTEt4Q0tvTUZRR1AzejFwRUIQxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIgyOi6-ssrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\",\"btn_url\":\"http://c.mjmobi.com/cli?info=ChhDTWpvdXZyTEt4Q0tvTUZRR1AzejFwRUIQACC4DijEoKvgu6fY0cgBMMjouvrLKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"image\":{\"url\":\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\",\"width\":\"100%\",\"height\":\"100%\"},\"gl\":{\"logo\":{\"url\":\"file:///android_asset/public/img/wgtt.jpg\",\"w\":40,\"h\":40,\"scale\":2},\"title\":\"中草药高端护肤品牌\",\"detail\":\"喜欢, 是唯一的捷径. 我只管喜欢\",\"desc\":\"我只管喜欢, 不是因为有钱才喜欢, 是因为喜欢才有钱!\"}}");
-            L.e("读取到的html模板:" + htmlTemplate);
+//            L.e("读取到的html模板:" + htmlTemplate);
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.gl.title\\s*\\}\\}", adInfoBean.getAd_material().getTitle() == null ? "" : adInfoBean.getAd_material().getTitle());
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.gl.detail\\s*\\}\\}", adInfoBean.getAd_material().getContent() == null ? "" : adInfoBean.getAd_material().getContent());
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.gl.desc\\s*\\}\\}", adInfoBean.getAd_material().getDesc() == null ? "" : adInfoBean.getAd_material().getDesc());
@@ -350,7 +350,7 @@ public class AdvRequestUtil {
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.btn_url\\s*\\}\\}", adInfoBean.getAd_material().getClick_url() == null ? "" : adInfoBean.getAd_material().getClick_url());
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.exposure_url\\s*\\}\\}", adInfoBean.getAd_material().getShow_urls().get(0) == null ? "" : adInfoBean.getAd_material().getShow_urls().get(0));
             htmlTemplate = htmlTemplate.replaceAll("\\{\\{\\s*axd.js\\s*\\}\\}", isIFrame ? "axd_iframe.js" : "axd_root.js");
-            L.e("读取到的html模板2:" + htmlTemplate);
+//            L.e("读取到的html模板2:" + htmlTemplate);
             return htmlTemplate;
         } catch (IOException e) {
             e.printStackTrace();
