@@ -154,7 +154,7 @@ public class RetrofitRequestManager {
         }else{
             observable = httpRequest.post(request.getUrl(), RequestBody.create(MediaType.parse("application/json"), request.getBody() == null ? "" : request.getBody()), request.getHeaders() == null ? new HashMap<String, String>() : request.getHeaders());
         }
-        L.e("请求的URL："+request.getUrl());
+//        L.e("请求的URL："+request.getUrl());
         final String httpType = isGet ? "Get" : "Post";
         if (isSync){
             observable = observable
@@ -171,7 +171,7 @@ public class RetrofitRequestManager {
                     public void accept(@NonNull ResponseBody data) throws Exception {
                         String url = request.getUrl();
                         String json = data.string();
-                        L.e(httpType + " url:" + url + " 返回的数据：" + json);
+//                        L.e(httpType + " url:" + url + " 返回的数据：" + json);
                         //解析json数据
                         parseData(isGet, json, request, responseType, callback);
                     }
@@ -211,12 +211,12 @@ public class RetrofitRequestManager {
                 }, new Action() {
                     @Override
                     public void run() throws Exception {
-                        L.e(httpType + " Completed！");
+//                        L.e(httpType + " Completed！");
                     }
                 }, new Consumer<Disposable>() {
                     @Override
                     public void accept(@NonNull Disposable disposable) throws Exception {
-                        L.e(httpType + " disposed！");
+//                        L.e(httpType + " disposed！");
                     }
                 });
     }
@@ -228,17 +228,17 @@ public class RetrofitRequestManager {
         final String requestType = isGet ? "Get" : "Post";
         try {
             // 解析返回是否正常
-            L.e("data:"+data);
+//            L.e("data:"+data);
             //解析返回的数据
             Gson gson = new GsonBuilder().registerTypeAdapterFactory(new JsonFilterAdapterFactory()).create();
             T result = gson.fromJson(data, responseType);
             callback.onSuccess(request.getUrl(), result);
             return true;
         } catch (JsonSyntaxException e) {
-            L.e(requestType + " Error：" + e, e);
+//            L.e(requestType + " Error：" + e, e);
             int errorCode = NetworkErrorCode.ERROR_CODE_DATA_FORMAT.getCode();
             String msg = NetworkErrorCode.ERROR_CODE_DATA_FORMAT.getMsg();
-            L.e(requestType + " ErrorCode：" + errorCode + " Message:" + msg);
+//            L.e(requestType + " ErrorCode：" + errorCode + " Message:" + msg);
             callback.onFailure(request.getUrl(), errorCode, msg);
             return false;
         }

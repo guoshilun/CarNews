@@ -138,8 +138,11 @@ public class AdvRequestUtil {
             callback.onFailure(null, 0, "cache is null");
 //            callback.onSuccess(null,new AdvResponseBean.AdInfoBean());
         }
+
+        AdvRequestBean requestBean = getAdvRequest(context, type);
+        L.e("open:"+gson.toJson(requestBean));
         RequestUtil.requestByPostAsy(context, API_ADV,
-                gson.toJson(getAdvRequest(context, type)),
+                gson.toJson(requestBean),
                 AdvResponseBean.class,
                 new IRequestCallBack<AdvResponseBean>() {
                     @Override
