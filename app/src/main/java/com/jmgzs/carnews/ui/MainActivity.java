@@ -93,7 +93,7 @@ public class MainActivity extends BaseActivity {
             GlideApp.with(this).asBitmap().centerInside().
                     placeholder(R.mipmap.user_head_default).error(R.mipmap.user_head_default).load(App.headPath).into(head);
 
-        }
+    }
 
     @Override
     public void onClick(View view) {
@@ -112,10 +112,10 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (insertAdvReq == null){
+        if (insertAdvReq == null) {
             insertAdvReq = new InsertAdvUtil(this);
         }
-        if (!isAdvShow){
+        if (!isAdvShow) {
             insertAdvReq.requestAdv();
             isAdvShow = true;
         }
@@ -127,8 +127,13 @@ public class MainActivity extends BaseActivity {
         RequestUtil.requestByGetAsy(this, Urls.getUpdateUrl(), UpdateBean.class, new IRequestCallBack<UpdateBean>() {
             @Override
             public void onSuccess(String url, UpdateBean data) {
-                if (data != null && data.getRsp().getStatus() == 1)
-                    showUpdateDialog(data.getData());
+                if (data != null && data.getRsp().getStatus() == 1 && data.getData() != null) {
+                    if (data.getData().getVersion() > AppUtils.getVersionNum())
+                        showUpdateDialog(data.getData());
+                    SPBase.putBoolean(Const.SPKey.OPEN_ADV, data.getData().isHas_ad());
+                    AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, false));
+
+                }
 
             }
 
@@ -145,7 +150,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showUpdateDialog(final UpdateInfo data) {
-        if (data == null) return;
         UpdateDialog updateDialog = new UpdateDialog(this);
         updateDialog.show();
         updateDialog.setData(data.getMsg(), data.isForce());
@@ -160,8 +164,6 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        SPBase.putBoolean(Const.SPKey.OPEN_ADV,data.isHas_ad());
-        AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, false));
     }
 
     @Override

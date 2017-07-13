@@ -355,10 +355,10 @@ public class NewsInfoActivity extends BaseActivity {
         wv.addJavascriptInterface(js, "carnews");
     }
 
-    private void showAdv(String htmlPath, int width, int height){
+    private void showAdv(String htmlPath, int width, int height) {
         int newHeight = width <= 0 ? height : (js.getPageWidth() * height / width);
-        String newHtml = "javascript:showAdv(\""+htmlPath+"\", "+js.getPageWidth()+","+newHeight+")";
-        L.e("插入广告html："+newHtml);
+        String newHtml = "javascript:showAdv(\"" + htmlPath + "\", " + js.getPageWidth() + "," + newHeight + ")";
+        L.e("插入广告html：" + newHtml);
         wv.loadUrl(newHtml);
         App.getInstance().runOnUiThread(2000, new Runnable() {
             @Override
@@ -394,9 +394,9 @@ public class NewsInfoActivity extends BaseActivity {
         scrollControlView = (ScrollControlFrameLayout) findViewById(R.id.newsInfo_scf);
         content = findViewById(R.id.newsInfo_content);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             ((LinearLayout.LayoutParams) statusBar.getLayoutParams()).height = DensityUtils.getStatusBarHeight(this);
-        }else{
+        } else {
             statusBar.setVisibility(View.GONE);
         }
         top.measure(View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenWidthPixels(this), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(DensityUtils.getScreenHeightPixels(this), View.MeasureSpec.AT_MOST));
@@ -435,7 +435,7 @@ public class NewsInfoActivity extends BaseActivity {
                     js.setFontSize(size);
                     File tempFile = new File(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info", "info.html");
                     html = AdvRequestUtil.transferHtmlToLocal(NewsInfoActivity.this, tempFile, html);
-                    L.e("aaaa:"+Uri.fromFile(tempFile.getParentFile()).toString());
+                    L.e("aaaa:" + Uri.fromFile(tempFile.getParentFile()).toString());
                     wv.loadDataWithBaseURL(Uri.fromFile(tempFile.getParentFile()).toString(), html, "text/html", "utf-8", null);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -540,11 +540,11 @@ public class NewsInfoActivity extends BaseActivity {
             return;
         }
         final AdSlotType slotType = getSlotTypeByChannel(channel);
-        if (slotType == null){
+        if (slotType == null) {
             return;
         }
         AdvRequestBean req = AdvRequestUtil.getAdvRequest(NewsInfoActivity.this, slotType);
-        L.e("广告请求："+new Gson().toJson(req));
+        L.e("广告请求：" + new Gson().toJson(req));
         final int advWidth = js.getPageWidth();
         final int advHeight = slotType.getHeight() * advWidth / slotType.getWidth();
         File dir = FileUtils.createDir(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info");
@@ -560,21 +560,21 @@ public class NewsInfoActivity extends BaseActivity {
                 L.e("广告请求失败");
                 String html = "";
                 String response = "";
-                if (slotType == AdSlotType.BANNER_800_120){
+                if (slotType == AdSlotType.BANNER_800_120) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
-                }else if (slotType == AdSlotType.BANNER_440_160){
+                } else if (slotType == AdSlotType.BANNER_440_160) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
-                }else if (slotType == AdSlotType.BANNER_640_100){
+                } else if (slotType == AdSlotType.BANNER_640_100) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
-                }else if (slotType == AdSlotType.BANNER_640_200){
+                } else if (slotType == AdSlotType.BANNER_640_200) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
-                }else if (slotType == AdSlotType.BANNER_240_180_W){
+                } else if (slotType == AdSlotType.BANNER_240_180_W) {
                     response = "{\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\",\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDT2J5OEpiUEt4Q3dvTUZRR0p6NW9qMD0QACDIECjbiJr5prH4mTMw5vLwls8rOg4I9iEQ_egEGMTiAyCFJEDYBFgxYnZodHRwczovL21lbmdqdS1zdGMtaDUud2VpbW9iLmNvbS9wL29ubGluZS9kMmUzZDQzYjhlMzNmNTc2MjRkYmIyZDkwNzNjMWJjOS8wLmh0bWw_Y2hhbm5lbFNvdXJjZT1jcGMtNDgzMjUxNTU5Jm1qX3NpZD0xaAFwAIAByBCIAej-ApABAZgBBrAB6Qc=\",\"desc\": \"\\u6c34\\u679c\\u7f51\\u8d2d\\u9996\\u9009\\uff0c\\u54c1\\u8d28\\u4fdd\\u8bc1\\uff0c\\u65b0\\u9c9c\\u5230\\u5bb6\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/1b69463d-2798-46b1-9091-aab2ba209b17.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDT2J5OEpiUEt4Q3dvTUZRR0p6NW9qMD0Q24ia-aax-JkzGg4I9iEQ_egEGMTiAyCFJCDm8vCWzyso2AQ4yBBAyBCYAQaoAekHsAEBuAEAwAHo_gLIAQE=&seqs=0\"],\"title\": \"\\u590f\\u5b63\\u6c34\\u679c\\u9c9c\\u6ecb\\u5473\\uff0c\\u9650\\u65f6\\u6298\\u4e0a\\u6298\"},\"ad_type\": 2,\"adid\": 4613,\"landing_page\":\"https://mengju-stc-h5.weimob.com/p/online/d2e3d43b8e33f57624dbb2d9073c1bc9/0.html?channelSource=cpc-483251559&mj_sid=1\"}]}";
-                }else if (slotType == AdSlotType.BANNER_1000_500_W){
+                } else if (slotType == AdSlotType.BANNER_1000_500_W) {
                     response = "{\"id\":ebb7fbcb-01da-4255-8c87-98eedbcd2909,\"ad_info\":[{\"ad_material\":{\"app_download_url\":\"http://mj-public.weimob.com/wd/mengdian_360_4.5.3_signed_Aligned.apk\",\"app_name\":\"\\u840c\\u5e97\",\"app_pkg_name\":\"com.hs.yjseller\",\"brand\":\"\\u5fae\\u76df\\u840c\\u5e97\",\"click_url\":\"http://c.mjmobi.com/cli?info=ChhDTEtaNFpmUEt4Q3dvTUZRR0lDYS1qMD0QACC4DijbiJr5prH4mTMwspnhl88rOg4I8yEQyt0EGMTiAyD7I0C8BVgxYkRodHRwOi8vbWotcHVibGljLndlaW1vYi5jb20vd2QvbWVuZ2RpYW5fMzYwXzQuNS4zX3NpZ25lZF9BbGlnbmVkLmFwa2gBcACAAZcPiAHo_gKQAQGYAQawAQY=\",\"desc\":\"\\u708e\\u708e\\u9177\\u6691\\u4e2d\\u7684\\u590f\\u5b63\\u6e05\\u51c9\\u6c34\\u679c\\uff0c\\u4fbf\\u5b9c\\u53c8\\u65b0\\u9c9c\",\"icon\":\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/36cee647-e6ec-49fa-8d42-e12915d2d28f.png\",\"images\":[\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/ad3d10bb-f5e7-4abe-88e2-e3d1103df186.jpg\"],\"show_urls\":[\"http://s.mjmobi.com/imp?info=ChhDTEtaNFpmUEt4Q3dvTUZRR0lDYS1qMD0Q24ia-aax-JkzGg4I8yEQyt0EGMTiAyD7IyCymeGXzysovAU4lw9AuA6YAQaoAQawAQG4AQDAAej-AsgBAQ==&seqs=0\"],\"title\":\"\\u590f\\u5b63\\u6c34\\u679c\\u9c9c\\u6ecb\\u5473\\uff0c\\u9650\\u65f6\\u6298\\u4e0a\\u6298\"},\"ad_type\":1,\"adid\":4603,\"landing_page\":\"http://mj-public.weimob.com/wd/mengdian_360_4.5.3_signed_Aligned.apk\"}]}";
-                }else if (slotType == AdSlotType.BANNER_640_100_W){
+                } else if (slotType == AdSlotType.BANNER_640_100_W) {
                     response = "{\"id\":\"ebb7fbcb-01da-4255-8c87-98eedbcd2909\",\"ad_info\":[{\"ad_material\":{\"click_url\":\"http://c.mjmobi.com/cli?info=ChhDT3JjNnBiUEt4Q3VvTUZRR0p5V25qMD0QACDIECjbiJr5prH4mTMw6tzqls8rOg4I9iEQ_egEGMTiAyCEJEDYBFgxYnZodHRwczovL21lbmdqdS1zdGMtaDUud2VpbW9iLmNvbS9wL29ubGluZS9kMmUzZDQzYjhlMzNmNTc2MjRkYmIyZDkwNzNjMWJjOS8wLmh0bWw_Y2hhbm5lbFNvdXJjZT1jcGMtNDgzMjUxNTU5Jm1qX3NpZD0xaAFwAIABxxCIAej-ApABAZgBBrAB6Qc=\",\"desc\":\"\\u6c34\\u679c\\u7f51\\u8d2d\\u9996\\u9009\\uff0c\\u54c1\\u8d28\\u4fdd\\u8bc1\\uff0c\\u65b0\\u9c9c\\u5230\\u5bb6\",\"images\":[\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/db62fa82-dd7e-4d32-bb13-3ecb8c790035.jpg\"],\"show_urls\":[\"http://s.mjmobi.com/imp?info=ChhDT3JjNnBiUEt4Q3VvTUZRR0p5V25qMD0Q24ia-aax-JkzGg4I9iEQ_egEGMTiAyCEJCDq3OqWzyso2AQ4xxBAyBCYAQaoAekHsAEBuAEAwAHo_gLIAQE=&seqs=0\"],\"title\":\"\\u590f\\u5b63\\u6c34\\u679c\\u9c9c\\u6ecb\\u5473\\uff0c\\u9650\\u65f6\\u6298\\u4e0a\\u6298\"},\"ad_type\":2,\"adid\":4612,\"landing_page\":\"https://mengju-stc-h5.weimob.com/p/online/d2e3d43b8e33f57624dbb2d9073c1bc9/0.html?channelSource=cpc-483251559&mj_sid=1\"}]}";
-                }else{
+                } else {
                     return;
                 }
                 html = AdvRequestUtil.getHtmlByResponse(NewsInfoActivity.this, js.getPageWidth(), slotType, response, true);
