@@ -27,6 +27,7 @@ import com.jmgzs.carnews.ui.dialog.DialogMenu;
 import com.jmgzs.carnews.ui.dialog.IMenuItemClickListerer;
 import com.jmgzs.carnews.util.InsertAdvUtil;
 import com.jmgzs.carnews.util.LoaderUtil;
+import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 import com.jmgzs.lib.swipelistview.SwipeMenu;
@@ -63,7 +64,7 @@ public class NewsStoreActivity extends BaseActivity implements AdapterView.OnIte
         title.setText(R.string.setting_store);
         listView = getView(R.id.swipe_list);
 
-        adapter = new StoreAdapter(this, null);
+        adapter = new StoreAdapter(this, LoaderUtil.get().loadCache(this));
         SwipeMenuCreator creator = new SwipeMenuCreator() {
             @Override
             public void create(SwipeMenu menu) {
@@ -84,22 +85,25 @@ public class NewsStoreActivity extends BaseActivity implements AdapterView.OnIte
         });
         listView.setAdapter(adapter);
         listView.setMenuCreator(creator);
-        selectData();
 
         insertAdvReq = new InsertAdvUtil(this);
         insertAdvReq.requestAdv();
     }
 
-    private void selectData() {
-//        DBHelper helper = DBHelper.getInstance(this);
-        List<NewsDataBean> all = LoaderUtil.get().loadCache(this);
-        if (all != null)
-            adapter.updateData(all);
+    @Override
+    protected String getUmengKey() {
+        return UmengUtil.U_STORELIST;
     }
+
+
+//    private void selectData() {
+//        List<NewsDataBean> all = LoaderUtil.get().loadCache(this);
+//        if (all != null)
+//            adapter.updateData(all);
+//    }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        L.e("click item " + i);
         if (i < 0 || i > adapterView.getCount()) return;
         Intent in = new Intent(this, NewsInfoActivity.class);
         in.putExtra("aid", ((NewsDataBean) adapterView.getItemAtPosition(i)).getAid());

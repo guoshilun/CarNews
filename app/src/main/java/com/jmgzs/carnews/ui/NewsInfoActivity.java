@@ -54,12 +54,14 @@ import com.jmgzs.carnews.util.ResUtils;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.carnews.util.ShareUtils;
 import com.jmgzs.carnews.util.T;
+import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.NetworkErrorCode;
 import com.jmgzs.lib_network.network.RequestUtil;
 import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 import com.jmgzs.lib_network.utils.NetworkUtils;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -121,6 +123,10 @@ public class NewsInfoActivity extends BaseActivity {
         }
         images = intent.getStringArrayListExtra(INTENT_IMAGES);
         channel = intent.getStringExtra(INTENT_CHANNEL);
+
+        boolean fromNotify = intent.getBooleanExtra("fromNotify", false);
+        if (fromNotify)
+            UmengUtil.event(this, UmengUtil.U_NOTIFY);
 //        L.e(images.toString());
         top = findViewById(R.id.newsInfo_top_bar);
         statusBar = findViewById(R.id.newInfo_status_bar);
@@ -190,6 +196,7 @@ public class NewsInfoActivity extends BaseActivity {
         tgbtnFav.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                UmengUtil.event(NewsInfoActivity.this, UmengUtil.U_STORE_BTN);
                 tgbtnFav.setEnabled(false);
                 if (isChecked) {
                     T.toastS("收藏成功");
@@ -475,6 +482,12 @@ public class NewsInfoActivity extends BaseActivity {
     }
 
     @Override
+    protected String getUmengKey() {
+        return UmengUtil.U_NEWS_DETAIL;
+    }
+
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.titleInfo_img_back://返回
@@ -482,6 +495,7 @@ public class NewsInfoActivity extends BaseActivity {
                 break;
             case R.id.bottomBar_img_share://分享
             case R.id.titleInfo_img_more:
+                UmengUtil.event(NewsInfoActivity.this, UmengUtil.U_SHARE);
                 if (info == null) {
                     return;
                 }

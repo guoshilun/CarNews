@@ -52,6 +52,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC0'
+    compile 'com.umeng.analytics:analytics:latest.integration'
     compile project(':lib_smarttablelayout')
     compile project(':lib_roundedimage')
     compile project(':lib_autoviewpager')

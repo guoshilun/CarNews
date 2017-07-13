@@ -26,7 +26,12 @@ import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.InsertAdvUtil;
 import com.jmgzs.carnews.util.SPBase;
+import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib_network.utils.L;
+import com.umeng.analytics.MobclickAgent;
+
+import static com.jmgzs.carnews.R.mipmap.on;
+import static com.umeng.message.proguard.k.A;
 
 /**
  * Created by mac on 17/6/5.
@@ -53,6 +58,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         parent.addView(root, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         setContentView(getContent(savedInstanceState));
         initView();
+
+        if (getUmengKey() !=null)
+             UmengUtil.event(this,getUmengKey());
     }
 
     private void translucentStatusBar() {
@@ -197,6 +205,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onPageStart(getClass().getSimpleName());//统计页面
+        MobclickAgent.onResume(this);//统计时长
         if (isBackHome){
             if (insertAdvReq == null){
                 insertAdvReq = new InsertAdvUtil(this);
@@ -209,8 +219,17 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd(getClass().getSimpleName());
+        MobclickAgent.onPause(this);
+    }
+
+    @Override
     protected void onDestroy() {
         this.unregisterReceiver(mHomeKeyEventReceiver);
         super.onDestroy();
     }
+
+    protected abstract String getUmengKey();
 }

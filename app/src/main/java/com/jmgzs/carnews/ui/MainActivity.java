@@ -29,6 +29,7 @@ import com.jmgzs.carnews.util.InsertAdvUtil;
 import com.jmgzs.carnews.util.AppUtils;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.SPBase;
+import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
@@ -54,6 +55,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initView() {
         overridePendingTransition(0, 0);
+        checkUpdate();
         //开启WebView调试模式
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -77,9 +79,12 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        checkUpdate();
     }
 
+    @Override
+    protected String getUmengKey() {
+        return UmengUtil.U_MAIN;
+    }
 
     @Override
     protected void onResume() {
@@ -106,7 +111,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-//        checkUpdate();
         if (!isAdvShow) {
             if (insertAdvReq == null) {
                 insertAdvReq = new InsertAdvUtil(this);
@@ -124,8 +128,13 @@ public class MainActivity extends BaseActivity {
         RequestUtil.requestByGetAsy(this, Urls.getUpdateUrl(), UpdateBean.class, new IRequestCallBack<UpdateBean>() {
             @Override
             public void onSuccess(String url, UpdateBean data) {
-                if (data != null && data.getRsp().getStatus() == 1)
-                    showUpdateDialog(data.getData());
+                if (data != null && data.getRsp().getStatus() == 1 && data.getData() != null) {
+                    if (data.getData().getVersion() > AppUtils.getVersionNum())
+                        showUpdateDialog(data.getData());
+                    SPBase.putBoolean(Const.SPKey.OPEN_ADV, data.getData().isHas_ad());
+                    AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, false));
+
+                }
 
             }
 
@@ -142,7 +151,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showUpdateDialog(final UpdateInfo data) {
-        if (data == null) return;
         UpdateDialog updateDialog = new UpdateDialog(this);
         updateDialog.show();
         updateDialog.setData(data.getMsg(), data.isForce());
@@ -157,8 +165,6 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        SPBase.getBoolean(Const.SPKey.OPEN_ADV, data.isHas_ad());
-        AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, false));
     }
 
     @Override

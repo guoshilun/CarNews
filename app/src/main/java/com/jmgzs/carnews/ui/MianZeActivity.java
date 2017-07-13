@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.BaseActivity;
+import com.jmgzs.carnews.util.UmengUtil;
 
 /**
  * Created by mac on 17/6/20.
@@ -30,4 +31,10 @@ public class MianZeActivity extends BaseActivity {
     public void onClick(View view) {
         finish();
     }
+
+    @Override
+    protected String getUmengKey() {
+        return UmengUtil.U_SETTING;
+    }
+
 }

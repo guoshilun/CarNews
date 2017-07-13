@@ -91,8 +91,11 @@ public class AdvRequestUtil {
         req.setDevice_info(device);
 
         AdvRequestBean.GeoInfoBean geo = new AdvRequestBean.GeoInfoBean();
-        geo.setLatitude(23.16f);
-        geo.setLongitude(113.23f);
+//        geo.setLatitude(23.16f);
+//        geo.setLongitude(113.23f);
+        double[] latlng = DeviceUtils.getLocation(context);
+        geo.setLatitude(Double.valueOf(latlng[0]).floatValue());
+        geo.setLongitude(Double.valueOf(latlng[1]).floatValue());
         req.setGeo_info(geo);
 
         req.setTemplate_id(Arrays.asList(slotType.getTemplateId()));
