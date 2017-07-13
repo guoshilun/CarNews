@@ -1,27 +1,18 @@
 package com.jmgzs.carnews.ui;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.BaseActivity;
@@ -51,17 +42,12 @@ import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import static android.R.attr.data;
 import static com.jmgzs.carnews.util.Const.PhotoCode.CACHE_TAKE_PHOTO;
-import static com.taobao.accs.ACCSManager.mContext;
-import static com.umeng.message.provider.a.e;
-import static com.umeng.message.provider.a.f;
 
 
 public class UserSettingActivity extends BaseActivity implements SettingItemView.OnCheckChangedListener {
@@ -165,10 +151,10 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
 
             case R.id.user_head:
                 showPhotoMenu();
-                UmengUtil.event(this,UmengUtil.U_SETTING_HEAD);
+                UmengUtil.event(this, UmengUtil.U_SETTING_HEAD);
                 break;
             case R.id.setting_store:
-                UmengUtil.event(this,UmengUtil.U_SETTING_STORE);
+                UmengUtil.event(this, UmengUtil.U_SETTING_STORE);
                 if (isStoreListNotNull)
                     startActivity(new Intent(this, NewsStoreActivity.class));
                 else T.toastS("尚未收藏任何新闻");
@@ -326,7 +312,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         RequestUtil.requestByGetAsy(this, Urls.getUpdateUrl(), UpdateBean.class, new IRequestCallBack<UpdateBean>() {
             @Override
             public void onSuccess(String url, UpdateBean data) {
-                if (data != null && data.getRsp().getStatus() == 1)
+                if (data != null && data.getRsp().getStatus() == 1
+                        && data.getData() != null && data.getData().getVersion() > AppUtils.getVersionNum())
                     showUpdateDialog(data.getData());
                 else T.toastS("当前版本为最新版!");
 
@@ -345,7 +332,6 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
     }
 
     private void showUpdateDialog(final UpdateInfo data) {
-        if (data == null) return;
         UpdateDialog updateDialog = new UpdateDialog(this);
         updateDialog.show();
         updateDialog.setData(data.getMsg(), data.isForce());
