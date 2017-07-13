@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.jmgsz.lib.adv.bean.AdvRequestBean;
 import com.jmgsz.lib.adv.bean.AdvResponseBean;
+import com.jmgsz.lib.adv.enums.AdChannel;
 import com.jmgsz.lib.adv.enums.AdSlotType;
 import com.jmgsz.lib.adv.interfaces.IAdvRequestCallback;
 import com.jmgsz.lib.adv.utils.DensityUtils;
@@ -44,7 +45,7 @@ public class AdvRequestUtil {
     private static volatile boolean isOpenAdv = true;
 
     public static void setAdvOpen(boolean isOpen) {
-//        isOpenAdv = isOpen;
+        isOpenAdv = isOpen;
     }
 
     public static AdvRequestBean getAdvRequest(Context context, AdSlotType slotType) {
@@ -140,7 +141,7 @@ public class AdvRequestUtil {
         }
 
         AdvRequestBean requestBean = getAdvRequest(context, type);
-        L.e("open:"+gson.toJson(requestBean));
+        L.i("request open:"+gson.toJson(requestBean));
         RequestUtil.requestByPostAsy(context, API_ADV,
                 gson.toJson(requestBean),
                 AdvResponseBean.class,
@@ -150,6 +151,7 @@ public class AdvRequestUtil {
                         if (data == null || data.getAd_info() == null || data.getAd_info().size() < 1 || (data.getAd_info().get(0)) == null) {
                             return;
                         }
+                        L.i("response open:"+ gson.toJson(data.getAd_info().get(0)));
                         ConfigCache.setUrlCache(context, API_ADV + type.name(), gson.toJson(data.getAd_info().get(0)));
                         callback.onCancel(data.getAd_info().get(0).getAd_material().getImages().get(0));
                     }
