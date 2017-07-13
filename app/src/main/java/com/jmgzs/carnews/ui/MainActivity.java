@@ -120,7 +120,6 @@ public class MainActivity extends BaseActivity {
         } else {
             super.onBackPressed();
         }
-
     }
 
     private UpdateDownloadListener updateListener;
