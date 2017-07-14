@@ -41,7 +41,7 @@ import static com.jmgsz.lib.adv.AdvUrls.API_ADV;
 
 public class AdvRequestUtil {
     //广告开关
-    private static volatile boolean isOpenAdv = true;
+    private static volatile boolean isOpenAdv = false;
 
     public static void setAdvOpen(boolean isOpen) {
 //        isOpenAdv = isOpen;
