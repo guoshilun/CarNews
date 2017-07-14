@@ -85,6 +85,7 @@ public class NewsStoreActivity extends BaseActivity implements AdapterView.OnIte
         });
         listView.setAdapter(adapter);
         listView.setMenuCreator(creator);
+        listView.setOnItemClickListener(this);
 
         insertAdvReq = new InsertAdvUtil(this);
         insertAdvReq.requestAdv();
