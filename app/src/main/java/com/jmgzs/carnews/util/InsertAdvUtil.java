@@ -1,6 +1,8 @@
 package com.jmgzs.carnews.util;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.webkit.WebView;
@@ -14,12 +16,15 @@ import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.js.JsBridge;
 import com.jmgzs.carnews.ui.NewsStoreActivity;
+import com.jmgzs.carnews.ui.WebViewActivity;
 import com.jmgzs.carnews.ui.dialog.AdvDialog;
 import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Wxl on 2017/7/6.
@@ -33,6 +38,7 @@ public class InsertAdvUtil {
     private WebView mWv;
     private int mAdvW, mAdvH;//广告页面中获取到的宽高
     private AdSlotType mAdvType;
+    private Map<String, Integer> mAdSlotTypeMap = new HashMap<>();//广告与点击类型映射
 
     public InsertAdvUtil(Activity activity) {
         this.activity = activity;
@@ -103,7 +109,8 @@ public class InsertAdvUtil {
         AdvRequestUtil.requestAdv(activity, width, false, req, file.getAbsolutePath(), new IAdvRequestCallback() {
 
             @Override
-            public void onGetAdvSuccess(String html, File localFile, int w, int height) {
+            public void onGetAdvSuccess(String html, File localFile, int w, int height, String landingPageUrl, int adType) {
+                mAdSlotTypeMap.put(landingPageUrl, adType);
                 final String finalHtml = html;
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -119,7 +126,7 @@ public class InsertAdvUtil {
             @Override
             public void onGetAdvFailure() {
                 //失败后显示假数据
-                String html;
+                /*String html;
                 String response;
                 if (slotType == AdSlotType.INSERT_480_800) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
@@ -144,12 +151,18 @@ public class InsertAdvUtil {
                         int height = slotType.getHeight() * DensityUtils.getScreenWidthPixels(activity) / slotType.getStandardWidth();
                         showAdv(finalHtml, width, height);
                     }
-                });
+                });*/
             }
         });
     }
 
     private void showAdv(final String html, final int width, final int height) {
+        if (activity == null || activity.isFinishing()) {
+            return;
+        }
+        if (isActivityDestroyed()) {
+            return;
+        }
         if (mAdvDialog == null) {
             mAdvDialog = new AdvDialog(activity);
             mAdvDialog.setWidthHeight(width, height);//纯图广告直接设置宽高
@@ -179,8 +192,29 @@ public class InsertAdvUtil {
                     });
                 }
             }
+
+            @Override
+            public boolean intentToLandPage(String url) {
+                Integer type;
+                if ((type = mAdSlotTypeMap.get(url)) != null && type == 0) {//下载
+                    return false;
+                } else {//外链
+                    Intent intent = new Intent(activity, WebViewActivity.class);
+                    intent.putExtra(WebViewActivity.INTENT_URL, url);
+                    activity.startActivity(intent);
+                    return true;
+                }
+            }
         });
         mAdvDialog.show();
+    }
+
+    @TargetApi(android.os.Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private boolean isActivityDestroyed() {
+        if (activity.isDestroyed()) {
+            return true;
+        }
+        return false;
     }
 
     public boolean isDialogShown() {

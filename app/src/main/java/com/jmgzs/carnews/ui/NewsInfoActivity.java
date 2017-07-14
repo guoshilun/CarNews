@@ -71,8 +71,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 新闻详情界面
@@ -106,6 +108,7 @@ public class NewsInfoActivity extends BaseActivity {
     private NewsDataBean info;
     private String channel;//新闻类型
     private ArrayList<String> images;
+    private Map<String, Integer> mAdSlotTypeMap = new HashMap<>();//广告与点击类型映射
 
     @Override
     protected int getContent(Bundle save) {
@@ -284,9 +287,15 @@ public class NewsInfoActivity extends BaseActivity {
                     return false;
                 }
                 if (url.startsWith("http")) {
-                    Intent intent = new Intent(NewsInfoActivity.this, WebViewActivity.class);
-                    intent.putExtra(WebViewActivity.INTENT_URL, url);
-                    startActivity(intent);
+                    Integer type;
+                    if ((type = mAdSlotTypeMap.get(url)) != null && type == 0){//下载
+                        return false;
+                    }else{//外链
+                        Intent intent = new Intent(NewsInfoActivity.this, WebViewActivity.class);
+                        intent.putExtra(WebViewActivity.INTENT_URL, url);
+                        NewsInfoActivity.this.startActivity(intent);
+                        return true;
+                    }
                 }
                 return true;
             }
@@ -554,15 +563,16 @@ public class NewsInfoActivity extends BaseActivity {
         File dir = FileUtils.createDir(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info");
         AdvRequestUtil.requestAdv(NewsInfoActivity.this, js.getPageWidth(), true, req, dir.getAbsolutePath(), new IAdvRequestCallback() {
             @Override
-            public void onGetAdvSuccess(String html, File localFile, int width, int height) {
+            public void onGetAdvSuccess(String html, File localFile, int width, int height, String landPageUrl, int adType) {
                 L.e("广告请求成功");
+                mAdSlotTypeMap.put(landPageUrl, adType);
                 processAdvData(html, width, height);
             }
 
             @Override
             public void onGetAdvFailure() {
                 L.e("广告请求失败");
-                String html = "";
+                /*String html = "";
                 String response = "";
                 if (slotType == AdSlotType.BANNER_800_120) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
@@ -589,7 +599,7 @@ public class NewsInfoActivity extends BaseActivity {
                     public void run() {
                         processAdvData(finalHtml, advWidth, advHeight);
                     }
-                });
+                });*/
             }
         });
 

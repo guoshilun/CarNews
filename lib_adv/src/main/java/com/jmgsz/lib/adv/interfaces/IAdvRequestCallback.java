@@ -8,6 +8,6 @@ import java.io.File;
 
 public interface IAdvRequestCallback {
 
-    void onGetAdvSuccess(String html, File localFile, int width, int height);
+    void onGetAdvSuccess(String html, File localFile, int width, int height, String landPageUrl, int adType);
     void onGetAdvFailure();
 }

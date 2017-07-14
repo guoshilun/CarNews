@@ -78,9 +78,7 @@ public class AdvDialog extends BaseDialog {
                     return false;
                 }
                 if (url.startsWith("http")) {
-                    Intent intent = new Intent(context, WebViewActivity.class);
-                    intent.putExtra(WebViewActivity.INTENT_URL, url);
-                    context.startActivity(intent);
+                    return mListener.intentToLandPage(url);
                 }
                 return true;
             }
@@ -175,5 +173,7 @@ public class AdvDialog extends BaseDialog {
         void onAdvLoad(WebView wv);
 
         void onAdvScaleChanged(float newScale);
+
+        boolean intentToLandPage(String url);
     }
 }
