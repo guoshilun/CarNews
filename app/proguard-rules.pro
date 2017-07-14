@@ -22,8 +22,6 @@
 -dontusemixedcaseclassnames   # 是否使用大小写混合
 -dontpreverify           # 混淆时是否做预校验
 -verbose                # 混淆时是否记录日志
--dontoptimize  #优化  不优化输入的类文件
--dontshrink
 -dontwarn
 -ignorewarning # 忽略警告
 -dontwarn android.webkit.WebView
@@ -33,6 +31,17 @@
 -keep class com.badlogic.gdx.controllers.android.AndroidControllers
 #mjsdk相关配置
 -keep class com.jmgsz.lib.adv.bean.** { * ;}
+-keep class com.jmgzs.carnews.bean.** { * ;}
+-keep class com.jmgzs.carnews.js.** { * ;}
+
+#umeng
+-keepclassmembers class *{
+    public <init> (org.json.JSONObject);
+}
+-keep public class com.jmgzs.carnews.R$*{
+    public static final int *;
+}
+
 -keep class * extends android.app.Activity {
     *;
 }
