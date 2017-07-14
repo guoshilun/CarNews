@@ -197,7 +197,8 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
     private void clearGlideCache() {
         GlideCacheUtil.getInstance().clearImageDiskCache(this);
         itemCache.setTextState("");
-        FileUtils.deleteFile(FileUtils.getAppBaseFile(this));
+//        删除文件夹导致头像,广告显示异常
+//        FileUtils.deleteFile(FileUtils.getAppBaseFile(this));
     }
 
     private void showPhotoMenu() {
