@@ -20,13 +20,13 @@ import com.jmgzs.carnews.util.TimeUtils;
  * Description: 单图item
  */
 
-public class RCVImageHolder  extends BaseHolder<NewsDataBean> {
+public class RCVImageHolder extends BaseHolder<NewsDataBean> {
 
     private ImageView image;
     private TextView title;
     private TextView author;
     private TextView time;
-    private GlideRequest request ;
+    private GlideRequest request;
 
     public RCVImageHolder(ViewGroup parent, @LayoutRes int layout, int w, int h) {
         super(parent, layout);
@@ -39,7 +39,8 @@ public class RCVImageHolder  extends BaseHolder<NewsDataBean> {
 
         image.getLayoutParams().width = w;
         image.getLayoutParams().height = h;
-        request = GlideApp.with(getContext()).asDrawable().centerCrop().error(R.mipmap.app_default_middle);
+        request = GlideApp.with(getContext()).asDrawable().centerCrop().error(R.mipmap.app_default_middle)
+                .placeholder(R.mipmap.app_default_middle);
 
     }
 
