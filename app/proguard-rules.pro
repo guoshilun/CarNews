@@ -15,6 +15,65 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-verbose
+-optimizationpasses 5          # 指定代码的压缩级别
+-dontskipnonpubliclibraryclasses    # 是否混淆第三方jar
+-dontusemixedcaseclassnames   # 是否使用大小写混合
+-dontpreverify           # 混淆时是否做预校验
+-verbose                # 混淆时是否记录日志
+-dontoptimize  #优化  不优化输入的类文件
+-dontshrink
+-dontwarn
+-ignorewarning # 忽略警告
+-dontwarn android.webkit.WebView
+
+-dontwarn android.support.**
+
+-keep class com.badlogic.gdx.controllers.android.AndroidControllers
+#mjsdk相关配置
+-keep class com.jmgsz.lib.adv.bean.** { * ;}
+-keep class * extends android.app.Activity {
+    *;
+}
+-keep abstract class * extends android.app.Application {
+    *;
+}
+
+-keep public class * extends android.app.Fragment
+-keep public class * extends android.support.v4.**
+-keep public class * extends android.app.Activity      # 保持哪些类不被混淆
+-keep public class * extends android.app.Application   # 保持哪些类不被混淆
+-keep public class * extends android.app.Service       # 保持哪些类不被混淆
+-keep public class * extends android.content.BroadcastReceiver  # 保持哪些类不被混淆
+-keep public class * extends android.content.ContentProvider    # 保持哪些类不被混淆
+-keep public class * extends android.app.backup.BackupAgentHelper # 保持哪些类不被混淆
+-keep public class * extends android.preference.Preference
+-keep public class com.android.vending.licensing.ILicensingService
+
+-keepattributes Exceptions,InnerClasses,Signature,EnclosingMethod
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+
+-keepclassmembers class com.badlogic.gdx.backends.android.AndroidInput* {
+   <init>(com.badlogic.gdx.Application, android.content.Context, java.lang.Object, com.badlogic.gdx.backends.android.AndroidApplicationConfiguration);
+}
+
+-keepnames class * implements java.io.Serializable
+
+-keepclassmembers class * implements java.io.Serializable {
+    *;
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    !private <fields>;
+    !private <methods>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
   **[] $VALUES;
