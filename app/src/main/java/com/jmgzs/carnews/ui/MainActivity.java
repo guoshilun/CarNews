@@ -132,10 +132,8 @@ public class MainActivity extends BaseActivity {
                     if (data.getData().getVersion() > AppUtils.getVersionNum())
                         showUpdateDialog(data.getData());
                     SPBase.putBoolean(Const.SPKey.OPEN_ADV, data.getData().isHas_ad());
-                    AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, false));
-
+                    AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, true));
                 }
-
             }
 
             @Override
