@@ -1,5 +1,6 @@
 package com.jmgzs.carnews.util;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -156,6 +157,12 @@ public class InsertAdvUtil {
     }
 
     private void showAdv(final String html, final int width, final int height) {
+        if (activity == null || activity.isFinishing()) {
+            return;
+        }
+        if (isActivityDestroyed()) {
+            return;
+        }
         if (mAdvDialog == null) {
             mAdvDialog = new AdvDialog(activity);
             mAdvDialog.setWidthHeight(width, height);//纯图广告直接设置宽高
@@ -189,9 +196,9 @@ public class InsertAdvUtil {
             @Override
             public boolean intentToLandPage(String url) {
                 Integer type;
-                if ((type = mAdSlotTypeMap.get(url)) != null && type == 0){//下载
+                if ((type = mAdSlotTypeMap.get(url)) != null && type == 0) {//下载
                     return false;
-                }else{//外链
+                } else {//外链
                     Intent intent = new Intent(activity, WebViewActivity.class);
                     intent.putExtra(WebViewActivity.INTENT_URL, url);
                     activity.startActivity(intent);
@@ -200,6 +207,14 @@ public class InsertAdvUtil {
             }
         });
         mAdvDialog.show();
+    }
+
+    @TargetApi(android.os.Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private boolean isActivityDestroyed() {
+        if (activity.isDestroyed()) {
+            return true;
+        }
+        return false;
     }
 
     public boolean isDialogShown() {
