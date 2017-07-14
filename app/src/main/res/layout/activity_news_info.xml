@@ -31,7 +31,7 @@
                 android:id="@+id/newsInfo_wv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/white" />
+                android:background="@android:color/white"/>
         </LinearLayout>
 
         <View
@@ -63,5 +63,13 @@
             android:layout_width="match_parent"
             android:layout_height="1px" />
     </LinearLayout>
-
+    <ProgressBar
+        android:id="@+id/newsInfo_progress_bar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:max="100"
+        android:progressDrawable="@drawable/progress_blue"
+        android:progress="0"
+        android:layout_below="@id/newsInfo_top_bar"/>
 </RelativeLayout>

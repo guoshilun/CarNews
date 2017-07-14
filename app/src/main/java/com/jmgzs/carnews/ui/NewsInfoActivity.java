@@ -26,6 +26,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -93,6 +94,7 @@ public class NewsInfoActivity extends BaseActivity {
     private ImageView btnShare, btnShareTop, btnBack, imgFav;
     private ToggleButton tgbtnFav;
     private TextView tvTitle;
+    private ProgressBar mPgbarLoading;
     private JsBridge js;
     private Animation animShareOpen, animShareClose;
 
@@ -135,6 +137,7 @@ public class NewsInfoActivity extends BaseActivity {
         statusBar = findViewById(R.id.newInfo_status_bar);
         bottomBar = findViewById(R.id.newsInfo_bottom_bar);
         contentCover = findViewById(R.id.newsInfo_grey_cover);
+        mPgbarLoading = (ProgressBar) findViewById(R.id.newsInfo_progress_bar);
 
         initButtons();
         initTitle();
@@ -277,7 +280,31 @@ public class NewsInfoActivity extends BaseActivity {
             wv.getSettings().setAllowUniversalAccessFromFileURLs(true);
         }
         wv.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                if (newProgress >= 100){
+                    mPgbarLoading.setProgress(100);
+                    Animation anim = AnimationUtils.loadAnimation(NewsInfoActivity.this, R.anim.anim_progress_hide);
+                    anim.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                        }
 
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            mPgbarLoading.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
+                    });
+                    mPgbarLoading.setAnimation(anim);
+                    anim.startNow();
+                }else{
+                    mPgbarLoading.setProgress(newProgress);
+                }
+            }
         });
         wv.setWebViewClient(new WebViewClient() {
             @Override
