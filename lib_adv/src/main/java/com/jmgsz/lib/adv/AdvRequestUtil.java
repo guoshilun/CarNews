@@ -45,7 +45,7 @@ public class AdvRequestUtil {
     private static volatile boolean isOpenAdv = false;
 
     public static void setAdvOpen(boolean isOpen) {
-        isOpenAdv = isOpen;
+//        isOpenAdv = isOpen;
     }
 
     public static AdvRequestBean getAdvRequest(Context context, AdSlotType slotType) {
