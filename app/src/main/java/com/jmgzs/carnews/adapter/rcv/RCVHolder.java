@@ -63,7 +63,8 @@ public class RCVHolder extends BaseHolder<NewsDataBean> {
 
         contentLayout = getView(R.id.item_images_layout);
         contentLayout.getLayoutParams().height = h;
-        request = GlideApp.with(getContext()).asDrawable().centerCrop().error(R.mipmap.app_default_middle);
+        request = GlideApp.with(getContext()).asDrawable().centerCrop()
+                .error(R.mipmap.app_default_middle).placeholder(R.mipmap.app_default_middle);
 
     }
 
