@@ -536,7 +536,7 @@ public class NewsInfoActivity extends BaseActivity {
                 if (info == null) {
                     return;
                 }
-                shareUtils.shareUrl(NewsInfoActivity.this, bottomBar, "http://mjcrawl-1252328573.file.myqcloud.com/44f642a2f2d6a2b861793f708b48d1201app-release.apk", Html.fromHtml(info.getTitle()), Html.fromHtml(info.getContent()), R.mipmap.car_title_logo, new UMShareListener() {
+                shareUtils.shareUrl(NewsInfoActivity.this, bottomBar, "http://mjcrawl-1252328573.file.myqcloud.com/44f642a2f2d6a2b861793f708b48d1201app-release-default-1.0.apk", Html.fromHtml(info.getTitle()), Html.fromHtml(info.getContent()), R.mipmap.logo, new UMShareListener() {
                     @Override
                     public void onStart(SHARE_MEDIA share_media) {
 

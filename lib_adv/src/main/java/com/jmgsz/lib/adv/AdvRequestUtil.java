@@ -45,7 +45,7 @@ public class AdvRequestUtil {
     private static volatile boolean isOpenAdv = false;
 
     public static void setAdvOpen(boolean isOpen) {
-//        isOpenAdv = isOpen;
+        isOpenAdv = isOpen;
     }
 
     public static AdvRequestBean getAdvRequest(Context context, AdSlotType slotType) {
@@ -126,10 +126,10 @@ public class AdvRequestUtil {
             callback.onFailure(null, 0, "cache is null");
             return;
         }
-        final AdSlotType type = AdSlotType.OPEN_640_960;
-        String json = ConfigCache.getUrlCacheDefault(context, API_ADV + type.name());
-//        final AdSlotType type = AdSlotType.getRandomOpenScreenType();
-//        String json = ConfigCache.getUrlCache(context, API_ADV + type.name());
+//        final AdSlotType type = AdSlotType.OPEN_640_960;
+//        String json = ConfigCache.getUrlCacheDefault(context, API_ADV + type.name());
+        final AdSlotType type = AdSlotType.getRandomOpenScreenType();
+        String json = ConfigCache.getUrlCache(context, API_ADV + type.name());
         final Gson gson = new Gson();
         try {
             if (json == null) throw new NullPointerException();
