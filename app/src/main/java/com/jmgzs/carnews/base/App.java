@@ -94,7 +94,7 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
         DensityUtils.init(this);
         initSP(SPBase.getSharedPreferences());
         //umeng统计
-        MobclickAgent.setDebugMode(true);
+        MobclickAgent.setDebugMode(false);
         L.i(UmengUtil.getDeviceInfo(this));
         initLocation();
     }
