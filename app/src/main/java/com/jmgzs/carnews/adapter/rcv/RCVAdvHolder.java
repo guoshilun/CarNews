@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.support.annotation.LayoutRes;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.SslErrorHandler;
@@ -49,6 +50,9 @@ public class RCVAdvHolder extends BaseHolder<NewsDataBean> {
     public void setData(NewsDataBean data) {
         if (data instanceof AdvDataBean) {
             AdvDataBean adv = (AdvDataBean) data;
+            if (TextUtils.isEmpty(adv.getFile()) || TextUtils.isEmpty(adv.getLandingPageUrl())){
+                return;
+            }
             AdvRequestUtil.initWebView(wv.getContext(), wv, false, -1, callback);
             String html = adv.getHtml();
 //            wv.loadUrl("https://www.baidu.com");
