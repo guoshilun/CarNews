@@ -139,7 +139,13 @@ public class UserSettingActivity extends BaseActivity implements SettingItemView
         itemPush.setChecked(App.isRecptPush);
         type = SPBase.getInt(Const.SPKey.TEXT_SIZE, 1);
         itemTextSize.setTextState(textSizeTitle[type]);
+
+    }
+
+    @Override
+    protected void onResume() {
         isStoreListNotNull = LoaderUtil.get().hasStored(this);
+        super.onResume();
     }
 
     @Override

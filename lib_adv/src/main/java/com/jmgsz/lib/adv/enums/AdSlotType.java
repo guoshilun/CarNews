@@ -123,7 +123,7 @@ public enum AdSlotType {
         this.templateId = templateId;
     }
 
-    public static AdSlotType getWidthHeightByTemplateId(int templateId) {
+    public static AdSlotType getAdSlotTypeByTemplateId(int templateId) {
         for (AdSlotType type : AdSlotType.values()) {
             if (type.templateId == templateId) {
                 return type;

@@ -7,8 +7,6 @@ package com.jmgzs.carnews.bean;
 
 public class AdvDataBean extends NewsDataBean {
 
-    private int advW;
-    private int advH;
     private String html;
     private String file;//html文件
     private String landingPageUrl;//landingPage
@@ -20,22 +18,6 @@ public class AdvDataBean extends NewsDataBean {
 
     public void setHtml(String html) {
         this.html = html;
-    }
-
-    public int getAdvW() {
-        return advW;
-    }
-
-    public void setAdvW(int advW) {
-        this.advW = advW;
-    }
-
-    public int getAdvH() {
-        return advH;
-    }
-
-    public void setAdvH(int advH) {
-        this.advH = advH;
     }
 
     public void setFile(String file) {

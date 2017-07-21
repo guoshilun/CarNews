@@ -1,25 +1,18 @@
-package com.jmgzs.carnews.ui.dialog;
+package com.jmgsz.lib.adv.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.jmgzs.carnews.R;
-import com.jmgzs.carnews.ui.WebViewActivity;
+import com.jmgsz.lib.adv.R;
 import com.jmgzs.lib_network.utils.L;
-import com.tencent.mm.opensdk.constants.Build;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * 插屏广告对话框
@@ -132,10 +125,6 @@ public class AdvDialog extends BaseDialog {
         });
     }
 
-    public float getScale() {
-        return scale;
-    }
-
     private int width, height;
 
     public void setWidthHeight(int width, int height) {
@@ -167,6 +156,18 @@ public class AdvDialog extends BaseDialog {
         if (mListener != null) {
             mListener.onAdvLoad(mWv);
         }
+    }
+
+    public void showWebView(){
+        mWv.setVisibility(View.VISIBLE);
+    }
+
+    public float getWebViewScale(){
+        return mWv.getScale();
+    }
+
+    public float getScale(){
+        return scale;
     }
 
     public interface IOnAdvLoadListener {

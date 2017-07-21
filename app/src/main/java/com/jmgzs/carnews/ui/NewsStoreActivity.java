@@ -1,44 +1,30 @@
 package com.jmgzs.carnews.ui;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.jmgsz.lib.adv.AdvRequestUtil;
-import com.jmgsz.lib.adv.bean.AdvRequestBean;
+import com.jmgsz.lib.adv.AdvUtil;
 import com.jmgsz.lib.adv.enums.AdSlotType;
-import com.jmgsz.lib.adv.interfaces.IAdvRequestCallback;
+import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.StoreAdapter;
-import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.BaseActivity;
 import com.jmgzs.carnews.bean.NewsDataBean;
-import com.jmgzs.carnews.db.DBHelper;
-import com.jmgsz.lib.adv.utils.DensityUtils;
-import com.jmgzs.carnews.js.JsBridge;
-import com.jmgzs.carnews.ui.dialog.AdvDialog;
 import com.jmgzs.carnews.ui.dialog.DialogMenu;
 import com.jmgzs.carnews.ui.dialog.IMenuItemClickListerer;
-import com.jmgzs.carnews.util.InsertAdvUtil;
 import com.jmgzs.carnews.util.LoaderUtil;
 import com.jmgzs.carnews.util.UmengUtil;
-import com.jmgzs.lib_network.utils.FileUtils;
-import com.jmgzs.lib_network.utils.L;
 import com.jmgzs.lib.swipelistview.SwipeMenu;
 import com.jmgzs.lib.swipelistview.SwipeMenuCreator;
 import com.jmgzs.lib.swipelistview.SwipeMenuItem;
 import com.jmgzs.lib.swipelistview.SwipeMenuListView;
+import com.jmgzs.lib_network.utils.FileUtils;
+import com.jmgzs.lib_network.utils.L;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by mac on 17/6/14.
@@ -49,7 +35,6 @@ public class NewsStoreActivity extends BaseActivity implements AdapterView.OnIte
 
     private SwipeMenuListView listView;
     private StoreAdapter adapter;
-    private InsertAdvUtil insertAdvReq;
 
     @Override
     protected int getContent(Bundle save) {
@@ -87,8 +72,8 @@ public class NewsStoreActivity extends BaseActivity implements AdapterView.OnIte
         listView.setMenuCreator(creator);
         listView.setOnItemClickListener(this);
 
-        insertAdvReq = new InsertAdvUtil(this);
-        insertAdvReq.requestAdv();
+        AdSlotType type = AdSlotType.getRandomInsertType();
+        AdvUtil.getInstance(this, FileUtils.getCachePath(this)+ File.separator + "info").showInsertAdv(this, type.getTemplateId(), null);
     }
 
     @Override

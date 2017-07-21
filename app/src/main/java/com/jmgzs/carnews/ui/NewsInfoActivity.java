@@ -1,8 +1,6 @@
 package com.jmgzs.carnews.ui;
 
 import android.app.ActivityManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -34,9 +32,11 @@ import android.widget.ToggleButton;
 
 import com.google.gson.Gson;
 import com.jmgsz.lib.adv.AdvRequestUtil;
+import com.jmgsz.lib.adv.AdvUtil;
 import com.jmgsz.lib.adv.bean.AdvRequestBean;
 import com.jmgsz.lib.adv.enums.AdSlotType;
-import com.jmgsz.lib.adv.interfaces.IAdvRequestCallback;
+import com.jmgsz.lib.adv.interfaces.IAdvHtmlCallback;
+import com.jmgsz.lib.adv.interfaces.IAdvStatusCallback;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.base.App;
@@ -63,7 +63,6 @@ import com.jmgzs.lib_network.network.RequestUtil;
 import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 import com.jmgzs.lib_network.utils.NetworkUtils;
-import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -74,7 +73,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -280,7 +278,7 @@ public class NewsInfoActivity extends BaseActivity {
             wv.getSettings().setAllowFileAccessFromFileURLs(true);
             wv.getSettings().setAllowUniversalAccessFromFileURLs(true);
         }
-        wv.setWebChromeClient(new WebChromeClient() {
+        WebChromeClient wcc = new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 if (newProgress >= 100){
@@ -306,27 +304,10 @@ public class NewsInfoActivity extends BaseActivity {
                     mPgbarLoading.setProgress(newProgress);
                 }
             }
-        });
-        wv.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                L.e("url:" + url);
-                if (url.startsWith("file")) {
-                    return false;
-                }
-                if (url.startsWith("http")) {
-                    Integer type;
-                    if ((type = mAdSlotTypeMap.get(url)) != null && type == 0){//下载
-                        return false;
-                    }else{//外链
-                        Intent intent = new Intent(NewsInfoActivity.this, WebViewActivity.class);
-                        intent.putExtra(WebViewActivity.INTENT_URL, url);
-                        NewsInfoActivity.this.startActivity(intent);
-                        return true;
-                    }
-                }
-                return true;
-            }
+        };
+        wv.setWebChromeClient(wcc);
+        wv.setTag(R.integer.tag_web_chrome_client, wcc);
+        WebViewClient wvc = new WebViewClient() {
 
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
@@ -351,79 +332,18 @@ public class NewsInfoActivity extends BaseActivity {
                 }
                 return super.shouldInterceptRequest(view, url);
             }
-        });
+        };
+        wv.setTag(R.integer.tag_web_view_client, wvc);
+        wv.setWebViewClient(wvc);
         js = new JsBridge(this, new JsBridge.IJsCallback() {
-            @Override
-            public void close() {
-                hideAdv();
-            }
 
             @Override
             public void loadFinish() {
                 L.e("详情页加载完成");
                 requestAdv();
             }
-
-            @Override
-            public void loadAdvFinish() {
-                L.e("广告加载完成");
-                NewsInfoActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        wv.loadUrl("javascript:showAdvPage()");//详情页面显示广告iframe
-                        App.getInstance().runOnUiThread(2000, new Runnable() {
-                            @Override
-                            public void run() {
-                                L.e("原始开始获取广告宽高");
-                                wv.loadUrl("javascript:getAdvRealWidthHeight()");//广告页获取页面宽高
-                            }
-                        });
-                    }
-                });
-            }
-
-            @Override
-            public void getAdvWidthHeight(final int width, final int height) {
-                L.e("收到广告位宽高回调");
-                NewsInfoActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        wv.loadUrl("javascript:setAdvWidthHeight(" + width + "," + height + ")");//广告页获取页面宽高
-                    }
-                });
-            }
         });
         wv.addJavascriptInterface(js, "carnews");
-    }
-
-    private void showAdv(String htmlPath, int width, int height) {
-        int newHeight = width <= 0 ? height : (js.getPageWidth() * height / width);
-        String newHtml = "javascript:showAdv(\"" + htmlPath + "\", " + js.getPageWidth() + "," + newHeight + ")";
-        L.e("插入广告html：" + newHtml);
-        wv.loadUrl(newHtml);
-        App.getInstance().runOnUiThread(2000, new Runnable() {
-            @Override
-            public void run() {
-                wv.loadUrl("javascript:setIFrameParentWindow()");//调用后js会自动回调loadAdvFinish()方法
-            }
-        });
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                NewsInfoActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-//                        wv.loadUrl("javascript:printSource()");
-                    }
-                });
-
-            }
-        }.start();
     }
 
     private void hideAdv() {
@@ -584,23 +504,45 @@ public class NewsInfoActivity extends BaseActivity {
         if (slotType == null) {
             return;
         }
-        AdvRequestBean req = AdvRequestUtil.getAdvRequest(NewsInfoActivity.this, slotType);
-        L.e("广告请求：" + new Gson().toJson(req));
         final int advWidth = js.getPageWidth();
-        final int advHeight = slotType.getHeight() * advWidth / slotType.getWidth();
-        File dir = FileUtils.createDir(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info");
-        AdvRequestUtil.requestAdv(NewsInfoActivity.this, js.getPageWidth(), true, req, dir.getAbsolutePath(), new IAdvRequestCallback() {
+        AdvUtil.getInstance(this, FileUtils.getCachePath(this)+ File.separator + "info").showBannerAdv(this, slotType.getTemplateId(), false, false, advWidth, new IAdvHtmlCallback() {
             @Override
-            public void onGetAdvSuccess(String html, File localFile, int width, int height, String landPageUrl, int adType) {
+            public void onGetAdvHtmlSuccess(String html, File localFile, int width, int height, String landPageUrl, int adType) {
+                AdvRequestUtil.initWebView(NewsInfoActivity.this, wv, true, slotType.getTemplateId(), new IAdvStatusCallback() {
+                    @Override
+                    public void close(int templateId) {
+                        hideAdv();
+                    }
+                });
+                int newHeight = width <= 0 ? height : (js.getPageWidth() * height / width);
+                String newHtml = "javascript:showAdv(\"" + Uri.fromFile(localFile) + "\", " + js.getPageWidth() + "," + newHeight + ")";
+                L.e("插入广告html：" + newHtml);
+                wv.loadUrl(newHtml);
+//                App.getInstance().runOnUiThread(2000, new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        wv.loadUrl("javascript:setIFrameParentWindow()");//调用后js会自动回调loadAdvFinish()方法
+//                    }
+//                });
+            }
+
+            @Override
+            public void onGetAdvHtmlFailure() {
+            }
+        });
+        File dir = FileUtils.createDir(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info");
+        /*AdvUtil.requestAdv(NewsInfoActivity.this, js.getPageWidth(), true, req, dir.getAbsolutePath(), new IAdvHtmlCallback() {
+            @Override
+            public void onGetAdvHtmlSuccess(String html, File localFile, int width, int height, String landPageUrl, int adType) {
                 L.e("广告请求成功");
                 mAdSlotTypeMap.put(landPageUrl, adType);
                 processAdvData(html, width, height);
             }
 
             @Override
-            public void onGetAdvFailure() {
+            public void onGetAdvHtmlFailure() {
                 L.e("广告请求失败");
-                /*String html = "";
+                *//*String html = "";
                 String response = "";
                 if (slotType == AdSlotType.BANNER_800_120) {
                     response = "{\"ad_info\": [{\"ad_material\": {\"click_url\": \"http://c.mjmobi.com/cli?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QACC4DijEoKvgu6fY0cgBMO2e5ZvMKzoOCMsgEJjnBBjY1QYgriJA2ARYL2ISaHR0cDovL2xhaThzeS5jb20vaAFwAIABlw-IAZjvApABAZgBBrAB6Qc=\",\"images\": [\"https://mj-img.oss-cn-hangzhou.aliyuncs.com/7c4b9f4a-c14f-420d-8513-7eb5ebefefad.jpg\"],\"show_urls\": [\"http://s.mjmobi.com/imp?info=ChhDTzJlNVp2TUt4Q2hvTUZRR0xIVXFTTT0QxKCr4Lun2NHIARoOCMsgEJjnBBjY1QYgriIg7Z7lm8wrKNgEOJcPQLgOmAEGqAHpB7ABAbgBAMABmO8CyAEB&seqs=0\"]},\"ad_type\": 2,\"adid\": 4398,\"landing_page\": \"http://lai8sy.com/\"}],\"id\": \"ebb7fbcb-01da-4255-8c87-98eedbcd2909\"}";
@@ -619,7 +561,7 @@ public class NewsInfoActivity extends BaseActivity {
                 } else {
                     return;
                 }
-                html = AdvRequestUtil.getHtmlByResponse(NewsInfoActivity.this, js.getPageWidth(), slotType, response, true);
+                html = AdvUtil.getHtmlByResponse(NewsInfoActivity.this, js.getPageWidth(), slotType, response, true);
                 final String finalHtml = html;
                 //TODO
                 NewsInfoActivity.this.runOnUiThread(new Runnable() {
@@ -627,16 +569,10 @@ public class NewsInfoActivity extends BaseActivity {
                     public void run() {
                         processAdvData(finalHtml, advWidth, advHeight);
                     }
-                });*/
+                });*//*
             }
-        });
+        });*/
 
-    }
-
-    private void processAdvData(String html, int width, int height) {
-        File file = FileUtils.createFile(NewsInfoActivity.this, FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info", "info_adv.html");
-        AdvRequestUtil.transferHtmlToLocal(NewsInfoActivity.this, file, html);
-        showAdv(Uri.fromFile(file).toString(), width, height);
     }
 
     private AdSlotType getSlotTypeByChannel(String channel) {

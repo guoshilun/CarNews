@@ -171,7 +171,7 @@ public class RetrofitRequestManager {
                     public void accept(@NonNull ResponseBody data) throws Exception {
                         String url = request.getUrl();
                         String json = data.string();
-//                        L.e(httpType + " url:" + url + " 返回的数据：" + json);
+                        L.e(httpType + " url:" + url + " 返回的数据：" + json);
                         //解析json数据
                         parseData(isGet, json, request, responseType, callback);
                     }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="tag_web_view_client">0x8</integer>
+    <integer name="tag_web_chrome_client">0x10</integer>
+</resources>

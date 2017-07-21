@@ -1,21 +1,51 @@
 package com.jmgsz.lib.adv;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslError;
+import android.os.Build;
+import android.os.Message;
 import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.ClientCertRequest;
+import android.webkit.ConsoleMessage;
+import android.webkit.GeolocationPermissions;
+import android.webkit.HttpAuthHandler;
+import android.webkit.JsPromptResult;
+import android.webkit.JsResult;
+import android.webkit.PermissionRequest;
+import android.webkit.SslErrorHandler;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebStorage;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.google.gson.Gson;
+import com.jmgsz.lib.adv.bean.AdvCacheBean;
 import com.jmgsz.lib.adv.bean.AdvRequestBean;
 import com.jmgsz.lib.adv.bean.AdvResponseBean;
-import com.jmgsz.lib.adv.enums.AdChannel;
 import com.jmgsz.lib.adv.enums.AdSlotType;
-import com.jmgsz.lib.adv.interfaces.IAdvRequestCallback;
+import com.jmgsz.lib.adv.interfaces.IAdvHtmlCallback;
+import com.jmgsz.lib.adv.interfaces.IAdvResponseCallback;
+import com.jmgsz.lib.adv.interfaces.IAdvStatusCallback;
+import com.jmgsz.lib.adv.js.AdvJs;
+import com.jmgsz.lib.adv.ui.WebViewActivity;
+import com.jmgsz.lib.adv.utils.AppUtil;
+import com.jmgsz.lib.adv.utils.CachePool;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgsz.lib.adv.utils.DeviceUtils;
-import com.jmgzs.lib_network.network.ConfigCache;
+import com.jmgsz.lib.adv.utils.HtmlFileUtil;
+import com.jmgsz.lib.adv.utils.ThreadPool;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.NetworkErrorCode;
 import com.jmgzs.lib_network.network.RequestUtil;
@@ -28,27 +58,19 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static android.R.attr.type;
 import static com.jmgsz.lib.adv.AdvUrls.API_ADV;
 
 /**
- * 广告请求
- * Created by wxl on 17/6/19.
- * Description:
+ * 广告请求辅助工具类
+ * Created by Wxl on 2017/7/20.
  */
 
 public class AdvRequestUtil {
-    //广告开关
-    private static volatile boolean isOpenAdv = false;
 
-    public static void setAdvOpen(boolean isOpen) {
-        isOpenAdv = isOpen;
-    }
+    private volatile static Map<Integer, String> templateNameMap;
 
-    public static AdvRequestBean getAdvRequest(Context context, AdSlotType slotType) {
+    static AdvRequestBean getAdvRequest(Context context, AdSlotType slotType) {
         AdvRequestBean req = new AdvRequestBean();
         req.setId("ebb7fbcb-01da-4255-8c87-98eedbcd2909");
         req.setUser_agent("Mozilla/5.0 (Linux; U; Android 4.3; zh-cn; R8007 Build/JLS36C) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30");
@@ -57,7 +79,7 @@ public class AdvRequestUtil {
         AdvRequestBean.AppSiteInfoBean site = new AdvRequestBean.AppSiteInfoBean();
         site.setAppsite_id("51e71da6-5b46-4d9f-b94f-9ec6a");
         site.setCategories(Arrays.asList(0));
-        site.setApp_name(getApplicationName(context));
+        site.setApp_name(AppUtil.getApplicationName(context));
         site.setApp_bundle_name(context.getPackageName());
         req.setApp_site_info(site);
 
@@ -102,141 +124,74 @@ public class AdvRequestUtil {
         req.setTemplate_id(Arrays.asList(slotType.getTemplateId()));
         req.setUser_ip(DeviceUtils.getDeviceCurrentIP());
 
-        req.setChannel_id(1001);
+        req.setChannel_id(9999);
 
         return req;
     }
 
-    private static String getApplicationName(Context context) {
-        PackageManager packageManager = null;
-        ApplicationInfo applicationInfo = null;
-        try {
-            packageManager = context.getPackageManager();
-            applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            applicationInfo = null;
-        }
-        String applicationName =
-                (String) packageManager.getApplicationLabel(applicationInfo);
-        return applicationName;
+    public static void requestAdvToCacheNoHtml(final Context context, final AdSlotType type, int reqCount, String tempDir) {
+        requestAdvToCache(context, type, reqCount, tempDir, false, 0, false);
     }
 
-    public static void requestOpenAdv(final Context context, final IRequestCallBack<AdvResponseBean.AdInfoBean> callback) {
-        if (!isOpenAdv) {
-            callback.onFailure(null, 0, "cache is null");
-            return;
-        }
-//        final AdSlotType type = AdSlotType.OPEN_640_960;
-//        String json = ConfigCache.getUrlCacheDefault(context, API_ADV + type.name());
-        final AdSlotType type = AdSlotType.getRandomOpenScreenType();
-        String json = ConfigCache.getUrlCache(context, API_ADV + type.name());
-        final Gson gson = new Gson();
-        try {
-            if (json == null) throw new NullPointerException();
-            AdvResponseBean.AdInfoBean cacheBean = gson.fromJson(json, AdvResponseBean.AdInfoBean.class);
-            callback.onSuccess(null, cacheBean);
-        } catch (Exception e) {
-            callback.onFailure(null, 0, "cache is null");
-//            callback.onSuccess(null,new AdvResponseBean.AdInfoBean());
-        }
+    public static void requestAdvToCache(final Context context, final AdSlotType type, final int reqCount, final String tempDir, final boolean isHtml, final int width, final boolean isIFrame) {
+        ThreadPool.getInstance().runThread(new Runnable() {
 
-        AdvRequestBean requestBean = getAdvRequest(context, type);
-        L.i("request open:"+gson.toJson(requestBean));
-        RequestUtil.requestByPostAsy(context, API_ADV,
-                gson.toJson(requestBean),
-                AdvResponseBean.class,
-                new IRequestCallBack<AdvResponseBean>() {
-                    @Override
-                    public void onSuccess(String url, AdvResponseBean data) {
-                        if (data == null || data.getAd_info() == null || data.getAd_info().size() < 1 || (data.getAd_info().get(0)) == null) {
-                            return;
-                        }
-                        L.i("response open:"+ gson.toJson(data.getAd_info().get(0)));
-                        ConfigCache.setUrlCache(context, API_ADV + type.name(), gson.toJson(data.getAd_info().get(0)));
-                        callback.onCancel(data.getAd_info().get(0).getAd_material().getImages().get(0));
-                    }
+            boolean isOnceFinish = false;
+            int count = reqCount;
+            int tryCount = reqCount * 2;
 
-                    @Override
-                    public void onFailure(String url, int errorCode, String msg) {
-
-                    }
-
-                    @Override
-                    public void onCancel(String url) {
-
-                    }
-                });
-    }
-
-    /**
-     * 缓存广告临时文件名的index的类型映射
-     */
-    private static Map<Integer, Integer> tempFileIndexMap;
-
-    private synchronized static int getTempFileIndex(final String tempDir, int type) {
-        initTempHtmlFileIndex(tempDir);
-        int id = tempFileIndexMap.get(type);
-        tempFileIndexMap.put(type, id >= 1000 ? 0 : id + 1);
-        return id;
-    }
-
-    private synchronized static void initTempHtmlFileIndex(final String tempDir) {
-        if (tempFileIndexMap == null) {
-            tempFileIndexMap = new HashMap<>();
-        } else {
-            return;
-        }
-        File dir = new File(tempDir);
-        File[] files = dir.listFiles();
-        for (int index = 0; index < files.length; index++) {
-            File tempFile = files[index];
-            String name = tempFile.getName();
-            String regex = "(\\d{1,2})_(\\d+)\\.html";
-            Matcher matcher = Pattern.compile(regex).matcher(name);
-            if (matcher.find()) {
-                String[] typeIndex = name.replaceAll(regex, "$1_$2").split("_");
-                if (typeIndex != null && typeIndex.length == 2) {
-                    String typeStr = typeIndex[0];
-                    String indexStr = typeIndex[1];
-                    try {
-                        int type = Integer.parseInt(typeStr);
-                        int id = Integer.parseInt(indexStr);
-                        Integer indexNum = tempFileIndexMap.get(type);
-                        if (indexNum != null) {
-                            int oldId = indexNum;
-                            if (id > oldId) {
-                                tempFileIndexMap.put(type, id);
+            @Override
+            public void run() {
+                while (tryCount-- > 0 && count > 0) {
+                    isOnceFinish = false;
+                    if (!isHtml) {
+                        AdvRequestUtil.requestAdvNoHtml(context, type, true, new IAdvResponseCallback() {
+                            @Override
+                            public void onGetAdvResponseSuccess(int width, int height, int adType, String showUrl, String clickUrl, String imgUrl, String title, String content, String desc) {
+                                count--;
+                                isOnceFinish = true;
                             }
-                        } else {
-                            tempFileIndexMap.put(type, id);
+
+                            @Override
+                            public void onGetAdvResponseFailure() {
+                                isOnceFinish = true;
+                            }
+                        });
+                    } else {
+                        AdvRequestUtil.requestAdv(context, width, isIFrame, type, tempDir, new IAdvHtmlCallback() {
+                            @Override
+                            public void onGetAdvHtmlSuccess(String html, File localFile, int width, int height, String landPageUrl, int adType) {
+                                count--;
+                                isOnceFinish = true;
+                            }
+
+                            @Override
+                            public void onGetAdvHtmlFailure() {
+                                isOnceFinish = true;
+                            }
+                        });
+                    }
+
+                    while (!isOnceFinish) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
                         }
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                        continue;
                     }
                 }
             }
-        }
-        for (int type : AdSlotType.getAdTypeList()){
-            if (tempFileIndexMap.get(type) == null){
-                tempFileIndexMap.put(type, 0);
-            }
-        }
+        });
     }
 
     /**
-     * 请求广告
+     * 请求广告，返回接口对象并缓存，非html
      *
      * @param context
-     * @param pageWidth WebView的宽度
-     * @param isIFrame  是否为嵌入的iframe
-     * @param request   请求
-     * @param callback  回调
+     * @param type     广告类型
+     * @param callback
      */
-    public static void requestAdv(final Context context, final int pageWidth, final boolean isIFrame, final AdvRequestBean request, final String tempDir, final IAdvRequestCallback callback) {
-        if (!isOpenAdv) {
-            return;
-        }
+    static void requestAdvNoHtml(final Context context, final AdSlotType type, final boolean isCache, final IAdvResponseCallback callback) {
+        final AdvRequestBean request = AdvRequestUtil.getAdvRequest(context, type);
         String req = new Gson().toJson(request);
         L.e("广告请求：" + req);
         //TODO 请求广告数据
@@ -248,8 +203,69 @@ public class AdvRequestUtil {
                     onFailure(url, NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getCode(), NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getMsg());
                     return;
                 }
+                final AdSlotType type = AdSlotType.getAdSlotTypeByTemplateId(request.getTemplate_id().get(0));
+                if (type == null) {
+                    onFailure(url, NetworkErrorCode.ERROR_CODE_UNKNOWN.getCode(), "未找到templateId对应的广告位类型");
+                    return;
+                }
+                final int width = type.getWidth();
+                final int height = type.getHeight();
+
+                if (isCache) {
+                    AdvCacheBean cache = new AdvCacheBean(data);
+                    CachePool.getInstance(context).add(type, cache);
+                }
+
+                if (callback != null) {
+                    AdvResponseBean.AdInfoBean info = data.getAd_info().get(0);
+                    AdvResponseBean.AdInfoBean.AdMaterialBean materialBean = info.getAd_material();
+                    callback.onGetAdvResponseSuccess(width, height, info.getAd_type(), materialBean.getShow_urls().get(0), materialBean.getClick_url(), materialBean.getImages().get(0), materialBean.getTitle(), materialBean.getContent(), materialBean.getDesc());
+                }
+            }
+
+            @Override
+            public void onFailure(String url, int errorCode, String msg) {
+                L.e("广告请求接口返回失败");
+                if (callback != null) {
+                    callback.onGetAdvResponseFailure();
+                }
+            }
+
+            @Override
+            public void onCancel(String url) {
+                if (callback != null) {
+                    callback.onGetAdvResponseFailure();
+                }
+            }
+        });
+    }
+
+    /**
+     * 请求广告，返回组装完成的html并缓存文件到传入的目录中
+     *
+     * @param context
+     * @param pageWidth WebView的宽度
+     * @param isIFrame  是否为嵌入的iframe，会使用不同的js
+     * @param type      广告类型
+     * @param tempDir   缓存目录名
+     * @param callback  回调
+     */
+    static void requestAdv(final Context context, final int pageWidth, final boolean isIFrame, final AdSlotType type, final String tempDir, final IAdvHtmlCallback callback) {
+        final AdvRequestBean request = AdvRequestUtil.getAdvRequest(context, type);
+        String req = new Gson().toJson(request);
+        L.e("广告请求：" + req);
+        //TODO 请求广告数据
+        RequestUtil.requestByPostAsy(context, API_ADV, req, AdvResponseBean.class, new IRequestCallBack<AdvResponseBean>() {
+            @Override
+            public void onSuccess(String url, final AdvResponseBean data) {
+                L.e("广告请求接口成功返回");
+                if (data == null || data.getAd_info() == null || data.getAd_info().size() < 1 || (data.getAd_info().get(0)) == null) {
+                    onFailure(url, NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getCode(), NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getMsg());
+                    return;
+                }
+
                 //TODO 选择模板
-                final AdSlotType type = AdSlotType.getWidthHeightByTemplateId(request.getTemplate_id().get(0));
+                final AdSlotType type = AdSlotType.getAdSlotTypeByTemplateId(request.getTemplate_id().get(0));
                 if (type == null) {
                     onFailure(url, NetworkErrorCode.ERROR_CODE_UNKNOWN.getCode(), "未找到templateId对应的广告位类型");
                     return;
@@ -267,8 +283,9 @@ public class AdvRequestUtil {
                 new Thread() {
                     @Override
                     public void run() {
+                        //html缓存并装载数据
                         String htmlTemplate = getHtmlByResponseObject(context, pageWidth, type, data, isIFrame);
-                        final File tempFile = new File(tempDir, type.getType() + "_" + getTempFileIndex(tempDir, type.getType()) + ".html'");
+                        final File tempFile = new File(tempDir, type.getTemplateId() + "_" + HtmlFileUtil.getTempFileIndex(tempDir, type.getType()) + ".html'");
                         htmlTemplate = transferHtmlToLocal(context, tempFile, htmlTemplate);
                         final String finalHtmlTemplate = htmlTemplate;
                         ((Activity) context).runOnUiThread(new Runnable() {
@@ -276,14 +293,14 @@ public class AdvRequestUtil {
                             public void run() {
                                 if (TextUtils.isEmpty(finalHtmlTemplate)) {
                                     if (callback != null) {
-                                        callback.onGetAdvFailure();
+                                        callback.onGetAdvHtmlFailure();
                                     }
                                     return;
                                 }
 
                                 //TODO 返回数据
                                 if (callback != null) {
-                                    callback.onGetAdvSuccess(finalHtmlTemplate, tempFile, width, height, data.getAd_info().get(0).getAd_material().getShow_urls().get(0) == null ? "" : data.getAd_info().get(0).getAd_material().getShow_urls().get(0),data.getAd_info().get(0).getAd_type());
+                                    callback.onGetAdvHtmlSuccess(finalHtmlTemplate, tempFile, width, height, data.getAd_info().get(0).getAd_material().getShow_urls().get(0) == null ? "" : data.getAd_info().get(0).getAd_material().getShow_urls().get(0), data.getAd_info().get(0).getAd_type());
                                 }
                             }
                         });
@@ -296,14 +313,14 @@ public class AdvRequestUtil {
             public void onFailure(String url, int errorCode, String msg) {
                 L.e("广告请求接口返回失败");
                 if (callback != null) {
-                    callback.onGetAdvFailure();
+                    callback.onGetAdvHtmlFailure();
                 }
             }
 
             @Override
             public void onCancel(String url) {
                 if (callback != null) {
-                    callback.onGetAdvFailure();
+                    callback.onGetAdvHtmlFailure();
                 }
             }
         });
@@ -330,12 +347,12 @@ public class AdvRequestUtil {
         }
     }
 
-    public static String getHtmlByResponse(Context context, final int pageWidth, AdSlotType type, String response, boolean isIFrame) {
+    static String getHtmlByResponse(Context context, final int pageWidth, AdSlotType type, String response, boolean isIFrame) {
         AdvResponseBean data = new Gson().fromJson(response, AdvResponseBean.class);
         return getHtmlByResponseObject(context, pageWidth, type, data, isIFrame);
     }
 
-    public static String getHtmlByResponseObject(Context context, final int pageWidth, AdSlotType type, AdvResponseBean resObj, boolean isIFrame) {
+    static String getHtmlByResponseObject(Context context, final int pageWidth, AdSlotType type, AdvResponseBean resObj, boolean isIFrame) {
         final AdvResponseBean.AdInfoBean adInfoBean = resObj.getAd_info().get(0);
         String templateName = getTemplateId(type);
         try {
@@ -363,31 +380,595 @@ public class AdvRequestUtil {
         }
     }
 
-    private static String getTemplateId(AdSlotType type) {
-        Map<Integer, String> templateNameMap = new HashMap<>();
-        templateNameMap.put(2019, "img.mustache");
-        templateNameMap.put(2032, "img.mustache");
-        templateNameMap.put(2023, "img.mustache");
-        templateNameMap.put(2044, "img.mustache");
-        templateNameMap.put(2020, "img.mustache");
-        templateNameMap.put(2021, "img.mustache");
-        templateNameMap.put(2017, "img.mustache");
-        templateNameMap.put(2018, "img.mustache");
-        templateNameMap.put(2022, "img.mustache");
-        templateNameMap.put(2033, "img.mustache");
-        templateNameMap.put(2024, "img.mustache");
-        templateNameMap.put(2031, "img.mustache");
+    public static void initWebView(final Context context, final WebView wv, final boolean isIFrame, final int id, final IAdvStatusCallback callback) {
+        if (wv == null) {
+            return;
+        }
+        wv.getSettings().setJavaScriptEnabled(true);
+        wv.getSettings().setUseWideViewPort(true);
 
-        templateNameMap.put(2001, "x75_75.mustache");
-        templateNameMap.put(2004, "x80_80.mustache");
-        templateNameMap.put(2003, "x240_180.mustache");
-        templateNameMap.put(2010, "x600_300.mustache");
+        wv.getSettings().setLoadWithOverviewMode(true);
+        wv.setHorizontalScrollBarEnabled(false);
+        wv.setVerticalScrollBarEnabled(false);
+        wv.getSettings().setLoadsImagesAutomatically(true);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            wv.getSettings().setAllowFileAccessFromFileURLs(true);
+        }
+
+        wv.setWebChromeClient(new WrapWebChromeClient((WebChromeClient) wv.getTag(R.integer.tag_web_chrome_client)));
+        final float[] scale = new float[1];//当前页面缩放比
+        final float[] widthHeight = new float[2];//当前html页面中的宽高
+        wv.setWebViewClient(new WrapWebViewClient((WebViewClient) wv.getTag(R.integer.tag_web_view_client)) {
+            @Override
+            public boolean shouldOverrideUrlLoading2(WebView view, String url) {
+                L.e("url:" + url);
+                if (url.startsWith("file")) {
+                    return false;
+                }
+                if (url.startsWith("http")) {
+                    Intent intent = new Intent(context, WebViewActivity.class);
+                    intent.putExtra(WebViewActivity.INTENT_URL, url);
+                    context.startActivity(intent);
+                    return true;
+                }
+                return true;
+            }
+
+            @Override
+            public void onReceivedSslError2(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
+            }
+
+            @Override
+            public void onScaleChanged2(WebView view, float oldScale, float newScale) {
+                L.e("旧缩放比：" + oldScale + "\t新缩放比：" + newScale);
+                scale[0] = newScale;
+                if (widthHeight[0] > 0 && widthHeight[1] > 0) {
+                    if (!isIFrame){
+                        ViewGroup.LayoutParams lps = wv.getLayoutParams();
+                        lps.width = (int) (widthHeight[0] * newScale);
+                        lps.height = (int) (widthHeight[1] * newScale);
+                        wv.setLayoutParams(lps);
+                    }
+                }
+            }
+        });
+
+        AdvJs js = new AdvJs(new AdvJs.IJsCallback() {
+            @Override
+            public void close() {
+                if (callback != null) {
+                    callback.close(id);
+                }
+            }
+
+            @Override
+            public void loadAdvFinish() {
+//                ThreadPool.getInstance().runOnMainThread(500, new Runnable() {
+//                    @Override
+//                    public void run() {
+                wv.setVisibility(View.VISIBLE);
+//                    }
+//                });
+            }
+
+            @Override
+            public void getAdvWidthHeight(final int width, final int height) {
+                widthHeight[0] = width;
+                widthHeight[1] = height;
+
+                float curScale;
+                if (scale[0] > 0) {
+                    curScale = scale[0];
+                } else {
+                    curScale = wv.getScale();
+                }
+                if (!isIFrame){
+                    ViewGroup.LayoutParams lps = wv.getLayoutParams();
+                    lps.width = (int) (width * curScale);
+                    lps.height = (int) (height * curScale);
+                    wv.setLayoutParams(lps);
+                }
+            }
+        });
+
+        wv.addJavascriptInterface(js, "adv_js");
+    }
+
+    static synchronized String getTemplateId(AdSlotType type) {
+        if (templateNameMap == null) {
+            templateNameMap = new HashMap<>();
+            templateNameMap.put(2019, "img.mustache");
+            templateNameMap.put(2032, "img.mustache");
+            templateNameMap.put(2023, "img.mustache");
+            templateNameMap.put(2044, "img.mustache");
+            templateNameMap.put(2020, "img.mustache");
+            templateNameMap.put(2021, "img.mustache");
+            templateNameMap.put(2017, "img.mustache");
+            templateNameMap.put(2018, "img.mustache");
+            templateNameMap.put(2022, "img.mustache");
+            templateNameMap.put(2033, "img.mustache");
+            templateNameMap.put(2024, "img.mustache");
+            templateNameMap.put(2031, "img.mustache");
+
+            templateNameMap.put(2001, "x75_75.mustache");
+            templateNameMap.put(2004, "x80_80.mustache");
+            templateNameMap.put(2003, "x240_180.mustache");
+            templateNameMap.put(2010, "x600_300.mustache");
 //        templateNameMap.put(2048, "x600_300.mustache");
-        templateNameMap.put(2039, "x720_405.mustache");
-        templateNameMap.put(2029, "x800_120.mustache");
-        //TODO 待定
-        templateNameMap.put(2061, "x600_300.mustache");
-
+            templateNameMap.put(2039, "x720_405.mustache");
+            templateNameMap.put(2029, "x800_120.mustache");
+            //TODO 待定
+            templateNameMap.put(2061, "x600_300.mustache");
+        }
         return templateNameMap.get(type.getTemplateId());
+    }
+}
+
+abstract class WrapWebViewClient extends WebViewClient {
+    private WebViewClient client;
+
+    public WrapWebViewClient(WebViewClient client) {
+        super();
+        this.client = client;
+    }
+
+    public abstract boolean shouldOverrideUrlLoading2(WebView view, String url);
+
+    public abstract void onReceivedSslError2(WebView view, SslErrorHandler handler, SslError error);
+
+    public abstract void onScaleChanged2(WebView view, float oldScale, float newScale);
+
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        boolean result;
+        if (!(result = shouldOverrideUrlLoading2(view, url))){
+            if (client != null){
+                return client.shouldOverrideUrlLoading(view, url);
+            }
+        }else{
+            return true;
+        }
+        return super.shouldOverrideUrlLoading(view, url);
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        if (client != null){
+            return client.shouldOverrideUrlLoading(view, request);
+        }else{
+            return super.shouldOverrideUrlLoading(view, request);
+        }
+    }
+
+    @Override
+    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        if (client != null){
+            client.onPageStarted(view, url, favicon);
+        }else{
+            super.onPageStarted(view, url, favicon);
+        }
+    }
+
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        if (client != null){
+            client.onPageFinished(view, url);
+        }else{
+            super.onPageFinished(view, url);
+        }
+    }
+
+    @Override
+    public void onLoadResource(WebView view, String url) {
+        if (client != null){
+            client.onLoadResource(view, url);
+        }else{
+            super.onLoadResource(view, url);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onPageCommitVisible(WebView view, String url) {
+        if (client != null){
+            client.onPageCommitVisible(view, url);
+        }else{
+            super.onPageCommitVisible(view, url);
+        }
+    }
+
+    @Override
+    public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+        if (client != null){
+            return client.shouldInterceptRequest(view, url);
+        }else{
+            return super.shouldInterceptRequest(view, url);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+        if (client != null){
+            return client.shouldInterceptRequest(view, request);
+        }else{
+            return super.shouldInterceptRequest(view, request);
+        }
+    }
+
+    @Override
+    public void onTooManyRedirects(WebView view, Message cancelMsg, Message continueMsg) {
+        if (client != null){
+            client.onTooManyRedirects(view, cancelMsg, continueMsg);
+        }else{
+            super.onTooManyRedirects(view, cancelMsg, continueMsg);
+        }
+    }
+
+    @Override
+    public void onReceivedError(WebView view, int errorCode, String description, String
+            failingUrl) {
+        if (client != null){
+            client.onReceivedError(view, errorCode, description, failingUrl);
+        }else{
+            super.onReceivedError(view, errorCode, description, failingUrl);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError
+            error) {
+        if (client != null){
+            client.onReceivedError(view, request, error);
+        }else{
+            super.onReceivedError(view, request, error);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onReceivedHttpError(WebView view, WebResourceRequest
+            request, WebResourceResponse errorResponse) {
+        if (client != null){
+            client.onReceivedHttpError(view, request, errorResponse);
+        }else{
+            super.onReceivedHttpError(view, request, errorResponse);
+        }
+    }
+
+    @Override
+    public void onFormResubmission(WebView view, Message dontResend, Message resend) {
+        if (client != null){
+            client.onFormResubmission(view, dontResend, resend);
+        }else{
+            super.onFormResubmission(view, dontResend, resend);
+        }
+    }
+
+    @Override
+    public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+        if (client != null){
+            client.doUpdateVisitedHistory(view, url, isReload);
+        }else{
+            super.doUpdateVisitedHistory(view, url, isReload);
+        }
+    }
+
+    @Override
+    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+        onReceivedSslError2(view, handler, error);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onReceivedClientCertRequest(WebView view, ClientCertRequest request) {
+        if (client != null){
+            client.onReceivedClientCertRequest(view, request);
+        }else{
+            super.onReceivedClientCertRequest(view, request);
+        }
+    }
+
+    @Override
+    public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String
+            host, String realm) {
+        if (client != null){
+            client.onReceivedHttpAuthRequest(view, handler, host, realm);
+        }else{
+            super.onReceivedHttpAuthRequest(view, handler, host, realm);
+        }
+    }
+
+    @Override
+    public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
+        if (client != null){
+            return client.shouldOverrideKeyEvent(view, event);
+        }else{
+            return super.shouldOverrideKeyEvent(view, event);
+        }
+    }
+
+    @Override
+    public void onUnhandledKeyEvent(WebView view, KeyEvent event) {
+        if (client != null){
+            client.onUnhandledKeyEvent(view, event);
+        }else{
+            super.onUnhandledKeyEvent(view, event);
+        }
+    }
+
+    @Override
+    public void onScaleChanged(WebView view, float oldScale, float newScale) {
+        onScaleChanged2(view, oldScale, newScale);
+        if (client != null){
+            client.onScaleChanged(view, oldScale, newScale);
+        }
+    }
+
+    @Override
+    public void onReceivedLoginRequest(WebView view, String realm, String account, String args) {
+        if (client != null){
+            client.onReceivedLoginRequest(view, realm, account, args);
+        }else{
+            super.onReceivedLoginRequest(view, realm, account, args);
+        }
+    }
+}
+
+class WrapWebChromeClient extends WebChromeClient{
+    private WebChromeClient client;
+
+    public WrapWebChromeClient(WebChromeClient client) {
+        super();
+        this.client = client;
+    }
+
+    @Override
+    public void onProgressChanged(WebView view, int newProgress) {
+        if (client != null){
+            client.onProgressChanged(view, newProgress);
+        }else{
+            super.onProgressChanged(view, newProgress);
+        }
+    }
+
+    @Override
+    public void onReceivedTitle(WebView view, String title) {
+        if (client != null){
+            client.onReceivedTitle(view, title);
+        }else{
+            super.onReceivedTitle(view, title);
+        }
+    }
+
+    @Override
+    public void onReceivedIcon(WebView view, Bitmap icon) {
+        if (client != null){
+            client.onReceivedIcon(view, icon);
+        }else{
+            super.onReceivedIcon(view, icon);
+        }
+    }
+
+    @Override
+    public void onReceivedTouchIconUrl(WebView view, String url, boolean precomposed) {
+        if (client != null){
+            client.onReceivedTouchIconUrl(view, url, precomposed);
+        }else{
+            super.onReceivedTouchIconUrl(view, url, precomposed);
+        }
+    }
+
+    @Override
+    public void onShowCustomView(View view, CustomViewCallback callback) {
+        if (client != null){
+            client.onShowCustomView(view, callback);
+        }else{
+            super.onShowCustomView(view, callback);
+        }
+    }
+
+    @Override
+    public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback) {
+        if (client != null){
+            client.onShowCustomView(view, requestedOrientation, callback);
+        }else{
+            super.onShowCustomView(view, requestedOrientation, callback);
+        }
+    }
+
+    @Override
+    public void onHideCustomView() {
+        if (client != null){
+            client.onHideCustomView();
+        }else{
+            super.onHideCustomView();
+        }
+    }
+
+    @Override
+    public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+        if (client != null){
+            return client.onCreateWindow(view, isDialog, isUserGesture, resultMsg);
+        }else{
+            return super.onCreateWindow(view, isDialog, isUserGesture, resultMsg);
+        }
+    }
+
+    @Override
+    public void onRequestFocus(WebView view) {
+        if (client != null){
+            client.onRequestFocus(view);
+        }else{
+            super.onRequestFocus(view);
+        }
+    }
+
+    @Override
+    public void onCloseWindow(WebView window) {
+        if (client != null){
+            client.onCloseWindow(window);
+        }else{
+            super.onCloseWindow(window);
+        }
+    }
+
+    @Override
+    public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+        if (client != null){
+            return client.onJsAlert(view, url, message, result);
+        }else{
+            return super.onJsAlert(view, url, message, result);
+        }
+    }
+
+    @Override
+    public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
+        if (client != null){
+            return client.onJsConfirm(view, url, message, result);
+        }else{
+            return super.onJsConfirm(view, url, message, result);
+        }
+    }
+
+    @Override
+    public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
+        if (client != null){
+            return client.onJsPrompt(view, url, message, defaultValue, result);
+        }else{
+            return super.onJsPrompt(view, url, message, defaultValue, result);
+        }
+    }
+
+    @Override
+    public boolean onJsBeforeUnload(WebView view, String url, String message, JsResult result) {
+        if (client != null){
+            return client.onJsBeforeUnload(view, url, message, result);
+        }else{
+            return super.onJsBeforeUnload(view, url, message, result);
+        }
+    }
+
+    @Override
+    public void onExceededDatabaseQuota(String url, String databaseIdentifier, long quota, long estimatedDatabaseSize, long totalQuota, WebStorage.QuotaUpdater quotaUpdater) {
+        if (client != null){
+            client.onExceededDatabaseQuota(url, databaseIdentifier, quota, estimatedDatabaseSize, totalQuota, quotaUpdater);
+        }else{
+            super.onExceededDatabaseQuota(url, databaseIdentifier, quota, estimatedDatabaseSize, totalQuota, quotaUpdater);
+        }
+    }
+
+    @Override
+    public void onReachedMaxAppCacheSize(long requiredStorage, long quota, WebStorage.QuotaUpdater quotaUpdater) {
+        if (client != null){
+            client.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
+        }else{
+            super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
+        }
+    }
+
+    @Override
+    public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+        if (client != null){
+            client.onGeolocationPermissionsShowPrompt(origin, callback);
+        }else{
+            super.onGeolocationPermissionsShowPrompt(origin, callback);
+        }
+    }
+
+    @Override
+    public void onGeolocationPermissionsHidePrompt() {
+        if (client != null){
+            client.onGeolocationPermissionsHidePrompt();
+        }else{
+            super.onGeolocationPermissionsHidePrompt();
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onPermissionRequest(PermissionRequest request) {
+        if (client != null){
+            client.onPermissionRequest(request);
+        }else{
+            super.onPermissionRequest(request);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onPermissionRequestCanceled(PermissionRequest request) {
+        if (client != null){
+            client.onPermissionRequestCanceled(request);
+        }else{
+            super.onPermissionRequestCanceled(request);
+        }
+    }
+
+    @Override
+    public boolean onJsTimeout() {
+        if (client != null){
+            return client.onJsTimeout();
+        }else{
+            return super.onJsTimeout();
+        }
+    }
+
+    @Override
+    public void onConsoleMessage(String message, int lineNumber, String sourceID) {
+        if (client != null){
+            client.onConsoleMessage(message, lineNumber, sourceID);
+        }else{
+            super.onConsoleMessage(message, lineNumber, sourceID);
+        }
+    }
+
+    @Override
+    public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+        if (client != null){
+            return client.onConsoleMessage(consoleMessage);
+        }else{
+            return super.onConsoleMessage(consoleMessage);
+        }
+    }
+
+    @Override
+    public Bitmap getDefaultVideoPoster() {
+        if (client != null){
+            return client.getDefaultVideoPoster();
+        }else{
+            return super.getDefaultVideoPoster();
+        }
+    }
+
+    @Override
+    public View getVideoLoadingProgressView() {
+        if (client != null){
+            return client.getVideoLoadingProgressView();
+        }else{
+            return super.getVideoLoadingProgressView();
+        }
+    }
+
+    @Override
+    public void getVisitedHistory(ValueCallback<String[]> callback) {
+        if (client != null){
+            client.getVisitedHistory(callback);
+        }else{
+            super.getVisitedHistory(callback);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+        if (client != null){
+            return client.onShowFileChooser(webView, filePathCallback, fileChooserParams);
+        }else{
+            return super.onShowFileChooser(webView, filePathCallback, fileChooserParams);
+        }
     }
 }

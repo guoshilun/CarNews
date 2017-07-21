@@ -6,11 +6,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
 
-import com.jmgsz.lib.adv.AdvRequestUtil;
+import com.jmgsz.lib.adv.AdvUtil;
+import com.jmgsz.lib.adv.enums.AdSlotType;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.HomeAdapter;
 import com.jmgzs.carnews.base.App;
@@ -20,12 +20,9 @@ import com.jmgzs.carnews.bean.UpdateBean;
 import com.jmgzs.carnews.bean.UpdateInfo;
 import com.jmgzs.carnews.network.Urls;
 import com.jmgzs.carnews.network.update.UpdateDownloadListener;
-import com.jmgzs.carnews.ui.dialog.AdvDialog;
 import com.jmgzs.carnews.ui.dialog.BaseDialog;
 import com.jmgzs.carnews.ui.dialog.UpdateDialog;
 import com.jmgzs.carnews.ui.tab.HomeTabProvider;
-import com.jmgzs.carnews.ui.tab.TabItem;
-import com.jmgzs.carnews.util.InsertAdvUtil;
 import com.jmgzs.carnews.util.AppUtils;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.SPBase;
@@ -33,11 +30,10 @@ import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib.view.roundedimage.RoundedImageView;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
-import com.jmgzs.lib_network.utils.L;
+import com.jmgzs.lib_network.utils.FileUtils;
 import com.ogaclejapan.smarttablelayout.SmartTabLayout;
 
-import static android.R.attr.data;
-import static android.R.transition.move;
+import java.io.File;
 
 public class MainActivity extends BaseActivity {
 
@@ -106,16 +102,13 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private InsertAdvUtil insertAdvReq;
     private boolean isAdvShow = false;
 
     @Override
     public void onBackPressed() {
         if (!isAdvShow) {
-            if (insertAdvReq == null) {
-                insertAdvReq = new InsertAdvUtil(this);
-            }
-            insertAdvReq.requestAdv();
+            AdSlotType type = AdSlotType.getRandomInsertType();
+            AdvUtil.getInstance(this, FileUtils.getCachePath(this)+ File.separator + "info").showInsertAdv(this, type.getTemplateId(), null);
             isAdvShow = true;
         } else {
             super.onBackPressed();
@@ -132,7 +125,7 @@ public class MainActivity extends BaseActivity {
                     if (data.getData().getVersion() > AppUtils.getVersionNum())
                         showUpdateDialog(data.getData());
                     SPBase.putBoolean(Const.SPKey.OPEN_ADV, data.getData().isHas_ad());
-                    AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, true));
+                    AdvUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, true));
                 }
             }
 

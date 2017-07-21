@@ -16,35 +16,19 @@
     <link rel="stylesheet" href="file:///android_assets/axd/css/bootstrap.css" />
     <link rel="stylesheet" href="file:///android_assets/axd/css/common.css" />
     <link rel="stylesheet" href="file:///android_assets/axd/css/axd.css" />
-    <style>
-        .clearfix {
-            padding: 4px;
-            background-color: #4881B9;
-        }
-        .brand_content button.btn-success {
-            margin: 8px;
-            padding: 3px 6px;
-        }
-        .brand_content .brand_desc {
-            padding: 8px;
-        }
-        .brand_title,
-        .brand_detail {
-            max-width: 200px;
-        }
-    </style>
 	<script src="file:///android_assets/axd/js/{{ axd.js }}"></script>
-    <!--axd_iframe.js-->
+    <!--axd_root.js-->
 </head>
-<!-- 2001: 75 * 75 -->
+
 <body id="adv_body" onload="loadFinish()">
-<div class="axd_container axd_container_top">
+<!-- 2029: 800 * 120 -->
+    <div class="axd_container axd_container_top">
         <!-- 曝光 -->
         <div class="axd_expose">
             <img src="{{ axd.exposure_url }}" alt="">
         </div>
         <!-- 关闭按钮 -->
-        <a class="axd_cl" onclick="window.carnews.close()">x</a>
+        <a class="axd_cl" onclick="close()">x</a>
         <!-- 广告标识 -->
         <em class="axd_ax">广告</em>
         <div>
@@ -57,9 +41,12 @@
                         </div>
                         <div class="brand_content fl">
                             <span class="brand_title">{{ axd.gl.title }}</span>
-                            <span class="brand_detail">{{ axd.gl.desc }}</span>
+                            <span class="brand_desc">{{ axd.gl.detail }}</span>
                         </div>
                     </div>
+                </div>
+                <div class="axd_container_content">
+                    <span class="brand_desc">{{ axd.gl.desc }}</span>
                 </div>
             </a>
         </div>

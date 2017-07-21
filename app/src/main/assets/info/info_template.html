@@ -66,6 +66,7 @@ function showAdv(htmlSrc, width, height){
     iframe.scrolling="no";
     iframe.frameBorder = 0;
     iframe.style.margin = 0;
+    iframe.onload = setIFrameParentWindow;
     body.appendChild(iframe);
     <!--iframe.style.display="none";-->
 

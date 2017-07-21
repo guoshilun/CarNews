@@ -1,4 +1,4 @@
-package com.jmgzs.carnews.ui;
+package com.jmgsz.lib.adv.ui;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -6,6 +6,9 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.SslErrorHandler;
@@ -15,31 +18,33 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import com.jmgzs.carnews.R;
-import com.jmgzs.carnews.base.BaseActivity;
-import com.jmgzs.carnews.util.WVDownloadListener;
+import com.jmgsz.lib.adv.R;
+import com.jmgsz.lib.adv.utils.WVDownloadListener;
 import com.jmgzs.lib_network.utils.L;
 
-import static com.jmgzs.carnews.R.id.webView;
 
 
 /**
  * Created by XJ on 2016/5/27.
  */
-public class WebViewActivity extends BaseActivity {
+public class WebViewActivity extends AppCompatActivity {
 
     private WebView wv;
     public static final String INTENT_URL = "url";
-    private boolean fromSplash =false;
+    public static final String INTENT_ACTIVITY = "activity";
+    private String activityName;
 
     @Override
-    protected int getContent(Bundle b) {
-        return R.layout.activity_webview;
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_webview);
+
+        initView();
     }
 
-    @Override
     protected void initView() {
-        wv = getView(webView);
+        wv = (WebView) findViewById(R.id.webView);
         WebSettings settings = wv.getSettings();
         //		settings.setSaveFormData(false);
         settings.setJavaScriptEnabled(true);
@@ -60,7 +65,7 @@ public class WebViewActivity extends BaseActivity {
         }
         initData();
 
-        getView(R.id.back).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -69,15 +74,10 @@ public class WebViewActivity extends BaseActivity {
 
     }
 
-    @Override
-    protected String getUmengKey() {
-        return null;
-    }
-
     protected void initData() {
         Intent intent = getIntent();
         String url = intent.getStringExtra(INTENT_URL);
-        fromSplash = intent.getBooleanExtra("fromSplash",false);
+        activityName = intent.getStringExtra(INTENT_ACTIVITY);
         L.e("广告详情的URL："+url);
         wv.setVisibility(View.INVISIBLE);
         wv.loadUrl(url);
@@ -85,9 +85,14 @@ public class WebViewActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (fromSplash){
-            Intent in = new Intent(this ,MainActivity.class);
-            startActivity(in);
+        if (!TextUtils.isEmpty(activityName)){
+            Intent in;
+            try {
+                in = new Intent(this ,Class.forName(activityName));
+                startActivity(in);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         super.onBackPressed();
     }

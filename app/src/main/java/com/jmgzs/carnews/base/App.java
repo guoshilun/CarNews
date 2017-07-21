@@ -14,7 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 
-import com.jmgsz.lib.adv.AdvRequestUtil;
+import com.jmgsz.lib.adv.AdvUtil;
 import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
 import com.jmgsz.lib.adv.utils.DensityUtils;
@@ -27,7 +27,6 @@ import com.umeng.analytics.MobclickAgent;
 import java.util.List;
 
 import static android.R.attr.key;
-import static android.R.attr.level;
 
 /**
  * Created by mac on 17/6/15.
@@ -65,7 +64,7 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
         if (shouldInit())
             init();
 
-        AdvRequestUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, true));
+        AdvUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, true));
     }
 
     private void initPush() {

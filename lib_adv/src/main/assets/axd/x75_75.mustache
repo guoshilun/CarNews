@@ -36,15 +36,15 @@
 	<script src="file:///android_assets/axd/js/{{ axd.js }}"></script>
     <!--axd_iframe.js-->
 </head>
-
+<!-- 2001: 75 * 75 -->
 <body id="adv_body" onload="loadFinish()">
-    <div class="axd_container axd_container_top">
+<div class="axd_container axd_container_top">
         <!-- 曝光 -->
         <div class="axd_expose">
             <img src="{{ axd.exposure_url }}" alt="">
         </div>
         <!-- 关闭按钮 -->
-        <a class="axd_cl" onclick="window.carnews.close()">x</a>
+        <a class="axd_cl" onclick="close()">x</a>
         <!-- 广告标识 -->
         <em class="axd_ax">广告</em>
         <div>
@@ -57,12 +57,8 @@
                         </div>
                         <div class="brand_content fl">
                             <span class="brand_title">{{ axd.gl.title }}</span>
-                            <span class="brand_detail">{{ axd.gl.detail }}</span>
+                            <span class="brand_detail">{{ axd.gl.desc }}</span>
                         </div>
-                    </div>
-                    <div class="brand_content">
-                        <span class="brand_desc">{{ axd.gl.desc }}{{ axd.gl.desc }}{{ axd.gl.desc }}{{ axd.gl.desc }}{{ axd.gl.desc }}</span>
-                        <button class="btn btn-success">了解更多</button>
                     </div>
                 </div>
             </a>

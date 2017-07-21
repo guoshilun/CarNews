@@ -20,18 +20,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import com.jmgsz.lib.adv.AdvUtil;
+import com.jmgsz.lib.adv.InsertAdvUtil;
+import com.jmgsz.lib.adv.enums.AdSlotType;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
-import com.jmgzs.carnews.util.InsertAdvUtil;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.carnews.util.UmengUtil;
+import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 import com.umeng.analytics.MobclickAgent;
 
-import static com.jmgzs.carnews.R.mipmap.on;
-import static com.umeng.message.proguard.k.A;
+import java.io.File;
 
 /**
  * Created by mac on 17/6/5.
@@ -179,7 +181,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private InsertAdvUtil insertAdvReq;
     private boolean isBackHome = false;
 
     private BroadcastReceiver mHomeKeyEventReceiver = new BroadcastReceiver() {
@@ -208,12 +209,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         MobclickAgent.onPageStart(getClass().getSimpleName());//统计页面
         MobclickAgent.onResume(this);//统计时长
         if (isBackHome){
-            if (insertAdvReq == null){
-                insertAdvReq = new InsertAdvUtil(this);
-            }
-            if (!insertAdvReq.isDialogShown()){
-                insertAdvReq.requestAdv();
-            }
+            AdSlotType type = AdSlotType.getRandomInsertType();
+            AdvUtil.getInstance(this, FileUtils.getCachePath(this) + File.separator + "info").showInsertAdv(this, type.getTemplateId(), null);
             isBackHome = false;
         }
     }

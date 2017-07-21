@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,7 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
-import com.jmgsz.lib.adv.AdvTempList;
+import com.jmgsz.lib.adv.AdvUtil;
+import com.jmgsz.lib.adv.bean.AdvCacheBean;
 import com.jmgsz.lib.adv.enums.AdSlotType;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.autoviewpager.AutoScrollViewPager;
@@ -29,26 +29,18 @@ import com.jmgzs.carnews.base.BaseFragment;
 import com.jmgzs.carnews.bean.AdvDataBean;
 import com.jmgzs.carnews.bean.NewsDataBean;
 import com.jmgzs.carnews.bean.NewsListBean;
-
 import com.jmgzs.carnews.network.Urls;
 import com.jmgzs.carnews.util.ResUtils;
+import com.jmgzs.carnews.util.T;
 import com.jmgzs.lib_network.network.ConfigCache;
 import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
+import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 
-import com.jmgzs.carnews.util.T;
-
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import static android.R.attr.data;
-import static android.R.id.list;
-import static android.media.CamcorderProfile.get;
-import static com.jmgsz.lib.adv.AdvTempList.getList_600_300;
-import static com.umeng.message.proguard.k.A;
-import static com.umeng.message.proguard.k.k;
 
 
 /**
@@ -72,6 +64,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     private static final int pageCount = 5;
     private boolean loadAll = false;
     private boolean isLoading = false;
+    private int advWidth;
 
     @Nullable
     @Override
@@ -185,14 +178,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
     protected void lazyLoad1() {
         //请求广告
         Activity activity = getActivity();
-        int width = DensityUtils.getScreenWidthPixels(activity) - DensityUtils.dip2px(activity, 8 * 2);
-        if (getCurrentPos() == 0) {
-            AdvTempList.requestAdvTempList(activity, width, 5, AdSlotType.INFO_600_300_W);
-        } else if (getCurrentPos() == 2) {
-            AdvTempList.requestAdvTempList(activity, width, 5, AdSlotType.INFO_720_405_W);
-        } else if (getCurrentPos() == 4) {
-            AdvTempList.requestAdvTempList(activity, width, 5, AdSlotType.INFO_800_120_W);
-        }
+        advWidth = DensityUtils.getScreenWidthPixels(activity) - DensityUtils.dip2px(activity, 8 * 2);
         //请求新闻列表
         if (adapter == null || adapter.getDataCount() == 0) {
             initAdapter(Urls.getUrlNews(String.valueOf(0), getChannel()), getNewsDataCache(0), false);
@@ -327,21 +313,23 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
 
     private AdvDataBean createAdvItemData() {
         AdvDataBean ad = new AdvDataBean();
-        List<AdvTempList.AdvTempBean> cache = null;
+        List<AdvCacheBean> cache;
+        int templateId;
         if (getCurrentPos() == 0) {
-            cache = AdvTempList.getList_600_300();
+            templateId = AdSlotType.INFO_600_300_W.getTemplateId();
         } else if (getCurrentPos() == 2) {
-            cache = AdvTempList.getList_720_405();
+            templateId = AdSlotType.INFO_720_405_W.getTemplateId();
         } else if (getCurrentPos() == 4) {
-            cache = AdvTempList.getList_800_120();
+            templateId = AdSlotType.INFO_800_120_W.getTemplateId();
+        }else{
+            return ad;
         }
+        cache = AdvUtil.getInstance(getContext(), FileUtils.getCachePath(getContext()) + File.separator + "info").getInfoAdvCacheList(getContext(), templateId, advWidth, 5);
         if (cache != null && cache.size() > 0) {
             ad.setHtml(cache.get(0).getHtml());
-            ad.setAdvW(cache.get(0).getWidth());
-            ad.setAdvH(cache.get(0).getHeight());
-            ad.setFile(cache.get(0).getFile());
-            ad.setLandingPageUrl(cache.get(0).getLandingPageUrl());
-            ad.setAdType(cache.get(0).getAdType());
+            ad.setFile(cache.get(0).getFilePath());
+            ad.setLandingPageUrl(cache.get(0).getResponse().getAd_info().get(0).getAd_material().getClick_url());
+            ad.setAdType(cache.get(0).getResponse().getAd_info().get(0).getAd_type());
             return ad;
         } else {
             return null;

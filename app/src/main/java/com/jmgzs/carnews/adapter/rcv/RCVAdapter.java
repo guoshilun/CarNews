@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.jmgsz.lib.adv.interfaces.IAdvStatusCallback;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.rcvbase.BaseHolder;
@@ -55,26 +56,12 @@ public class RCVAdapter extends RCVBaseAdapter<NewsDataBean, BaseHolder<NewsData
         else if(viewType == 1){
             return new RCVHolder(parent, R.layout.item_view_image3, imageW, imageH);
         }else {
-            return new RCVAdvHolder(parent, R.layout.item_view_adv, new JsBridge.IJsCallback() {
+            return new RCVAdvHolder(parent, R.layout.item_view_adv, new IAdvStatusCallback() {
                 @Override
-                public void close() {
+                public void close(int id) {
 //                    removeItem(0);
                 }
 
-                @Override
-                public void loadFinish() {
-
-                }
-
-                @Override
-                public void loadAdvFinish() {
-
-                }
-
-                @Override
-                public void getAdvWidthHeight(int width, int height) {
-
-                }
             });
         }
     }

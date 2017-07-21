@@ -27,19 +27,6 @@ public class JsBridge {
     }
 
     @JavascriptInterface
-    public void close() {
-        L.e("广告关闭");
-        if (callback != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    callback.close();
-                }
-            });
-        }
-    }
-
-    @JavascriptInterface
     public void toast(final String msg) {
         for (int i = 0; i < msg.length(); i += 200) {
             int last = i + 200 > msg.length() ? msg.length() : i + 200;
@@ -51,11 +38,6 @@ public class JsBridge {
 //                T.toastS(msg);
 //            }
 //        });
-    }
-
-    @JavascriptInterface
-    public float toast() {
-        return fontSize;
     }
 
     @JavascriptInterface
@@ -80,30 +62,6 @@ public class JsBridge {
         }
     }
 
-    @JavascriptInterface
-    public void loadAdvFinish() {
-        if (callback != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    callback.loadAdvFinish();
-                }
-            });
-        }
-    }
-
-    @JavascriptInterface
-    public void getAdvWidthHeight(final int width, final int height) {
-        if (callback != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    callback.getAdvWidthHeight(width, height);
-                }
-            });
-        }
-    }
-
     public int getPageWidth() {
         return pageWidth;
     }
@@ -113,12 +71,8 @@ public class JsBridge {
     }
 
     public interface IJsCallback {
-        void close();
 
         void loadFinish();
 
-        void loadAdvFinish();
-
-        void getAdvWidthHeight(int width, int height);
     }
 }
