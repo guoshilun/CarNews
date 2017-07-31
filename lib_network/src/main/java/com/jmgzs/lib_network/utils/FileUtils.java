@@ -34,7 +34,12 @@ public class FileUtils {
             sdCardPath = Environment.getExternalStorageDirectory();
             return sdCardPath.toString() + File.separator + "CarNews";
         }
-        return context.getCacheDir().getPath();
+        try {
+            return context.getCacheDir().getCanonicalPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return context.getCacheDir().getAbsolutePath();
+        }
     }
 
     private static final int BUFFER = 8192;

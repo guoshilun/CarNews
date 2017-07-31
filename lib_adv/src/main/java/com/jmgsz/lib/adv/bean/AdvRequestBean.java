@@ -87,7 +87,7 @@ public class AdvRequestBean {
         this.geo_info = geo_info;
     }
 
-    private static AdSlotInfoBean setAdSlotInfo(int width, int height){
+    private static AdSlotInfoBean setAdSlotInfo(int width, int height) {
         AdSlotInfoBean adSlot = new AdSlotInfoBean();
         adSlot.setAd_num(1);
         adSlot.setHeight(height);
@@ -109,7 +109,7 @@ public class AdvRequestBean {
      **/
     private static int mapNetworkState(Context context) {
         int result;
-        switch (NetworkUtils.getNetworkState(context)){
+        switch (NetworkUtils.getNetworkState(context)) {
             case NETWORN_NONE:
                 result = 1;
                 break;
@@ -436,7 +436,7 @@ public class AdvRequestBean {
         }
     }
 
-    public static class GeoInfoBean{
+    public static class GeoInfoBean {
         private float longitude;
         private float latitude;
 

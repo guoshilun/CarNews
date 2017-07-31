@@ -13,7 +13,7 @@ public class AdvBean {
     private Image image;
     private Gl gl;
 
-    public static AdvBean getDataByStr(String json){
+    public static AdvBean getDataByStr(String json) {
         return new Gson().fromJson(json, AdvBean.class);
     }
 
@@ -49,7 +49,7 @@ public class AdvBean {
         this.gl = gl;
     }
 
-    public static class Image{
+    public static class Image {
         private String url;
         private String width;
         private String height;
@@ -78,7 +78,8 @@ public class AdvBean {
             this.height = height;
         }
     }
-    public static class Gl{
+
+    public static class Gl {
         private String title;
         private String detail;
         private String desc;
@@ -116,7 +117,7 @@ public class AdvBean {
             this.logo = logo;
         }
 
-        public static class Logo{
+        public static class Logo {
             private String url;
             private int w;
             private int h;

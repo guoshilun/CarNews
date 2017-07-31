@@ -43,14 +43,15 @@ public class SplashActivity extends AdvBaseActivity {
     private String tempDir;
 
     public static final String INTENT_LOGO = "logo";
-    public static final String INTENT_APP_INFO  = "app_info";
-    public static final String INTENT_ACTIVITY_NAME  = "activity_name";
-    public static final String INTENT_TEMP_DIR  = "temp_dir";
+    public static final String INTENT_APP_INFO = "app_info";
+    public static final String INTENT_ACTIVITY_NAME = "activity_name";
+    public static final String INTENT_TEMP_DIR = "temp_dir";
 
     @Override
     protected int getContent(Bundle save) {
         return R.layout.activity_splash;
     }
+
     @Override
     protected void initView() {
         ThreadPool.setMainHandler(this);
@@ -62,46 +63,46 @@ public class SplashActivity extends AdvBaseActivity {
         showAdv();
     }
 
-    private void initData(){
+    private void initData() {
         Intent intent = getIntent();
-        if (intent != null){
+        if (intent != null) {
             logoResId = intent.getIntExtra(INTENT_LOGO, -1);
             appInfo = intent.getStringExtra(INTENT_APP_INFO);
             activityName = intent.getStringExtra(INTENT_ACTIVITY_NAME);
             tempDir = intent.getStringExtra(INTENT_TEMP_DIR);
         }
-        if (logoResId < 0){
+        if (logoResId < 0) {
             logoResId = getLogoResId();
         }
-        if (TextUtils.isEmpty(appInfo)){
+        if (TextUtils.isEmpty(appInfo)) {
             appInfo = getAppInfo();
         }
-        if (TextUtils.isEmpty(activityName)){
+        if (TextUtils.isEmpty(activityName)) {
             activityName = getActivityName();
         }
-        if (TextUtils.isEmpty(tempDir)){
+        if (TextUtils.isEmpty(tempDir)) {
             tempDir = getTempDir();
         }
-        if (logoResId > 0){
+        if (logoResId > 0) {
             logoImgView.setImageResource(logoResId);
         }
 
         appInfoTv.setText(appInfo);
     }
 
-    protected String getTempDir(){
+    protected String getTempDir() {
         return "";
     }
 
-    protected int getLogoResId(){
+    protected int getLogoResId() {
         return -1;
     }
 
-    protected String getAppInfo(){
+    protected String getAppInfo() {
         return null;
     }
 
-    protected String getActivityName(){
+    protected String getActivityName() {
         return null;
     }
 

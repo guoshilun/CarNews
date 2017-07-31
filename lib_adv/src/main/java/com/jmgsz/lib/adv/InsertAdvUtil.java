@@ -36,16 +36,18 @@ public class InsertAdvUtil {
         if (slotType == null || data == null) {
             return;
         }
-        if (mAdvDialog != null){//上一个dialog未关闭
+        if (mAdvDialog != null) {//上一个dialog未关闭
             mAdvDialog.dismiss();
+            mAdvDialog = null;
         }
         js = new AdvJs(new AdvJs.IJsCallback() {
             @Override
             public void close() {
+                L.e("插屏关闭");
                 if (mAdvDialog != null) {
                     mAdvDialog.dismiss();
                 }
-                if (callback != null){
+                if (callback != null) {
                     callback.close(templateId);
                 }
             }
@@ -75,7 +77,7 @@ public class InsertAdvUtil {
                 }
                 L.e("设置的插屏广告宽高：" + (mAdvW * scale) + "\t" + (mAdvH * scale));
                 mAdvDialog.changeWidthHeight((int) (mAdvW * scale), (int) (mAdvH * scale));
-
+                mAdvDialog.showWebView();
             }
         });
 
@@ -90,7 +92,7 @@ public class InsertAdvUtil {
                 L.e("插屏广告宽高：" + slotType.getWidth() + "\t" + slotType.getHeight());
 //                showAdv(finalHtml, slotType.getWidth(), slotType.getHeight());
                 int height = slotType.getHeight() * DensityUtils.getScreenWidthPixels(activity) / slotType.getStandardWidth();
-                showAdv(activity, finalHtml, new File(htmlFile), width,  height);
+                showAdv(activity, finalHtml, new File(htmlFile), width, height);
             }
         });
     }
@@ -102,12 +104,8 @@ public class InsertAdvUtil {
         if (isActivityDestroyed(activity)) {
             return;
         }
-        if (mAdvDialog == null) {
-            mAdvDialog = new AdvDialog(activity);
-            mAdvDialog.setWidthHeight(width, height);//纯图广告直接设置宽高
-        } else {
-            mAdvDialog.changeWidthHeight(width, height);//纯图广告直接设置宽高
-        }
+        mAdvDialog = new AdvDialog(activity);
+        mAdvDialog.setWidthHeight(width, height);//纯图广告直接设置宽高
         mAdvDialog.setListener(new AdvDialog.IOnAdvLoadListener() {
             @Override
             public void onAdvLoad(final WebView wv) {
@@ -152,8 +150,8 @@ public class InsertAdvUtil {
         return mAdvDialog != null && mAdvDialog.isShowing();
     }
 
-    public void dismiss(){
-        if (mAdvDialog != null && mAdvDialog.isShowing()){
+    public void dismiss() {
+        if (mAdvDialog != null && mAdvDialog.isShowing()) {
             mAdvDialog.dismiss();
         }
     }

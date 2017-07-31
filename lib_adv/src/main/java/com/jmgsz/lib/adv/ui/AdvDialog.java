@@ -83,7 +83,7 @@ public class AdvDialog extends BaseDialog {
 
             @Override
             public void onScaleChanged(WebView view, float oldScale, float newScale) {
-                L.e("旧缩放比："+oldScale+"\t新缩放比："+newScale);
+                L.e("旧缩放比：" + oldScale + "\t新缩放比：" + newScale);
                 scale = newScale;
                 if (mListener != null) {
                     mListener.onAdvScaleChanged(newScale);
@@ -141,7 +141,7 @@ public class AdvDialog extends BaseDialog {
         mWv.getLayoutParams().width = lp.width;
         mWv.getLayoutParams().height = lp.height;
         mWv.invalidate();
-}
+    }
 
     @Override
     public void show() {
@@ -158,15 +158,15 @@ public class AdvDialog extends BaseDialog {
         }
     }
 
-    public void showWebView(){
+    public void showWebView() {
         mWv.setVisibility(View.VISIBLE);
     }
 
-    public float getWebViewScale(){
+    public float getWebViewScale() {
         return mWv.getScale();
     }
 
-    public float getScale(){
+    public float getScale() {
         return scale;
     }
 

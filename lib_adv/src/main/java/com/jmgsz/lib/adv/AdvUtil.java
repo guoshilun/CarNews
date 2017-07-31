@@ -16,6 +16,7 @@ import com.jmgsz.lib.adv.interfaces.IAdvResponseCallback;
 import com.jmgsz.lib.adv.interfaces.IAdvStatusCallback;
 import com.jmgsz.lib.adv.ui.SplashActivity;
 import com.jmgsz.lib.adv.utils.CachePool;
+import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgsz.lib.adv.utils.ThreadPool;
 import com.jmgzs.lib_network.network.ConfigCache;
 import com.jmgzs.lib_network.network.IRequestCallBack;
@@ -45,13 +46,13 @@ public class AdvUtil {
     private AdvUtil() {
     }
 
-    public static synchronized AdvUtil getInstance(Context context, String tempDir){
-        if (instance == null){
+    public static synchronized AdvUtil getInstance(Context context, String tempDir) {
+        if (instance == null) {
             instance = new AdvUtil();
             AdvUtil.tempDir = tempDir;
             File f = new File(tempDir);
-            if(!f.canRead() || !f.canWrite()){
-                throw new SecurityException("Cache dir cannot be read or written!");
+            if (f.exists() && !f.isDirectory()) {
+                throw new SecurityException("Cache dir is a file not a directory!");
             }
             init(context);
         }
@@ -66,8 +67,8 @@ public class AdvUtil {
         isOpenAdv = isOpen;
     }
 
-    private static void init(Context context){
-        if (Thread.currentThread() != context.getMainLooper().getThread()){
+    private static void init(Context context) {
+        if (Thread.currentThread() != context.getMainLooper().getThread()) {
             throw new RuntimeException("Please init AdvUtil on Main Thread!");
         }
         ThreadPool.setMainHandler(context);
@@ -126,6 +127,7 @@ public class AdvUtil {
 
     /**
      * 请求开屏广告，获取缓存并请求下一次的广告
+     *
      * @param context
      * @param templateIds
      * @param callback
@@ -151,7 +153,7 @@ public class AdvUtil {
                     AdvResponseBean.AdInfoBean.AdMaterialBean materialBean = info.getAd_material();
                     if (callback != null) {//返回缓存数据
                         callback.onGetAdvResponseSuccess(type.getWidth(), type.getHeight(), info.getAd_type(), materialBean.getShow_urls().get(0), materialBean.getClick_url(), materialBean.getImages().get(0), materialBean.getTitle(), materialBean.getContent(), materialBean.getDesc());
-                    }else{
+                    } else {
                         Intent intent = new Intent(context, SplashActivity.class);
                         intent.putExtra(SplashActivity.INTENT_LOGO, logoResId);
                         intent.putExtra(SplashActivity.INTENT_APP_INFO, appInfo);
@@ -163,12 +165,12 @@ public class AdvUtil {
             }
             AdvRequestUtil.requestAdvToCacheNoHtml(context, type, 2, tempDir);
         }
-        if (!isReturn){
+        if (!isReturn) {
             callback.onGetAdvResponseFailure();
         }
     }
 
-    public void showInsertAdv(final Activity context, int templateId, IAdvStatusCallback callback){
+    public void showInsertAdv(final Activity context, int templateId, IAdvStatusCallback callback) {
         if (!isOpenAdv) {
             return;
         }
@@ -183,16 +185,18 @@ public class AdvUtil {
             }
             insertAdvUtil.showDialog(context, templateId, type, cache, callback);
         }
-        AdvRequestUtil.requestAdvToCacheNoHtml(context, type, 2, tempDir);
+        int width = type.getWidth() * DensityUtils.getScreenWidthPixels(context) / type.getStandardWidth();//换算后的广告宽度
+        AdvRequestUtil.requestAdvHtmlToCache(context, type, 2, width, false, tempDir);
     }
 
     /**
      * 显示banner广告
+     *
      * @param context
      * @param templateId
      * @param isUseCache 是否使用缓存，如果未读取到缓存，与不使用缓存方式相同
      */
-    public void showBannerAdv(final Context context, int templateId, final boolean isUseCache, final boolean isIFrame, final int width, final IAdvHtmlCallback callback){
+    public void showBannerAdv(final Context context, int templateId, final boolean isUseCache, final boolean isIFrame, final int width, final IAdvHtmlCallback callback) {
         if (!isOpenAdv) {
             return;
         }
@@ -200,21 +204,22 @@ public class AdvUtil {
         if (type == null) {
             return;
         }
-        if (isUseCache){//使用缓存返回方式
+        if (isUseCache) {//使用缓存返回方式
             AdvCacheBean cache = CachePool.getInstance(context).pop(type);
             if (cache != null) {
-                if (callback != null){
+                if (callback != null) {
                     AdvResponseBean.AdInfoBean info = cache.getResponse().getAd_info().get(0);
                     callback.onGetAdvHtmlSuccess(cache.getHtml(), new File(cache.getFilePath()), type.getWidth(), type.getHeight(), info.getLanding_page(), info.getAd_type());
                 }
             }
-            AdvRequestUtil.requestAdvToCache(context, type, 2, tempDir, true, width, isIFrame);
+            AdvRequestUtil.requestAdvHtmlToCache(context, type, 2, width, isIFrame, tempDir);
+        } else {
+            //直接返回请求内容方式
+            AdvRequestUtil.requestAdvHtml(context, width, isIFrame, type, tempDir, false, callback);
         }
-        //直接返回请求内容方式
-        AdvRequestUtil.requestAdv(context, width, isIFrame, type, tempDir, callback);
     }
 
-    public void showBannerAdv(final Context context, final int templateId, final boolean isUseCache, final boolean isIFrame, final WebView wv, final int width, final IAdvStatusCallback callback){
+    public void showBannerAdv(final Context context, final int templateId, final boolean isUseCache, final boolean isIFrame, final WebView wv, final int width, final IAdvStatusCallback callback) {
         AdvRequestUtil.initWebView(context, wv, isIFrame, templateId, callback);
         showBannerAdv(context, templateId, isUseCache, false, width, new IAdvHtmlCallback() {
             @Override
@@ -236,33 +241,35 @@ public class AdvUtil {
         if (type == null) {
             return;
         }
-        if (isUseCache){//使用缓存返回方式
+        if (isUseCache) {//使用缓存返回方式
             AdvCacheBean cache = CachePool.getInstance(context).pop(type);
             if (cache != null) {
-                if (callback != null){
+                if (callback != null) {
                     AdvResponseBean.AdInfoBean info = cache.getResponse().getAd_info().get(0);
                     AdvResponseBean.AdInfoBean.AdMaterialBean materialBean = info.getAd_material();
                     callback.onGetAdvResponseSuccess(type.getWidth(), type.getHeight(), info.getAd_type(), materialBean.getShow_urls().get(0), materialBean.getClick_url(), materialBean.getImages().get(0), materialBean.getTitle(), materialBean.getContent(), materialBean.getDesc());
                 }
             }
             AdvRequestUtil.requestAdvToCacheNoHtml(context, type, 2, tempDir);
+        } else {
+            //直接返回请求内容方式
+            AdvRequestUtil.requestAdvNoHtml(context, type, isUseCache, callback);
         }
-        //直接返回请求内容方式
-        AdvRequestUtil.requestAdvNoHtml(context, type, isUseCache, callback);
     }
-    public void showInfoAdv(final Context context, int templateId, final boolean isUseCache, final IAdvResponseCallback callback){
+
+    public void showInfoAdv(final Context context, int templateId, final boolean isUseCache, final IAdvResponseCallback callback) {
         showBannerAdv(context, templateId, isUseCache, callback);
     }
 
-    public void showInfoAdv(final Context context, int templateId, final boolean isUseCache, final boolean isIFrame, final int width, final IAdvHtmlCallback callback){
+    public void showInfoAdv(final Context context, int templateId, final boolean isUseCache, final boolean isIFrame, final int width, final IAdvHtmlCallback callback) {
         showBannerAdv(context, templateId, isUseCache, isIFrame, width, callback);
     }
 
-    public void showInfoAdv(final Context context, int templateId, final boolean isUseCache,boolean isIFrame, final WebView wv, final int width, final IAdvStatusCallback callback){
+    public void showInfoAdv(final Context context, int templateId, final boolean isUseCache, boolean isIFrame, final WebView wv, final int width, final IAdvStatusCallback callback) {
         showBannerAdv(context, templateId, isUseCache, isIFrame, wv, width, callback);
     }
 
-    public List<AdvCacheBean> getInfoAdvCacheList(final Context context, int templateId, final int width, final int count){
+    public List<AdvCacheBean> getInfoAdvCacheList(final Context context, int templateId, final int width, final int count) {
         List<AdvCacheBean> data = new ArrayList<>();
         if (!isOpenAdv) {
             return data;
@@ -272,19 +279,18 @@ public class AdvUtil {
             return data;
         }
         int requestCount = count;
-        while (requestCount > 0){
+        while (requestCount > 0) {
             AdvCacheBean cache = CachePool.getInstance(context).pop(type);
             if (cache != null) {
                 data.add(cache);
                 requestCount--;
-            }else{
+            } else {
                 break;
             }
         }
-        AdvRequestUtil.requestAdvToCache(context, type, count, tempDir, true, width, false);
+        AdvRequestUtil.requestAdvHtmlToCache(context, type, count, width, false, tempDir);
         return data;
     }
-
 
 
 }

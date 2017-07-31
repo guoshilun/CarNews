@@ -6,7 +6,7 @@
 function loadFinish(){
     <!--window.adv_js.toast('浏览器宽高：'+document.getElementsByClassName('axd_container')[0].clientWidth+'\t'+document.getElementsByClassName('axd_container')[0].clientHeight);-->
     window.adv_js.loadAdvFinish();
-    getWidthHeight();
+    setTimeout("getWidthHeight()", 500);
 };
 //获取当前广告页面的宽高
 function getWidthHeight(){
@@ -18,7 +18,7 @@ function getWidthHeight(){
 function show(){
     document.getElementById('adv_body').style.display="block";
 };
-function close(){
+function closeAdv(){
     window.adv_js.close();
 };
 //默认先隐藏广告页面，等加载完成后再显示

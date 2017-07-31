@@ -129,11 +129,15 @@ public class AdvRequestUtil {
         return req;
     }
 
-    public static void requestAdvToCacheNoHtml(final Context context, final AdSlotType type, int reqCount, String tempDir) {
-        requestAdvToCache(context, type, reqCount, tempDir, false, 0, false);
+    public static void requestAdvHtmlToCache(final Context context, final AdSlotType type, int reqCount, int width, boolean isIFrame, String tempDir) {
+        requestAdv(context, type, reqCount, tempDir, true, width, isIFrame, true);
     }
 
-    public static void requestAdvToCache(final Context context, final AdSlotType type, final int reqCount, final String tempDir, final boolean isHtml, final int width, final boolean isIFrame) {
+    public static void requestAdvToCacheNoHtml(final Context context, final AdSlotType type, int reqCount, String tempDir) {
+        requestAdv(context, type, reqCount, tempDir, false, 0, false, false);
+    }
+
+    public static void requestAdv(final Context context, final AdSlotType type, final int reqCount, final String tempDir, final boolean isHtml, final int width, final boolean isIFrame, final boolean isCache) {
         ThreadPool.getInstance().runThread(new Runnable() {
 
             boolean isOnceFinish = false;
@@ -145,7 +149,7 @@ public class AdvRequestUtil {
                 while (tryCount-- > 0 && count > 0) {
                     isOnceFinish = false;
                     if (!isHtml) {
-                        AdvRequestUtil.requestAdvNoHtml(context, type, true, new IAdvResponseCallback() {
+                        AdvRequestUtil.requestAdvNoHtml(context, type, isCache, new IAdvResponseCallback() {
                             @Override
                             public void onGetAdvResponseSuccess(int width, int height, int adType, String showUrl, String clickUrl, String imgUrl, String title, String content, String desc) {
                                 count--;
@@ -158,7 +162,7 @@ public class AdvRequestUtil {
                             }
                         });
                     } else {
-                        AdvRequestUtil.requestAdv(context, width, isIFrame, type, tempDir, new IAdvHtmlCallback() {
+                        AdvRequestUtil.requestAdvHtml(context, width, isIFrame, type, tempDir, isCache, new IAdvHtmlCallback() {
                             @Override
                             public void onGetAdvHtmlSuccess(String html, File localFile, int width, int height, String landPageUrl, int adType) {
                                 count--;
@@ -199,7 +203,7 @@ public class AdvRequestUtil {
             @Override
             public void onSuccess(String url, final AdvResponseBean data) {
                 L.e("广告请求接口成功返回");
-                if (data == null || data.getAd_info() == null || data.getAd_info().size() < 1 || (data.getAd_info().get(0)) == null) {
+                if (data == null || data.getAd_info() == null || data.getAd_info().size() < 1 || (data.getAd_info().get(0)) == null || data.getAd_info().get(0).getAd_material() == null) {
                     onFailure(url, NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getCode(), NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getMsg());
                     return;
                 }
@@ -250,7 +254,7 @@ public class AdvRequestUtil {
      * @param tempDir   缓存目录名
      * @param callback  回调
      */
-    static void requestAdv(final Context context, final int pageWidth, final boolean isIFrame, final AdSlotType type, final String tempDir, final IAdvHtmlCallback callback) {
+    static void requestAdvHtml(final Context context, final int pageWidth, final boolean isIFrame, final AdSlotType type, final String tempDir, final boolean isCache, final IAdvHtmlCallback callback) {
         final AdvRequestBean request = AdvRequestUtil.getAdvRequest(context, type);
         String req = new Gson().toJson(request);
         L.e("广告请求：" + req);
@@ -259,7 +263,7 @@ public class AdvRequestUtil {
             @Override
             public void onSuccess(String url, final AdvResponseBean data) {
                 L.e("广告请求接口成功返回");
-                if (data == null || data.getAd_info() == null || data.getAd_info().size() < 1 || (data.getAd_info().get(0)) == null) {
+                if (data == null || data.getAd_info() == null || data.getAd_info().size() < 1 || (data.getAd_info().get(0)) == null || data.getAd_info().get(0).getAd_material() == null) {
                     onFailure(url, NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getCode(), NetworkErrorCode.ERROR_CODE_EMPTY_RESPONSE.getMsg());
                     return;
                 }
@@ -285,9 +289,13 @@ public class AdvRequestUtil {
                     public void run() {
                         //html缓存并装载数据
                         String htmlTemplate = getHtmlByResponseObject(context, pageWidth, type, data, isIFrame);
-                        final File tempFile = new File(tempDir, type.getTemplateId() + "_" + HtmlFileUtil.getTempFileIndex(tempDir, type.getType()) + ".html'");
+                        final File tempFile = new File(tempDir, type.getTemplateId() + "_" + HtmlFileUtil.getTempFileIndex(tempDir, type.getType()) + ".html");
                         htmlTemplate = transferHtmlToLocal(context, tempFile, htmlTemplate);
                         final String finalHtmlTemplate = htmlTemplate;
+                        if (isCache) {
+                            AdvCacheBean cache = new AdvCacheBean(htmlTemplate, data, tempFile.getAbsolutePath());
+                            CachePool.getInstance(context).add(type, cache);
+                        }
                         ((Activity) context).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -424,7 +432,7 @@ public class AdvRequestUtil {
                 L.e("旧缩放比：" + oldScale + "\t新缩放比：" + newScale);
                 scale[0] = newScale;
                 if (widthHeight[0] > 0 && widthHeight[1] > 0) {
-                    if (!isIFrame){
+                    if (!isIFrame) {
                         ViewGroup.LayoutParams lps = wv.getLayoutParams();
                         lps.width = (int) (widthHeight[0] * newScale);
                         lps.height = (int) (widthHeight[1] * newScale);
@@ -463,7 +471,7 @@ public class AdvRequestUtil {
                 } else {
                     curScale = wv.getScale();
                 }
-                if (!isIFrame){
+                if (!isIFrame) {
                     ViewGroup.LayoutParams lps = wv.getLayoutParams();
                     lps.width = (int) (width * curScale);
                     lps.height = (int) (height * curScale);
@@ -522,11 +530,11 @@ abstract class WrapWebViewClient extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         boolean result;
-        if (!(result = shouldOverrideUrlLoading2(view, url))){
-            if (client != null){
+        if (!(result = shouldOverrideUrlLoading2(view, url))) {
+            if (client != null) {
                 return client.shouldOverrideUrlLoading(view, url);
             }
-        }else{
+        } else {
             return true;
         }
         return super.shouldOverrideUrlLoading(view, url);
@@ -535,36 +543,36 @@ abstract class WrapWebViewClient extends WebViewClient {
     @TargetApi(Build.VERSION_CODES.N)
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-        if (client != null){
+        if (client != null) {
             return client.shouldOverrideUrlLoading(view, request);
-        }else{
+        } else {
             return super.shouldOverrideUrlLoading(view, request);
         }
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        if (client != null){
+        if (client != null) {
             client.onPageStarted(view, url, favicon);
-        }else{
+        } else {
             super.onPageStarted(view, url, favicon);
         }
     }
 
     @Override
     public void onPageFinished(WebView view, String url) {
-        if (client != null){
+        if (client != null) {
             client.onPageFinished(view, url);
-        }else{
+        } else {
             super.onPageFinished(view, url);
         }
     }
 
     @Override
     public void onLoadResource(WebView view, String url) {
-        if (client != null){
+        if (client != null) {
             client.onLoadResource(view, url);
-        }else{
+        } else {
             super.onLoadResource(view, url);
         }
     }
@@ -572,18 +580,18 @@ abstract class WrapWebViewClient extends WebViewClient {
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onPageCommitVisible(WebView view, String url) {
-        if (client != null){
+        if (client != null) {
             client.onPageCommitVisible(view, url);
-        }else{
+        } else {
             super.onPageCommitVisible(view, url);
         }
     }
 
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-        if (client != null){
+        if (client != null) {
             return client.shouldInterceptRequest(view, url);
-        }else{
+        } else {
             return super.shouldInterceptRequest(view, url);
         }
     }
@@ -591,18 +599,18 @@ abstract class WrapWebViewClient extends WebViewClient {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-        if (client != null){
+        if (client != null) {
             return client.shouldInterceptRequest(view, request);
-        }else{
+        } else {
             return super.shouldInterceptRequest(view, request);
         }
     }
 
     @Override
     public void onTooManyRedirects(WebView view, Message cancelMsg, Message continueMsg) {
-        if (client != null){
+        if (client != null) {
             client.onTooManyRedirects(view, cancelMsg, continueMsg);
-        }else{
+        } else {
             super.onTooManyRedirects(view, cancelMsg, continueMsg);
         }
     }
@@ -610,9 +618,9 @@ abstract class WrapWebViewClient extends WebViewClient {
     @Override
     public void onReceivedError(WebView view, int errorCode, String description, String
             failingUrl) {
-        if (client != null){
+        if (client != null) {
             client.onReceivedError(view, errorCode, description, failingUrl);
-        }else{
+        } else {
             super.onReceivedError(view, errorCode, description, failingUrl);
         }
     }
@@ -621,9 +629,9 @@ abstract class WrapWebViewClient extends WebViewClient {
     @Override
     public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError
             error) {
-        if (client != null){
+        if (client != null) {
             client.onReceivedError(view, request, error);
-        }else{
+        } else {
             super.onReceivedError(view, request, error);
         }
     }
@@ -632,27 +640,27 @@ abstract class WrapWebViewClient extends WebViewClient {
     @Override
     public void onReceivedHttpError(WebView view, WebResourceRequest
             request, WebResourceResponse errorResponse) {
-        if (client != null){
+        if (client != null) {
             client.onReceivedHttpError(view, request, errorResponse);
-        }else{
+        } else {
             super.onReceivedHttpError(view, request, errorResponse);
         }
     }
 
     @Override
     public void onFormResubmission(WebView view, Message dontResend, Message resend) {
-        if (client != null){
+        if (client != null) {
             client.onFormResubmission(view, dontResend, resend);
-        }else{
+        } else {
             super.onFormResubmission(view, dontResend, resend);
         }
     }
 
     @Override
     public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
-        if (client != null){
+        if (client != null) {
             client.doUpdateVisitedHistory(view, url, isReload);
-        }else{
+        } else {
             super.doUpdateVisitedHistory(view, url, isReload);
         }
     }
@@ -665,9 +673,9 @@ abstract class WrapWebViewClient extends WebViewClient {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onReceivedClientCertRequest(WebView view, ClientCertRequest request) {
-        if (client != null){
+        if (client != null) {
             client.onReceivedClientCertRequest(view, request);
-        }else{
+        } else {
             super.onReceivedClientCertRequest(view, request);
         }
     }
@@ -675,27 +683,27 @@ abstract class WrapWebViewClient extends WebViewClient {
     @Override
     public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String
             host, String realm) {
-        if (client != null){
+        if (client != null) {
             client.onReceivedHttpAuthRequest(view, handler, host, realm);
-        }else{
+        } else {
             super.onReceivedHttpAuthRequest(view, handler, host, realm);
         }
     }
 
     @Override
     public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
-        if (client != null){
+        if (client != null) {
             return client.shouldOverrideKeyEvent(view, event);
-        }else{
+        } else {
             return super.shouldOverrideKeyEvent(view, event);
         }
     }
 
     @Override
     public void onUnhandledKeyEvent(WebView view, KeyEvent event) {
-        if (client != null){
+        if (client != null) {
             client.onUnhandledKeyEvent(view, event);
-        }else{
+        } else {
             super.onUnhandledKeyEvent(view, event);
         }
     }
@@ -703,22 +711,22 @@ abstract class WrapWebViewClient extends WebViewClient {
     @Override
     public void onScaleChanged(WebView view, float oldScale, float newScale) {
         onScaleChanged2(view, oldScale, newScale);
-        if (client != null){
+        if (client != null) {
             client.onScaleChanged(view, oldScale, newScale);
         }
     }
 
     @Override
     public void onReceivedLoginRequest(WebView view, String realm, String account, String args) {
-        if (client != null){
+        if (client != null) {
             client.onReceivedLoginRequest(view, realm, account, args);
-        }else{
+        } else {
             super.onReceivedLoginRequest(view, realm, account, args);
         }
     }
 }
 
-class WrapWebChromeClient extends WebChromeClient{
+class WrapWebChromeClient extends WebChromeClient {
     private WebChromeClient client;
 
     public WrapWebChromeClient(WebChromeClient client) {
@@ -728,162 +736,162 @@ class WrapWebChromeClient extends WebChromeClient{
 
     @Override
     public void onProgressChanged(WebView view, int newProgress) {
-        if (client != null){
+        if (client != null) {
             client.onProgressChanged(view, newProgress);
-        }else{
+        } else {
             super.onProgressChanged(view, newProgress);
         }
     }
 
     @Override
     public void onReceivedTitle(WebView view, String title) {
-        if (client != null){
+        if (client != null) {
             client.onReceivedTitle(view, title);
-        }else{
+        } else {
             super.onReceivedTitle(view, title);
         }
     }
 
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
-        if (client != null){
+        if (client != null) {
             client.onReceivedIcon(view, icon);
-        }else{
+        } else {
             super.onReceivedIcon(view, icon);
         }
     }
 
     @Override
     public void onReceivedTouchIconUrl(WebView view, String url, boolean precomposed) {
-        if (client != null){
+        if (client != null) {
             client.onReceivedTouchIconUrl(view, url, precomposed);
-        }else{
+        } else {
             super.onReceivedTouchIconUrl(view, url, precomposed);
         }
     }
 
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-        if (client != null){
+        if (client != null) {
             client.onShowCustomView(view, callback);
-        }else{
+        } else {
             super.onShowCustomView(view, callback);
         }
     }
 
     @Override
     public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback) {
-        if (client != null){
+        if (client != null) {
             client.onShowCustomView(view, requestedOrientation, callback);
-        }else{
+        } else {
             super.onShowCustomView(view, requestedOrientation, callback);
         }
     }
 
     @Override
     public void onHideCustomView() {
-        if (client != null){
+        if (client != null) {
             client.onHideCustomView();
-        }else{
+        } else {
             super.onHideCustomView();
         }
     }
 
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-        if (client != null){
+        if (client != null) {
             return client.onCreateWindow(view, isDialog, isUserGesture, resultMsg);
-        }else{
+        } else {
             return super.onCreateWindow(view, isDialog, isUserGesture, resultMsg);
         }
     }
 
     @Override
     public void onRequestFocus(WebView view) {
-        if (client != null){
+        if (client != null) {
             client.onRequestFocus(view);
-        }else{
+        } else {
             super.onRequestFocus(view);
         }
     }
 
     @Override
     public void onCloseWindow(WebView window) {
-        if (client != null){
+        if (client != null) {
             client.onCloseWindow(window);
-        }else{
+        } else {
             super.onCloseWindow(window);
         }
     }
 
     @Override
     public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-        if (client != null){
+        if (client != null) {
             return client.onJsAlert(view, url, message, result);
-        }else{
+        } else {
             return super.onJsAlert(view, url, message, result);
         }
     }
 
     @Override
     public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
-        if (client != null){
+        if (client != null) {
             return client.onJsConfirm(view, url, message, result);
-        }else{
+        } else {
             return super.onJsConfirm(view, url, message, result);
         }
     }
 
     @Override
     public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
-        if (client != null){
+        if (client != null) {
             return client.onJsPrompt(view, url, message, defaultValue, result);
-        }else{
+        } else {
             return super.onJsPrompt(view, url, message, defaultValue, result);
         }
     }
 
     @Override
     public boolean onJsBeforeUnload(WebView view, String url, String message, JsResult result) {
-        if (client != null){
+        if (client != null) {
             return client.onJsBeforeUnload(view, url, message, result);
-        }else{
+        } else {
             return super.onJsBeforeUnload(view, url, message, result);
         }
     }
 
     @Override
     public void onExceededDatabaseQuota(String url, String databaseIdentifier, long quota, long estimatedDatabaseSize, long totalQuota, WebStorage.QuotaUpdater quotaUpdater) {
-        if (client != null){
+        if (client != null) {
             client.onExceededDatabaseQuota(url, databaseIdentifier, quota, estimatedDatabaseSize, totalQuota, quotaUpdater);
-        }else{
+        } else {
             super.onExceededDatabaseQuota(url, databaseIdentifier, quota, estimatedDatabaseSize, totalQuota, quotaUpdater);
         }
     }
 
     @Override
     public void onReachedMaxAppCacheSize(long requiredStorage, long quota, WebStorage.QuotaUpdater quotaUpdater) {
-        if (client != null){
+        if (client != null) {
             client.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
-        }else{
+        } else {
             super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
         }
     }
 
     @Override
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
-        if (client != null){
+        if (client != null) {
             client.onGeolocationPermissionsShowPrompt(origin, callback);
-        }else{
+        } else {
             super.onGeolocationPermissionsShowPrompt(origin, callback);
         }
     }
 
     @Override
     public void onGeolocationPermissionsHidePrompt() {
-        if (client != null){
+        if (client != null) {
             client.onGeolocationPermissionsHidePrompt();
-        }else{
+        } else {
             super.onGeolocationPermissionsHidePrompt();
         }
     }
@@ -891,9 +899,9 @@ class WrapWebChromeClient extends WebChromeClient{
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onPermissionRequest(PermissionRequest request) {
-        if (client != null){
+        if (client != null) {
             client.onPermissionRequest(request);
-        }else{
+        } else {
             super.onPermissionRequest(request);
         }
     }
@@ -901,63 +909,63 @@ class WrapWebChromeClient extends WebChromeClient{
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onPermissionRequestCanceled(PermissionRequest request) {
-        if (client != null){
+        if (client != null) {
             client.onPermissionRequestCanceled(request);
-        }else{
+        } else {
             super.onPermissionRequestCanceled(request);
         }
     }
 
     @Override
     public boolean onJsTimeout() {
-        if (client != null){
+        if (client != null) {
             return client.onJsTimeout();
-        }else{
+        } else {
             return super.onJsTimeout();
         }
     }
 
     @Override
     public void onConsoleMessage(String message, int lineNumber, String sourceID) {
-        if (client != null){
+        if (client != null) {
             client.onConsoleMessage(message, lineNumber, sourceID);
-        }else{
+        } else {
             super.onConsoleMessage(message, lineNumber, sourceID);
         }
     }
 
     @Override
     public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-        if (client != null){
+        if (client != null) {
             return client.onConsoleMessage(consoleMessage);
-        }else{
+        } else {
             return super.onConsoleMessage(consoleMessage);
         }
     }
 
     @Override
     public Bitmap getDefaultVideoPoster() {
-        if (client != null){
+        if (client != null) {
             return client.getDefaultVideoPoster();
-        }else{
+        } else {
             return super.getDefaultVideoPoster();
         }
     }
 
     @Override
     public View getVideoLoadingProgressView() {
-        if (client != null){
+        if (client != null) {
             return client.getVideoLoadingProgressView();
-        }else{
+        } else {
             return super.getVideoLoadingProgressView();
         }
     }
 
     @Override
     public void getVisitedHistory(ValueCallback<String[]> callback) {
-        if (client != null){
+        if (client != null) {
             client.getVisitedHistory(callback);
-        }else{
+        } else {
             super.getVisitedHistory(callback);
         }
     }
@@ -965,9 +973,9 @@ class WrapWebChromeClient extends WebChromeClient{
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
-        if (client != null){
+        if (client != null) {
             return client.onShowFileChooser(webView, filePathCallback, fileChooserParams);
-        }else{
+        } else {
             return super.onShowFileChooser(webView, filePathCallback, fileChooserParams);
         }
     }

@@ -23,6 +23,7 @@ import com.jmgsz.lib.adv.utils.DensityUtils;
 public abstract class AdvBaseActivity extends AppCompatActivity {
     protected LinearLayout root;
     protected View paddingView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

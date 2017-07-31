@@ -15,7 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**广告缓存池
+/**
+ * 广告缓存池
  * Created by Wxl on 2017/7/18.
  */
 
@@ -59,11 +60,11 @@ public class CachePool {
         gson = new Gson();
         cachePool = gson.fromJson(cache, new TypeToken<Map<AdSlotType, List<AdvCacheBean>>>() {
         }.getType());
-        if (cachePool == null){
+        if (cachePool == null) {
             cachePool = new HashMap<>();
         }
-        for (AdSlotType type : AdSlotType.values()){
-            if (cachePool.get(type) == null){
+        for (AdSlotType type : AdSlotType.values()) {
+            if (cachePool.get(type) == null) {
                 cachePool.put(type, new ArrayList<AdvCacheBean>());
             }
         }
@@ -99,13 +100,13 @@ public class CachePool {
         List<AdvCacheBean> cacheList = cachePool.get(type);
         AdvCacheBean obj;
         File file = null;
-        do{
-            if (cacheList.size() < index + 1){
+        do {
+            if (cacheList.size() < index + 1) {
                 obj = null;
                 break;
             }
             obj = cacheList.remove(index);
-            if (!TextUtils.isEmpty(obj.getFilePath())){
+            if (!TextUtils.isEmpty(obj.getFilePath())) {
                 file = new File(obj.getFilePath());
             }
         }
@@ -113,12 +114,13 @@ public class CachePool {
         save();
         return obj;
     }
-    public synchronized int size(AdSlotType type){
+
+    public synchronized int size(AdSlotType type) {
         List<AdvCacheBean> cacheList = cachePool.get(type);
         return cacheList.size();
     }
 
-    public synchronized AdvCacheBean get(AdSlotType type){
+    public synchronized AdvCacheBean get(AdSlotType type) {
         List<AdvCacheBean> cacheList = cachePool.get(type);
         if (cacheList.size() < 1) {
             return null;

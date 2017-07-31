@@ -146,8 +146,8 @@ public enum AdSlotType {
         return insertList.get(position);
     }
 
-    public synchronized static List<Integer> getAdTypeList(){
-        if (typeList == null){
+    public synchronized static List<Integer> getAdTypeList() {
+        if (typeList == null) {
             typeList = new ArrayList<>();
             typeList.add(TYPE_OPEN);
             typeList.add(TYPE_INFO);

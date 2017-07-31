@@ -5,7 +5,8 @@ import android.webkit.JavascriptInterface;
 import com.jmgsz.lib.adv.utils.ThreadPool;
 import com.jmgzs.lib_network.utils.L;
 
-/**广告页面的js相关回调
+/**
+ * 广告页面的js相关回调
  * Created by Wxl on 2017/7/19.
  */
 

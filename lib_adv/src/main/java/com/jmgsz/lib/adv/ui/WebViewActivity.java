@@ -23,7 +23,6 @@ import com.jmgsz.lib.adv.utils.WVDownloadListener;
 import com.jmgzs.lib_network.utils.L;
 
 
-
 /**
  * Created by XJ on 2016/5/27.
  */
@@ -78,17 +77,17 @@ public class WebViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String url = intent.getStringExtra(INTENT_URL);
         activityName = intent.getStringExtra(INTENT_ACTIVITY);
-        L.e("广告详情的URL："+url);
+        L.e("广告详情的URL：" + url);
         wv.setVisibility(View.INVISIBLE);
         wv.loadUrl(url);
     }
 
     @Override
     public void onBackPressed() {
-        if (!TextUtils.isEmpty(activityName)){
+        if (!TextUtils.isEmpty(activityName)) {
             Intent in;
             try {
-                in = new Intent(this ,Class.forName(activityName));
+                in = new Intent(this, Class.forName(activityName));
                 startActivity(in);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();

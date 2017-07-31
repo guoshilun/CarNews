@@ -54,7 +54,7 @@ public class WVDownloadListener implements DownloadListener {
                 return;
             }
         } else
-            fileName = url.substring(url.lastIndexOf("/") + 1)+".apk";
+            fileName = url.substring(url.lastIndexOf("/") + 1) + ".apk";
 
 
         DownloadManager dm = (DownloadManager) ct.getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);

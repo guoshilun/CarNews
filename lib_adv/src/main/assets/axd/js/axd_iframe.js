@@ -30,7 +30,7 @@ function getWidthHeight(){
 function show(){
     document.getElementById('adv_body').style.display="block";
 };
-function close(){
+function closeAdv(){
     parentWindow.adv_js.close();
 };
 //默认先隐藏广告页面，等加载完成后再显示
