@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorTransparent">#00000000</color>
-    <color name="btn_pressed_white">#7fffffff</color>
-    <color name="colorPrimary">#005a9f</color>
-    <color name="app_bg">#fff0f0f0</color>
-    <color name="bg_60">#99000000</color>
-    <color name="colorWhite">#ffffffff</color>
+    <color name="adv_colorTransparent">#00000000</color>
+    <color name="adv_btn_pressed_white">#7fffffff</color>
+    <color name="adv_colorPrimary">#005a9f</color>
+    <color name="adv_app_bg">#fff0f0f0</color>
+    <color name="adv_bg_60">#99000000</color>
+    <color name="adv_colorWhite">#ffffffff</color>
 </resources>

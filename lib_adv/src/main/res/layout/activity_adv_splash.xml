@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:addStatesFromChildren="true"
-    android:background="@color/app_bg"
+    android:background="@color/adv_app_bg"
     android:descendantFocusability="blocksDescendants"
     android:orientation="vertical">
 
@@ -26,7 +26,7 @@
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="广告5s"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/adv_colorWhite"
         android:textSize="12sp"
         android:visibility="invisible" />
 
@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/app_bg"
+        android:background="@color/adv_app_bg"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="15dp"
@@ -47,7 +47,7 @@
             android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
             android:scaleType="centerInside"
-            app:riv_border_color="@color/colorTransparent"
+            app:riv_border_color="@color/adv_colorTransparent"
             app:riv_border_width="0dp"
             app:riv_corner_radius="10dp"
             app:riv_oval="false" />

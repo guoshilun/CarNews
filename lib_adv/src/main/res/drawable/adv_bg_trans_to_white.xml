@@ -3,12 +3,12 @@
     <!--透明至灰色点击效果-->
     <item android:state_pressed="true" >
         <shape>
-            <solid android:color="@color/btn_pressed_white" />
+            <solid android:color="@color/adv_btn_pressed_white" />
         </shape>
     </item>
     <item>
         <shape>
-            <solid android:color="@color/colorTransparent" />
+            <solid android:color="@color/adv_colorTransparent" />
         </shape>
     </item>
 </selector>

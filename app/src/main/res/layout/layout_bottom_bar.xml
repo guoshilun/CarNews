@@ -34,7 +34,7 @@
                 android:layout_height="match_parent"
                 android:textOff=""
                 android:textOn=""
-                android:background="@drawable/bg_trans_to_white"/>
+                android:background="@drawable/adv_bg_trans_to_white"/>
         </FrameLayout>
 
         <View
@@ -46,7 +46,7 @@
             android:id="@+id/bottomBar_img_share"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_trans_to_white"
+            android:background="@drawable/adv_bg_trans_to_white"
             android:clickable="true"
             android:scaleType="center"
             android:src="@mipmap/share" />
