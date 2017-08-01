@@ -46,10 +46,9 @@ public class AdvUtil {
     private AdvUtil() {
     }
 
-    public static synchronized AdvUtil getInstance(Context context) {
+    public static synchronized AdvUtil getInstance() {
         if (instance == null) {
             instance = new AdvUtil();
-            init(context);
         }
         return instance;
     }
@@ -69,7 +68,8 @@ public class AdvUtil {
         ThreadPool.setMainHandler(context);
     }
 
-    public void init(String tempDir){
+    public void init(Context context, String tempDir){
+        init(context);
         AdvUtil.tempDir = tempDir;
         File f = new File(tempDir);
         if (!f.exists()){

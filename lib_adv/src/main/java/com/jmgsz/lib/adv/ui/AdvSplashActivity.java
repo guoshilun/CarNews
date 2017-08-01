@@ -111,8 +111,8 @@ public class AdvSplashActivity extends AdvBaseActivity {
     }
 
     private void showAdv() {
-        AdvUtil.getInstance(this).init(tempDir);
-        AdvUtil.getInstance(this).requestOpenAdv(this, new IRequestCallBack<AdvResponseBean.AdInfoBean>() {
+        AdvUtil.getInstance().init(this, tempDir);
+        AdvUtil.getInstance().requestOpenAdv(this, new IRequestCallBack<AdvResponseBean.AdInfoBean>() {
             @Override
             public void onSuccess(String url, final AdvResponseBean.AdInfoBean data) {
                 if (AdvUtil.isOpenAdv())
