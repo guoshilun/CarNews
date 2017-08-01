@@ -422,7 +422,7 @@ public class NewsInfoActivity extends BaseActivity {
                     float size = (SPBase.getInt(Const.SPKey.TEXT_SIZE, 1) - 1) * 0.2f + 1;
                     L.e("字体大小：" + size);
                     js.setFontSize(size);
-                    File tempFile = new File(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info", "info.html");
+                    File tempFile = new File(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "adv", "info.html");
                     html = AdvRequestUtil.transferHtmlToLocal(NewsInfoActivity.this, tempFile, html);
                     L.e("aaaa:" + Uri.fromFile(tempFile.getParentFile()).toString());
                     wv.loadDataWithBaseURL(Uri.fromFile(tempFile.getParentFile()).toString(), html, "text/html", "utf-8", null);
@@ -534,7 +534,7 @@ public class NewsInfoActivity extends BaseActivity {
             return;
         }
         final int advWidth = js.getPageWidth();
-        AdvUtil.getInstance(this, FileUtils.getCachePath(this)+ File.separator + "info").showBannerAdv(this, slotType.getTemplateId(), false, false, advWidth, new IAdvHtmlCallback() {
+        AdvUtil.getInstance(this).showBannerAdv(this, slotType.getTemplateId(), false, false, advWidth, new IAdvHtmlCallback() {
             @Override
             public void onGetAdvHtmlSuccess(String html, File localFile, int width, int height, String landPageUrl, int adType) {
                 AdvRequestUtil.initWebView(NewsInfoActivity.this, wv, true, slotType.getTemplateId(), new IAdvStatusCallback() {

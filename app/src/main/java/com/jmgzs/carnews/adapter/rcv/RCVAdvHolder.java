@@ -1,27 +1,17 @@
 package com.jmgzs.carnews.adapter.rcv;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
-import android.net.http.SslError;
 import android.support.annotation.LayoutRes;
 import android.text.TextUtils;
-import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.jmgsz.lib.adv.AdvRequestUtil;
 import com.jmgsz.lib.adv.interfaces.IAdvStatusCallback;
-import com.jmgsz.lib.adv.ui.WebViewActivity;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.rcvbase.BaseHolder;
-import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.bean.AdvDataBean;
 import com.jmgzs.carnews.bean.NewsDataBean;
-import com.jmgzs.carnews.js.JsBridge;
 import com.jmgzs.lib_network.utils.L;
 
 import java.io.File;

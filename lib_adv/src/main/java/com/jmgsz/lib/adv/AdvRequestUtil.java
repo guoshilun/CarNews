@@ -39,7 +39,7 @@ import com.jmgsz.lib.adv.interfaces.IAdvHtmlCallback;
 import com.jmgsz.lib.adv.interfaces.IAdvResponseCallback;
 import com.jmgsz.lib.adv.interfaces.IAdvStatusCallback;
 import com.jmgsz.lib.adv.js.AdvJs;
-import com.jmgsz.lib.adv.ui.WebViewActivity;
+import com.jmgsz.lib.adv.ui.AdvWebViewActivity;
 import com.jmgsz.lib.adv.utils.AppUtil;
 import com.jmgsz.lib.adv.utils.CachePool;
 import com.jmgsz.lib.adv.utils.DensityUtils;
@@ -414,8 +414,8 @@ public class AdvRequestUtil {
                     return false;
                 }
                 if (url.startsWith("http")) {
-                    Intent intent = new Intent(context, WebViewActivity.class);
-                    intent.putExtra(WebViewActivity.INTENT_URL, url);
+                    Intent intent = new Intent(context, AdvWebViewActivity.class);
+                    intent.putExtra(AdvWebViewActivity.INTENT_URL, url);
                     context.startActivity(intent);
                     return true;
                 }

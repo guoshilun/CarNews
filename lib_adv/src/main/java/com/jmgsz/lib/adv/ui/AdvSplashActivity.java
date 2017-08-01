@@ -29,7 +29,7 @@ import com.jmgzs.lib_network.network.RequestUtil;
  * Description:
  */
 
-public class SplashActivity extends AdvBaseActivity {
+public class AdvSplashActivity extends AdvBaseActivity {
 
 
     private ImageView imageView;
@@ -49,7 +49,7 @@ public class SplashActivity extends AdvBaseActivity {
 
     @Override
     protected int getContent(Bundle save) {
-        return R.layout.activity_splash;
+        return R.layout.activity_adv_splash;
     }
 
     @Override
@@ -111,7 +111,8 @@ public class SplashActivity extends AdvBaseActivity {
     }
 
     private void showAdv() {
-        AdvUtil.getInstance(this, tempDir).requestOpenAdv(this, new IRequestCallBack<AdvResponseBean.AdInfoBean>() {
+        AdvUtil.getInstance(this).init(tempDir);
+        AdvUtil.getInstance(this).requestOpenAdv(this, new IRequestCallBack<AdvResponseBean.AdInfoBean>() {
             @Override
             public void onSuccess(String url, final AdvResponseBean.AdInfoBean data) {
                 if (AdvUtil.isOpenAdv())
@@ -127,7 +128,7 @@ public class SplashActivity extends AdvBaseActivity {
             @Override
             public void onCancel(String url) {
                 if (url != null && url.startsWith("http"))
-                    Glide.with(SplashActivity.this).downloadOnly().load(url);
+                    Glide.with(AdvSplashActivity.this).downloadOnly().load(url);
                 delayGoMain();
             }
         });
@@ -135,7 +136,7 @@ public class SplashActivity extends AdvBaseActivity {
 
     private void loadImage(final AdvResponseBean.AdInfoBean data) {
         imageView.setVisibility(View.VISIBLE);
-        Glide.with(SplashActivity.this).asDrawable()
+        Glide.with(AdvSplashActivity.this).asDrawable()
                 .load(data.getAd_material().getImages().get(0)).listener(new RequestListener<Drawable>() {
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -150,16 +151,16 @@ public class SplashActivity extends AdvBaseActivity {
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent in = new Intent(SplashActivity.this, WebViewActivity.class);
-                        in.putExtra(WebViewActivity.INTENT_URL, data.getAd_material().getClick_url());
-                        in.putExtra(WebViewActivity.INTENT_ACTIVITY, activityName);
+                        Intent in = new Intent(AdvSplashActivity.this, AdvWebViewActivity.class);
+                        in.putExtra(AdvWebViewActivity.INTENT_URL, data.getAd_material().getClick_url());
+                        in.putExtra(AdvWebViewActivity.INTENT_ACTIVITY, activityName);
                         startActivity(in);
                         finish();
                     }
                 });
                 if (data.getAd_material().getShow_urls() != null &&
                         data.getAd_material().getShow_urls().size() > 0)
-                    RequestUtil.requestByGetAsy(SplashActivity.this,
+                    RequestUtil.requestByGetAsy(AdvSplashActivity.this,
                             data.getAd_material().getShow_urls().get(0), Void.class, null);
 
                 return true;
@@ -210,7 +211,7 @@ public class SplashActivity extends AdvBaseActivity {
 
     private void goMain() {
         try {
-            startActivity(new Intent(SplashActivity.this, Class.forName(activityName)));
+            startActivity(new Intent(AdvSplashActivity.this, Class.forName(activityName)));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

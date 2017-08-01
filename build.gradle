@@ -3,8 +3,8 @@
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
-//        maven{ url "http://192.168.31.136:8081/repository/maven_aliyun/"}
+//        jcenter()
+        maven{ url "http://192.168.31.138:8081/repository/maven_aliyun/"}
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0'
@@ -17,8 +17,8 @@ buildscript {
 allprojects {
     repositories {
         mavenLocal()
-        jcenter()
-//        maven{ url "http://192.168.31.136:8081/repository/maven_aliyun/"}
+//        jcenter()
+        maven{ url "http://192.168.31.138:8081/repository/maven_aliyun/"}
     }
 }
 

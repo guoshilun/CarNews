@@ -12,7 +12,7 @@ import com.jmgsz.lib.adv.enums.AdSlotType;
 import com.jmgsz.lib.adv.interfaces.IAdvStatusCallback;
 import com.jmgsz.lib.adv.js.AdvJs;
 import com.jmgsz.lib.adv.ui.AdvDialog;
-import com.jmgsz.lib.adv.ui.WebViewActivity;
+import com.jmgsz.lib.adv.ui.AdvWebViewActivity;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgsz.lib.adv.utils.ThreadPool;
 import com.jmgzs.lib_network.utils.L;
@@ -128,8 +128,8 @@ public class InsertAdvUtil {
                 if ((type = mAdSlotTypeMap.get(url)) != null && type == 0) {//下载
                     return false;
                 } else {//外链
-                    Intent intent = new Intent(activity, WebViewActivity.class);
-                    intent.putExtra(WebViewActivity.INTENT_URL, url);
+                    Intent intent = new Intent(activity, AdvWebViewActivity.class);
+                    intent.putExtra(AdvWebViewActivity.INTENT_URL, url);
                     activity.startActivity(intent);
                     return true;
                 }

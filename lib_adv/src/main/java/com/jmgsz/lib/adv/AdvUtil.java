@@ -14,7 +14,7 @@ import com.jmgsz.lib.adv.enums.AdSlotType;
 import com.jmgsz.lib.adv.interfaces.IAdvHtmlCallback;
 import com.jmgsz.lib.adv.interfaces.IAdvResponseCallback;
 import com.jmgsz.lib.adv.interfaces.IAdvStatusCallback;
-import com.jmgsz.lib.adv.ui.SplashActivity;
+import com.jmgsz.lib.adv.ui.AdvSplashActivity;
 import com.jmgsz.lib.adv.utils.CachePool;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgsz.lib.adv.utils.ThreadPool;
@@ -41,19 +41,14 @@ public class AdvUtil {
     private static volatile InsertAdvUtil insertAdvUtil;
     private static volatile String tempDir;
     private static volatile AdvUtil instance;
-
+    private volatile boolean isInit;
 
     private AdvUtil() {
     }
 
-    public static synchronized AdvUtil getInstance(Context context, String tempDir) {
+    public static synchronized AdvUtil getInstance(Context context) {
         if (instance == null) {
             instance = new AdvUtil();
-            AdvUtil.tempDir = tempDir;
-            File f = new File(tempDir);
-            if (f.exists() && !f.isDirectory()) {
-                throw new SecurityException("Cache dir is a file not a directory!");
-            }
             init(context);
         }
         return instance;
@@ -74,7 +69,25 @@ public class AdvUtil {
         ThreadPool.setMainHandler(context);
     }
 
+    public void init(String tempDir){
+        AdvUtil.tempDir = tempDir;
+        File f = new File(tempDir);
+        if (!f.exists()){
+            f.mkdirs();
+        }
+        if (!f.exists() || !f.isDirectory()) {
+            throw new SecurityException("Cache dir is a file or cannot be created!");
+        }
+        isInit = true;
+    }
+    private void checkInit(){
+        if (!isInit){
+            throw new RuntimeException("Please init before show adv!");
+        }
+    }
+
     public void requestOpenAdv(final Context context, final IRequestCallBack<AdvResponseBean.AdInfoBean> callback) {
+        checkInit();
         if (!isOpenAdv) {
             callback.onFailure(null, 0, "cache is null");
             return;
@@ -133,6 +146,7 @@ public class AdvUtil {
      * @param callback
      */
     public void requestOpenAdv(final Context context, List<Integer> templateIds, int logoResId, String appInfo, String className, String tempDir, final IAdvResponseCallback callback) {
+        checkInit();
         if (!isOpenAdv) {
             callback.onGetAdvResponseFailure();
             return;
@@ -154,11 +168,11 @@ public class AdvUtil {
                     if (callback != null) {//返回缓存数据
                         callback.onGetAdvResponseSuccess(type.getWidth(), type.getHeight(), info.getAd_type(), materialBean.getShow_urls().get(0), materialBean.getClick_url(), materialBean.getImages().get(0), materialBean.getTitle(), materialBean.getContent(), materialBean.getDesc());
                     } else {
-                        Intent intent = new Intent(context, SplashActivity.class);
-                        intent.putExtra(SplashActivity.INTENT_LOGO, logoResId);
-                        intent.putExtra(SplashActivity.INTENT_APP_INFO, appInfo);
-                        intent.putExtra(SplashActivity.INTENT_ACTIVITY_NAME, className);
-                        intent.putExtra(SplashActivity.INTENT_TEMP_DIR, tempDir);
+                        Intent intent = new Intent(context, AdvSplashActivity.class);
+                        intent.putExtra(AdvSplashActivity.INTENT_LOGO, logoResId);
+                        intent.putExtra(AdvSplashActivity.INTENT_APP_INFO, appInfo);
+                        intent.putExtra(AdvSplashActivity.INTENT_ACTIVITY_NAME, className);
+                        intent.putExtra(AdvSplashActivity.INTENT_TEMP_DIR, tempDir);
                         context.startActivity(intent);
                     }
                 }
@@ -171,6 +185,7 @@ public class AdvUtil {
     }
 
     public void showInsertAdv(final Activity context, int templateId, IAdvStatusCallback callback) {
+        checkInit();
         if (!isOpenAdv) {
             return;
         }
@@ -197,6 +212,7 @@ public class AdvUtil {
      * @param isUseCache 是否使用缓存，如果未读取到缓存，与不使用缓存方式相同
      */
     public void showBannerAdv(final Context context, int templateId, final boolean isUseCache, final boolean isIFrame, final int width, final IAdvHtmlCallback callback) {
+        checkInit();
         if (!isOpenAdv) {
             return;
         }
@@ -234,6 +250,7 @@ public class AdvUtil {
     }
 
     public void showBannerAdv(final Context context, final int templateId, final boolean isUseCache, final IAdvResponseCallback callback) {
+        checkInit();
         if (!isOpenAdv) {
             return;
         }
@@ -271,6 +288,7 @@ public class AdvUtil {
 
     public List<AdvCacheBean> getInfoAdvCacheList(final Context context, int templateId, final int width, final int count) {
         List<AdvCacheBean> data = new ArrayList<>();
+        checkInit();
         if (!isOpenAdv) {
             return data;
         }

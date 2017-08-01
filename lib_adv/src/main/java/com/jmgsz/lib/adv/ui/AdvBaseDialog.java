@@ -17,7 +17,7 @@ import com.jmgzs.lib_network.utils.L;
 /**
  * Created by zhaotun on 15/11/9.
  */
-public abstract class BaseDialog extends Dialog implements View.OnClickListener {
+public abstract class AdvBaseDialog extends Dialog implements View.OnClickListener {
 
     protected Context context;
 
@@ -44,11 +44,11 @@ public abstract class BaseDialog extends Dialog implements View.OnClickListener 
      *                uses the window manager and theme in this context to
      *                present its UI.
      */
-    public BaseDialog(Context context) {
+    public AdvBaseDialog(Context context) {
         this(context, R.style.customDialog_roll_up_down);
     }
 
-    public BaseDialog(Context context, int theme) {
+    public AdvBaseDialog(Context context, int theme) {
         super(context, theme);
         this.context = context;
     }

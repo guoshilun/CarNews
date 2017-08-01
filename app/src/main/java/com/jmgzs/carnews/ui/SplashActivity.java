@@ -1,7 +1,7 @@
 package com.jmgzs.carnews.ui;
 
+import com.jmgsz.lib.adv.ui.AdvSplashActivity;
 import com.jmgzs.carnews.R;
-import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib_network.utils.FileUtils;
 
 import java.io.File;
@@ -11,7 +11,7 @@ import java.io.File;
  * Description:
  */
 
-public class SplashActivity extends com.jmgsz.lib.adv.ui.SplashActivity {
+public class SplashActivity extends AdvSplashActivity {
 
     @Override
     protected int getLogoResId() {

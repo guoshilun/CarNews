@@ -19,7 +19,7 @@ import com.jmgzs.lib_network.utils.L;
  * Created by Wxl on 2017/6/28.
  */
 
-public class AdvDialog extends BaseDialog {
+public class AdvDialog extends AdvBaseDialog {
 
     private IOnAdvLoadListener mListener;
     private WebView mWv;

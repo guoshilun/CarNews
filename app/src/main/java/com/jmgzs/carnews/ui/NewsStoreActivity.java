@@ -73,7 +73,7 @@ public class NewsStoreActivity extends BaseActivity implements AdapterView.OnIte
         listView.setOnItemClickListener(this);
 
         AdSlotType type = AdSlotType.getRandomInsertType();
-        AdvUtil.getInstance(this, FileUtils.getCachePath(this)+ File.separator + "info").showInsertAdv(this, type.getTemplateId(), null);
+        AdvUtil.getInstance(this).showInsertAdv(this, type.getTemplateId(), null);
     }
 
     @Override

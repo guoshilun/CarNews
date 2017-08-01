@@ -26,7 +26,7 @@ import com.jmgzs.lib_network.utils.L;
 /**
  * Created by XJ on 2016/5/27.
  */
-public class WebViewActivity extends AppCompatActivity {
+public class AdvWebViewActivity extends AppCompatActivity {
 
     private WebView wv;
     public static final String INTENT_URL = "url";
@@ -37,7 +37,7 @@ public class WebViewActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_webview);
+        setContentView(R.layout.activity_adv_webview);
 
         initView();
     }

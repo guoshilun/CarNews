@@ -99,7 +99,8 @@
         <activity
             android:name=".ui.MainActivity"
             android:configChanges="fontScale"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".ui.UserSettingActivity"
             android:configChanges="fontScale"
@@ -126,7 +127,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.jmgsz.lib.adv.ui.WebViewActivity"
+            android:name="com.jmgsz.lib.adv.ui.AdvWebViewActivity"
             android:configChanges="fontScale"
             android:hardwareAccelerated="false"
             android:screenOrientation="portrait" />

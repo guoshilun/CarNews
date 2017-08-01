@@ -324,7 +324,7 @@ public class MainFragment extends BaseFragment implements OnRCVItemClickListener
         }else{
             return ad;
         }
-        cache = AdvUtil.getInstance(getContext(), FileUtils.getCachePath(getContext()) + File.separator + "info").getInfoAdvCacheList(getContext(), templateId, advWidth, 5);
+        cache = AdvUtil.getInstance(getContext()).getInfoAdvCacheList(getContext(), templateId, advWidth, 5);
         if (cache != null && cache.size() > 0) {
             ad.setHtml(cache.get(0).getHtml());
             ad.setFile(cache.get(0).getFilePath());

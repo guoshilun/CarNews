@@ -20,10 +20,12 @@ import com.jmgzs.carnews.util.Const;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.util.ShareUtils;
 import com.jmgzs.carnews.util.UmengUtil;
+import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 import com.jmgzs.carnews.util.SPBase;
 import com.umeng.analytics.MobclickAgent;
 
+import java.io.File;
 import java.util.List;
 
 import static android.R.attr.key;
@@ -63,7 +65,7 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
         instance = this;
         if (shouldInit())
             init();
-
+        AdvUtil.getInstance(this).init(FileUtils.getCachePath(this)+ File.separator + "adv");
         AdvUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, true));
     }
 
