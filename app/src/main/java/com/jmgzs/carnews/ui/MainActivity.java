@@ -110,7 +110,7 @@ public class MainActivity extends BaseActivity {
     public void onBackPressed() {
         if (!isAdvShow) {
             AdSlotType type = AdSlotType.getRandomInsertType();
-            AdvUtil.getInstance(this).showInsertAdv(this, type.getTemplateId(), null);
+            AdvUtil.getInstance().showInsertAdv(this, type.getTemplateId(), null);
             isAdvShow = true;
         } else {
             super.onBackPressed();

@@ -65,7 +65,7 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
         instance = this;
         if (shouldInit())
             init();
-        AdvUtil.getInstance(this).init(FileUtils.getCachePath(this)+ File.separator + "adv");
+        AdvUtil.getInstance().init(this, FileUtils.getCachePath(this)+ File.separator + "adv");
         AdvUtil.setAdvOpen(SPBase.getBoolean(Const.SPKey.OPEN_ADV, true));
     }
 

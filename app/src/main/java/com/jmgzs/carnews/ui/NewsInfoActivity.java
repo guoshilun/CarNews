@@ -534,7 +534,7 @@ public class NewsInfoActivity extends BaseActivity {
             return;
         }
         final int advWidth = js.getPageWidth();
-        AdvUtil.getInstance(this).showBannerAdv(this, slotType.getTemplateId(), false, false, advWidth, new IAdvHtmlCallback() {
+        AdvUtil.getInstance().showBannerAdv(this, slotType.getTemplateId(), false, false, advWidth, new IAdvHtmlCallback() {
             @Override
             public void onGetAdvHtmlSuccess(String html, File localFile, int width, int height, String landPageUrl, int adType) {
                 AdvRequestUtil.initWebView(NewsInfoActivity.this, wv, true, slotType.getTemplateId(), new IAdvStatusCallback() {
@@ -559,7 +559,7 @@ public class NewsInfoActivity extends BaseActivity {
             public void onGetAdvHtmlFailure() {
             }
         });
-        File dir = FileUtils.createDir(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info");
+//        File dir = FileUtils.createDir(FileUtils.getCachePath(NewsInfoActivity.this) + File.separator + "info");
         /*AdvUtil.requestAdv(NewsInfoActivity.this, js.getPageWidth(), true, req, dir.getAbsolutePath(), new IAdvHtmlCallback() {
             @Override
             public void onGetAdvHtmlSuccess(String html, File localFile, int width, int height, String landPageUrl, int adType) {

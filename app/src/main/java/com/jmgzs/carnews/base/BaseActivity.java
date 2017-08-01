@@ -210,7 +210,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         MobclickAgent.onResume(this);//统计时长
         if (isBackHome){
             AdSlotType type = AdSlotType.getRandomInsertType();
-            AdvUtil.getInstance(this).showInsertAdv(this, type.getTemplateId(), null);
+            AdvUtil.getInstance().showInsertAdv(this, type.getTemplateId(), null);
             isBackHome = false;
         }
     }
