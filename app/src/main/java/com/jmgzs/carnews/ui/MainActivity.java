@@ -32,6 +32,7 @@ import com.jmgzs.lib_network.network.IRequestCallBack;
 import com.jmgzs.lib_network.network.RequestUtil;
 import com.jmgzs.lib_network.utils.FileUtils;
 import com.ogaclejapan.smarttablelayout.SmartTabLayout;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 
@@ -44,6 +45,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected int getContent(Bundle savedInstanceState) {
+        MobclickAgent.openActivityDurationTrack(false);
         return R.layout.activity_main;
     }
 

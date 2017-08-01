@@ -94,7 +94,7 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
         initSP(SPBase.getSharedPreferences());
         //umeng统计
         MobclickAgent.setDebugMode(false);
-        L.i(UmengUtil.getDeviceInfo(this));
+//        L.i(UmengUtil.getDeviceInfo(this));
         initLocation();
     }
 
