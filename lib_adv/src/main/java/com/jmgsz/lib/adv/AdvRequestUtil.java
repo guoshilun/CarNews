@@ -403,10 +403,10 @@ public class AdvRequestUtil {
             wv.getSettings().setAllowFileAccessFromFileURLs(true);
         }
 
-        wv.setWebChromeClient(new WrapWebChromeClient((WebChromeClient) wv.getTag(R.integer.tag_web_chrome_client)));
+        wv.setWebChromeClient(new WrapWebChromeClient((WebChromeClient) wv.getTag(R.integer.adv_tag_web_chrome_client)));
         final float[] scale = new float[1];//当前页面缩放比
         final float[] widthHeight = new float[2];//当前html页面中的宽高
-        wv.setWebViewClient(new WrapWebViewClient((WebViewClient) wv.getTag(R.integer.tag_web_view_client)) {
+        wv.setWebViewClient(new WrapWebViewClient((WebViewClient) wv.getTag(R.integer.adv_tag_web_view_client)) {
             @Override
             public boolean shouldOverrideUrlLoading2(WebView view, String url) {
                 L.e("url:" + url);

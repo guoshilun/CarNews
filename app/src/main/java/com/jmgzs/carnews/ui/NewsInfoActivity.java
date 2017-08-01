@@ -334,7 +334,7 @@ public class NewsInfoActivity extends BaseActivity {
             }
         };
         wv.setWebChromeClient(wcc);
-        wv.setTag(R.integer.tag_web_chrome_client, wcc);
+        wv.setTag(R.integer.adv_tag_web_chrome_client, wcc);
         WebViewClient wvc = new WebViewClient() {
 
             @Override
@@ -361,7 +361,7 @@ public class NewsInfoActivity extends BaseActivity {
                 return super.shouldInterceptRequest(view, url);
             }
         };
-        wv.setTag(R.integer.tag_web_view_client, wvc);
+        wv.setTag(R.integer.adv_tag_web_view_client, wvc);
         wv.setWebViewClient(wvc);
         js = new JsBridge(this, new JsBridge.IJsCallback() {
 

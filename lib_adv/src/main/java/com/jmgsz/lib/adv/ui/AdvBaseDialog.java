@@ -45,7 +45,7 @@ public abstract class AdvBaseDialog extends Dialog implements View.OnClickListen
      *                present its UI.
      */
     public AdvBaseDialog(Context context) {
-        this(context, R.style.customDialog_roll_up_down);
+        this(context, R.style.adv_customDialog_roll_up_down);
     }
 
     public AdvBaseDialog(Context context, int theme) {
@@ -64,7 +64,7 @@ public abstract class AdvBaseDialog extends Dialog implements View.OnClickListen
 
     protected void setWindow(int x, int y) {
         Window dialogWindow = getWindow();
-        dialogWindow.setBackgroundDrawableResource(R.color.colorTransparent);
+        dialogWindow.setBackgroundDrawableResource(R.color.adv_colorTransparent);
         LayoutParams lp = dialogWindow.getAttributes();
         DisplayMetrics d = context.getResources().getDisplayMetrics(); // 获取屏幕宽、高用
         lp.width = (int) (d.widthPixels * mWidthScale);
