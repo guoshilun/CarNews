@@ -60,6 +60,23 @@ public class ScrollControlFrameLayout extends FrameLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    public void reset(){
+        alphaView.setVisibility(VISIBLE);
+        alphaView.setAlpha(1);
+        LayoutParams lps = (LayoutParams) scrollView.getLayoutParams();
+        LayoutParams newLps = new LayoutParams(lps.width, lps.height);
+        newLps.setMargins(lps.leftMargin, alphaViewHeight, lps.rightMargin, lps.bottomMargin);
+        scrollView.setLayoutParams(newLps);
+        invalidate();
+        scrollEndListener.reset();
+        isIntercepted = false;
+        mStartX = 0;
+        mStartY = 0;
+        mX = 0;
+        mY = 0;
+        interceptedStartY = 0;
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
@@ -185,5 +202,6 @@ public class ScrollControlFrameLayout extends FrameLayout {
 
     public interface IScrollEndListener {
         boolean isScrollVerticalEnd(boolean isTop);
+        void reset();
     }
 }

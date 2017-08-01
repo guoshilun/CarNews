@@ -46,4 +46,10 @@ public class TitleBarScrollController implements ScrollableWebView.IWebViewScrol
             return isToBottom;
         }
     }
+
+    @Override
+    public void reset() {
+        isToTop = true;
+        isToBottom = false;
+    }
 }

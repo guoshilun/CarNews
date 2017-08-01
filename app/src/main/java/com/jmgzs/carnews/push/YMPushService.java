@@ -158,17 +158,20 @@ public class YMPushService extends UmengMessageService implements IPush {
         }
     }
 
+    private static int id;
+
     private void showNotification(Context context, PushBean pushBean){
         //获取NotificationManager实例
         NotificationManager notifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(context, NewsInfoActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(NewsInfoActivity.INTENT_AID, pushBean.getAid());
+        L.e("推送收到的aid:"+pushBean.getAid());
         intent.putExtra("fromNotify", true);
         ArrayList<String> imgList = new ArrayList<>();
         imgList.add(pushBean.getImg());
         intent.putStringArrayListExtra(NewsInfoActivity.INTENT_IMAGES, imgList);
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, id++, intent, PendingIntent.FLAG_ONE_SHOT);
         //实例化NotificationCompat.Builde并设置相关属性
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 //设置小图标
@@ -184,6 +187,6 @@ public class YMPushService extends UmengMessageService implements IPush {
                 ;
 //        RemoteViews expandedView = new RemoteViews(getPackageName(), R.layout.);
 //        builder.setCustomBigContentView(expandedView);
-        notifyManager.notify(""+pushBean.getAid(), 1, builder.build());
+        notifyManager.notify(""+pushBean.getAid(), 0, builder.build());
     }
 }

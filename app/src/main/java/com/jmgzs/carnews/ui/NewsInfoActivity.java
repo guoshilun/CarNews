@@ -116,21 +116,16 @@ public class NewsInfoActivity extends BaseActivity {
         return R.layout.activity_news_info;
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        initView();
+    }
 
     @Override
     protected void initView() {
-        Intent intent = getIntent();
-        if (intent == null || 0 > ((newsId = intent.getIntExtra(INTENT_AID, -1)))) {
-            Toast.makeText(this, "数据异常", Toast.LENGTH_SHORT).show();
-            this.onBackPressed();
-            return;
-        }
-        images = intent.getStringArrayListExtra(INTENT_IMAGES);
-        channel = intent.getStringExtra(INTENT_CHANNEL);
-
-        boolean fromNotify = intent.getBooleanExtra("fromNotify", false);
-        if (fromNotify)
-            UmengUtil.event(this, UmengUtil.U_NOTIFY);
+        initIntent();
 //        L.e(images.toString());
         top = findViewById(R.id.newsInfo_top_bar);
         statusBar = findViewById(R.id.newInfo_status_bar);
@@ -144,55 +139,26 @@ public class NewsInfoActivity extends BaseActivity {
         initScroll();
         initShare();
 
-        requestInfo(newsId);
+        initStatus();
 
 //        wv.loadDataWithBaseURL("file:///android_asset/", htmlTemplate, "text/html", "utf-8", null);
     }
 
-    private void initAnim() {
-        animShareOpen = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_show);
-        animShareClose = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_hide);
-        animShareClose.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                App.getInstance().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        contentCover.setVisibility(View.GONE);
-                        ((ViewGroup) contentCover.getParent().getParent()).invalidate();
-                    }
-                });
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-    }
-
-    private void initButtons() {
-        btnShare = (ImageView) findViewById(R.id.bottomBar_img_share);
-        btnShareTop = (ImageView) findViewById(R.id.titleInfo_img_more);
-        btnBack = (ImageView) findViewById(R.id.titleInfo_img_back);
-
-        initOneBtn(btnBack, R.mipmap.arrow_left);
-        btnShareTop.setImageResource(R.mipmap.point);
-        initOneBtn(btnShareTop, R.mipmap.point);
-        btnShare.setImageResource(R.mipmap.share);
-        initOneBtn(btnShare, R.mipmap.share);
-
-        initFavBtn();
-    }
-
-    private void initFavBtn() {
-        imgFav = (ImageView) findViewById(R.id.bottomBar_img_home);
-        tgbtnFav = (ToggleButton) findViewById(R.id.bottomBar_tgbtn_home);
-        hasStored = LoaderUtil.get().hasStored(this, String.valueOf(newsId));
+    private void initStatus(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+            wv.loadUrl("about:blank");
+        }else{
+            wv.clearView();
+        }
+        wv.clearHistory();
+        scrollControlView.reset();
+        wv.scrollTo(0, 0);
+        contentCover.setVisibility(View.GONE);
+        ((ViewGroup) contentCover.getParent().getParent()).invalidate();
+        ShareUtils.dismiss(this);
+        tgbtnFav.setOnCheckedChangeListener(null);
         tgbtnFav.setChecked(hasStored);
+        hasStored = LoaderUtil.get().hasStored(this, String.valueOf(newsId));
         if (hasStored) {
             imgFav.setImageResource(R.mipmap.fav_2);
         } else {
@@ -245,6 +211,68 @@ public class NewsInfoActivity extends BaseActivity {
                 }
             }
         });
+        requestInfo(newsId);
+    }
+
+    private void initIntent(){
+        Intent intent = getIntent();
+        if (intent == null || 0 > ((newsId = intent.getIntExtra(INTENT_AID, -1)))) {
+            Toast.makeText(this, "数据异常", Toast.LENGTH_SHORT).show();
+            L.e("详情页收到的aid:"+newsId);
+            this.onBackPressed();
+            return;
+        }
+        L.e("详情页收到的aid:"+newsId);
+        images = intent.getStringArrayListExtra(INTENT_IMAGES);
+        channel = intent.getStringExtra(INTENT_CHANNEL);
+
+        boolean fromNotify = intent.getBooleanExtra("fromNotify", false);
+        if (fromNotify)
+            UmengUtil.event(this, UmengUtil.U_NOTIFY);
+    }
+
+    private void initAnim() {
+        animShareOpen = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_show);
+        animShareClose = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_hide);
+        animShareClose.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                App.getInstance().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        contentCover.setVisibility(View.GONE);
+                        ((ViewGroup) contentCover.getParent().getParent()).invalidate();
+                    }
+                });
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+    }
+
+    private void initButtons() {
+        btnShare = (ImageView) findViewById(R.id.bottomBar_img_share);
+        btnShareTop = (ImageView) findViewById(R.id.titleInfo_img_more);
+        btnBack = (ImageView) findViewById(R.id.titleInfo_img_back);
+
+        initOneBtn(btnBack, R.mipmap.arrow_left);
+        btnShareTop.setImageResource(R.mipmap.point);
+        initOneBtn(btnShareTop, R.mipmap.point);
+        btnShare.setImageResource(R.mipmap.share);
+        initOneBtn(btnShare, R.mipmap.share);
+
+        initFavBtn();
+    }
+
+    private void initFavBtn() {
+        imgFav = (ImageView) findViewById(R.id.bottomBar_img_home);
+        tgbtnFav = (ToggleButton) findViewById(R.id.bottomBar_tgbtn_home);
     }
 
     private void initOneBtn(ImageView btn, int imgRes) {
@@ -398,6 +426,7 @@ public class NewsInfoActivity extends BaseActivity {
                     html = AdvRequestUtil.transferHtmlToLocal(NewsInfoActivity.this, tempFile, html);
                     L.e("aaaa:" + Uri.fromFile(tempFile.getParentFile()).toString());
                     wv.loadDataWithBaseURL(Uri.fromFile(tempFile.getParentFile()).toString(), html, "text/html", "utf-8", null);
+                    wv.clearHistory();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -16,11 +16,15 @@ import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
 import com.jmgzs.lib_network.utils.L;
 
+import java.util.WeakHashMap;
+
 /**分享
  * Created by Wxl on 2017/6/15.
  */
 
 public class ShareUtils {
+
+    private static WeakHashMap<Context, ShareBoardView> showDialog = new WeakHashMap<>();
 
     public static void init(Context context){
         PlatformConfig.setWeixin("wx9b5cb75750f4ed62", "346b090018f9bcad83ad192b05ae2761");
@@ -78,6 +82,7 @@ public class ShareUtils {
         int[] xy = new int[2];
         parent.getLocationOnScreen(xy);
         board.show(parent, xy[0], xy[1]);
+        showDialog.put(context, board);
     }
 
     public void shareImg(final Activity context, final View parent, final String url, final CharSequence title, final CharSequence desc, final UMShareListener shareListener, final ShareBoardView.IOnBoardDismissListener boardListener){
@@ -90,6 +95,7 @@ public class ShareUtils {
         int[] xy = new int[2];
         parent.getLocationOnScreen(xy);
         board.show(parent, xy[0], xy[1]);
+        showDialog.put(context, board);
     }
 
     public void shareImg(final Activity context, final View parent, final int picRes, final CharSequence title, final CharSequence desc, final UMShareListener shareListener, final ShareBoardView.IOnBoardDismissListener boardListener){
@@ -102,6 +108,7 @@ public class ShareUtils {
         int[] xy = new int[2];
         parent.getLocationOnScreen(xy);
         board.show(parent, xy[0], xy[1]);
+        showDialog.put(context, board);
     }
 
     public void shareUrl(final Activity context, final View parent, final String url, final CharSequence title, final CharSequence desc, final int picRes, final UMShareListener shareListener, final ShareBoardView.IOnBoardDismissListener boardListener){
@@ -115,6 +122,15 @@ public class ShareUtils {
         parent.getLocationOnScreen(xy);
 //        L.e("屏幕中的x:"+xy[0]+"\ty:"+xy[1]);
         board.show(parent, xy[0], xy[1]);
+        showDialog.put(context, board);
     }
 
+    public static void dismiss(Context context){
+        if (context != null){
+            ShareBoardView board = showDialog.get(context);
+            if (board != null){
+                board.dismiss();
+            }
+        }
+    }
 }
