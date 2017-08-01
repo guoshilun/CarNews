@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg_trans_to_white"
+    android:background="@drawable/adv_bg_trans_to_white"
     android:gravity="center">
 
     <ImageView

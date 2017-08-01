@@ -11,9 +11,9 @@
         android:layout_width="50dp"
         android:layout_height="match_parent"
         android:scaleType="center"
-        android:src="@mipmap/arrow_icon"
+        android:src="@mipmap/adv_arrow_icon"
         android:clickable="true"
-        android:background="@drawable/bg_trans_to_white"/>
+        android:background="@drawable/adv_bg_trans_to_white"/>
 
     <TextView
         android:id="@+id/titleInfo_tv_title"
@@ -31,6 +31,6 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:scaleType="center"
-        android:background="@drawable/bg_trans_to_white"/>
+        android:background="@drawable/adv_bg_trans_to_white"/>
 
 </LinearLayout>
