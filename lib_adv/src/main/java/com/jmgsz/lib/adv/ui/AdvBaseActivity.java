@@ -55,7 +55,7 @@ public abstract class AdvBaseActivity extends AppCompatActivity {
     }
 
     protected int getStatusBarColor() {
-        return this.getResources().getColor(R.color.colorPrimary);
+        return this.getResources().getColor(R.color.adv_colorPrimary);
     }
 
     protected void addPaddingAboveContentView() {
