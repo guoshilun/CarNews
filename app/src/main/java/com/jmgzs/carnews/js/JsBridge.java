@@ -3,8 +3,8 @@ package com.jmgzs.carnews.js;
 import android.app.Activity;
 import android.webkit.JavascriptInterface;
 
-import com.jmgsz.lib.adv.utils.DensityUtils;
-import com.jmgsz.lib.adv.utils.DeviceUtils;
+import com.jmgzs.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib.adv.utils.DeviceUtils;
 import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.util.T;
 import com.jmgzs.lib_network.utils.L;

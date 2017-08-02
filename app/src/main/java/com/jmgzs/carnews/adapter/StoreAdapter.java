@@ -15,7 +15,7 @@ import com.jmgzs.carnews.base.App;
 import com.jmgzs.carnews.base.GlideApp;
 import com.jmgzs.carnews.base.GlideRequest;
 import com.jmgzs.carnews.bean.NewsDataBean;
-import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.network.NetWorkReciver;
 import com.jmgzs.carnews.util.TimeUtils;
 import com.jmgzs.lib_network.utils.L;

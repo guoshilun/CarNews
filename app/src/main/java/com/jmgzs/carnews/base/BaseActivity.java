@@ -20,10 +20,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import com.jmgsz.lib.adv.AdvUtil;
-import com.jmgsz.lib.adv.InsertAdvUtil;
-import com.jmgsz.lib.adv.enums.AdSlotType;
-import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib.adv.AdvUtil;
+import com.jmgzs.lib.adv.InsertAdvUtil;
+import com.jmgzs.lib.adv.enums.AdSlotType;
+import com.jmgzs.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
