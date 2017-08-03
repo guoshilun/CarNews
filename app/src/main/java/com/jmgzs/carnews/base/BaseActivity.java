@@ -21,7 +21,6 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.jmgsz.lib.adv.AdvUtil;
-import com.jmgsz.lib.adv.InsertAdvUtil;
 import com.jmgsz.lib.adv.enums.AdSlotType;
 import com.jmgsz.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
@@ -29,11 +28,8 @@ import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
 import com.jmgzs.carnews.util.SPBase;
 import com.jmgzs.carnews.util.UmengUtil;
-import com.jmgzs.lib_network.utils.FileUtils;
 import com.jmgzs.lib_network.utils.L;
 import com.umeng.analytics.MobclickAgent;
-
-import java.io.File;
 
 /**
  * Created by mac on 17/6/5.
