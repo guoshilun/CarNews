@@ -27,7 +27,7 @@ public abstract class AdvBaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        initIntentData();
         translucentStatusBar();
 
         ViewGroup parent = (ViewGroup) findViewById(android.R.id.content);
@@ -103,4 +103,5 @@ public abstract class AdvBaseActivity extends AppCompatActivity {
     protected abstract int getContent(Bundle save);
 
     protected abstract void initView();
+    protected void initIntentData(){}
 }

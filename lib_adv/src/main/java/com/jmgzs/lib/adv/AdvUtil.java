@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.webkit.WebView;
 
 import com.google.gson.Gson;
@@ -71,12 +73,12 @@ public class AdvUtil {
     public void init(Context context, String tempDir){
         init(context);
         AdvUtil.tempDir = tempDir;
+        if (TextUtils.isEmpty(tempDir)){//默认为应用的缓存目录下的adv文件夹
+            tempDir = context.getCacheDir().getAbsolutePath() + File.separator + "adv";
+        }
         File f = new File(tempDir);
         if (!f.exists()){
             f.mkdirs();
-        }
-        if (!f.exists() || !f.isDirectory()) {
-            throw new SecurityException("Cache dir is a file or cannot be created!");
         }
         isInit = true;
     }
@@ -86,7 +88,12 @@ public class AdvUtil {
         }
     }
 
-    public void requestOpenAdv(final Context context, final IRequestCallBack<AdvResponseBean.AdInfoBean> callback) {
+    /**
+     * 有缓存则直接返回，并且请求下一次的广告缓存
+     * @param context
+     * @param callback
+     */
+    public void showOpenAdv(final Context context, final IRequestCallBack<AdvResponseBean.AdInfoBean> callback) {
         checkInit();
         if (!isOpenAdv) {
             callback.onFailure(null, 0, "cache is null");
@@ -134,8 +141,8 @@ public class AdvUtil {
                 });
     }
 
-    public void showOpenAdv(final Context context, List<Integer> templateIds, int logoResId, String appInfo, String className, String tempDir) {
-        requestOpenAdv(context, templateIds, logoResId, appInfo, className, tempDir, null);
+    public void showOpenAdv(final Context context, List<Integer> templateIds, int logoResId, String appInfo, String className, Bundle params) {
+        showOpenAdv(context, templateIds, logoResId, appInfo, className, params, null);
     }
 
     /**
@@ -145,7 +152,7 @@ public class AdvUtil {
      * @param templateIds
      * @param callback
      */
-    public void requestOpenAdv(final Context context, List<Integer> templateIds, int logoResId, String appInfo, String className, String tempDir, final IAdvResponseCallback callback) {
+    public void showOpenAdv(final Context context, List<Integer> templateIds, int logoResId, String appInfo, String className, Bundle params, final IAdvResponseCallback callback) {
         checkInit();
         if (!isOpenAdv) {
             callback.onGetAdvResponseFailure();
@@ -171,13 +178,13 @@ public class AdvUtil {
                         Intent intent = new Intent(context, AdvSplashActivity.class);
                         intent.putExtra(AdvSplashActivity.INTENT_LOGO, logoResId);
                         intent.putExtra(AdvSplashActivity.INTENT_APP_INFO, appInfo);
+                        intent.putExtra(AdvSplashActivity.INTENT_PARAMS, params);
                         intent.putExtra(AdvSplashActivity.INTENT_ACTIVITY_NAME, className);
-                        intent.putExtra(AdvSplashActivity.INTENT_TEMP_DIR, tempDir);
                         context.startActivity(intent);
                     }
                 }
             }
-            AdvRequestUtil.requestAdvToCacheNoHtml(context, type, 2, tempDir);
+            AdvRequestUtil.requestAdvToCacheNoHtml(context, type, 2);
         }
         if (!isReturn) {
             callback.onGetAdvResponseFailure();
@@ -267,7 +274,7 @@ public class AdvUtil {
                     callback.onGetAdvResponseSuccess(type.getWidth(), type.getHeight(), info.getAd_type(), materialBean.getShow_urls().get(0), materialBean.getClick_url(), materialBean.getImages().get(0), materialBean.getTitle(), materialBean.getContent(), materialBean.getDesc());
                 }
             }
-            AdvRequestUtil.requestAdvToCacheNoHtml(context, type, 2, tempDir);
+            AdvRequestUtil.requestAdvToCacheNoHtml(context, type, 2);
         } else {
             //直接返回请求内容方式
             AdvRequestUtil.requestAdvNoHtml(context, type, isUseCache, callback);
