@@ -30,7 +30,7 @@
 
 -keep class com.badlogic.gdx.controllers.android.AndroidControllers
 #mjsdk相关配置
--keep class com.jmgsz.lib.adv.bean.** { * ;}
+-keep class com.jmgzs.lib.adv.bean.** { * ;}
 -keep class com.jmgzs.carnews.bean.** { * ;}
 -keep class com.jmgzs.carnews.js.** { * ;}
 

@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply from: '../maven_push.gradle'
+//apply from: '../maven_push.gradle'
 
 android {
     compileSdkVersion 25
@@ -30,8 +30,10 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.google.code.gson:gson:2.8.1'
     testCompile 'junit:junit:4.12'
-    compile project(':lib_network')
+//    compile project(':lib_network')
+    compile ("com.jmgzs.lib_network:network:1.0.0-SNAPSHOT@aar"){transitive=true}
     compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC0'
-    compile project(':lib_roundedimage')
+//    compile project(':lib_roundedimage')
+    compile 'com.jmgzs.lib.view.roundedimage:rounded_img:1.0.0-SNAPSHOT@aar'
 }

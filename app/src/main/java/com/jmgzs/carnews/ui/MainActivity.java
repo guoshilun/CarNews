@@ -9,8 +9,8 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.webkit.WebView;
 
-import com.jmgsz.lib.adv.AdvUtil;
-import com.jmgsz.lib.adv.enums.AdSlotType;
+import com.jmgzs.lib.adv.AdvUtil;
+import com.jmgzs.lib.adv.enums.AdSlotType;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.HomeAdapter;
 import com.jmgzs.carnews.base.App;

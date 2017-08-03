@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.jmgsz.lib.adv.interfaces.IAdvStatusCallback;
-import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib.adv.interfaces.IAdvStatusCallback;
+import com.jmgzs.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.rcvbase.BaseHolder;
 import com.jmgzs.carnews.adapter.rcvbase.OnRCVItemClickListener;

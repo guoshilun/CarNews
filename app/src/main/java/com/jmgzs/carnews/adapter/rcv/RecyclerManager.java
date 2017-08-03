@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib.adv.utils.DensityUtils;
 import com.jmgzs.lib_network.utils.L;
 
 

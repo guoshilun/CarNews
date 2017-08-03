@@ -1,6 +1,6 @@
 package com.jmgzs.carnews.ui;
 
-import com.jmgsz.lib.adv.ui.AdvSplashActivity;
+import com.jmgzs.lib.adv.ui.AdvSplashActivity;
 import com.jmgzs.carnews.R;
 import com.jmgzs.lib_network.utils.FileUtils;
 

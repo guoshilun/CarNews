@@ -15,10 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.Gson;
-import com.jmgsz.lib.adv.AdvUtil;
-import com.jmgsz.lib.adv.bean.AdvCacheBean;
-import com.jmgsz.lib.adv.enums.AdSlotType;
-import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib.adv.AdvUtil;
+import com.jmgzs.lib.adv.bean.AdvCacheBean;
+import com.jmgzs.lib.adv.enums.AdSlotType;
+import com.jmgzs.lib.adv.utils.DensityUtils;
 import com.jmgzs.autoviewpager.AutoScrollViewPager;
 import com.jmgzs.autoviewpager.indicator.CircleIndicator;
 import com.jmgzs.carnews.R;

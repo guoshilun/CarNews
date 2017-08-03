@@ -1,4 +1,4 @@
-package com.jmgsz.lib.adv;
+package com.jmgzs.lib.adv;
 
 import org.junit.Test;
 

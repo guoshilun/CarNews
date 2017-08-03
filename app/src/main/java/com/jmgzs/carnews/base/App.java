@@ -14,10 +14,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 
-import com.jmgsz.lib.adv.AdvUtil;
+import com.jmgzs.lib.adv.AdvUtil;
 import com.jmgzs.carnews.push.PushUtil;
 import com.jmgzs.carnews.util.Const;
-import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.util.ShareUtils;
 import com.jmgzs.carnews.util.UmengUtil;
 import com.jmgzs.lib_network.utils.FileUtils;

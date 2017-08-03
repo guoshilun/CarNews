@@ -127,7 +127,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.jmgsz.lib.adv.ui.AdvWebViewActivity"
+            android:name="com.jmgzs.lib.adv.ui.AdvWebViewActivity"
             android:configChanges="fontScale"
             android:hardwareAccelerated="false"
             android:screenOrientation="portrait" />

@@ -6,9 +6,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
-import com.jmgsz.lib.adv.AdvUtil;
-import com.jmgsz.lib.adv.enums.AdSlotType;
-import com.jmgsz.lib.adv.utils.DensityUtils;
+import com.jmgzs.lib.adv.AdvUtil;
+import com.jmgzs.lib.adv.enums.AdSlotType;
+import com.jmgzs.lib.adv.utils.DensityUtils;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.StoreAdapter;
 import com.jmgzs.carnews.base.BaseActivity;

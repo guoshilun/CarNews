@@ -6,8 +6,8 @@ import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-import com.jmgsz.lib.adv.AdvRequestUtil;
-import com.jmgsz.lib.adv.interfaces.IAdvStatusCallback;
+import com.jmgzs.lib.adv.AdvRequestUtil;
+import com.jmgzs.lib.adv.interfaces.IAdvStatusCallback;
 import com.jmgzs.carnews.R;
 import com.jmgzs.carnews.adapter.rcvbase.BaseHolder;
 import com.jmgzs.carnews.bean.AdvDataBean;
