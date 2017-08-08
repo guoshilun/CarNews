@@ -95,7 +95,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
             ((ViewGroup) paddingView.getParent()).removeView(paddingView);
         }
         paddingView.setBackgroundColor(getStatusBarColor());
-//        L.e("状态栏高度："+statusBarHeight);
         root.addView(paddingView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, statusBarHeight));
     }
 
