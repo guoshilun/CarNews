@@ -40,12 +40,12 @@ public class AdvSplashActivity extends AdvBaseActivity {
     private int logoResId;
     private String appInfo;
     private String activityName;
-    private String tempDir;
+    private Bundle params;
 
     public static final String INTENT_LOGO = "logo";
     public static final String INTENT_APP_INFO = "app_info";
     public static final String INTENT_ACTIVITY_NAME = "activity_name";
-    public static final String INTENT_TEMP_DIR = "temp_dir";
+    public static final String INTENT_PARAMS = "params";
 
     @Override
     protected int getContent(Bundle save) {
@@ -59,17 +59,17 @@ public class AdvSplashActivity extends AdvBaseActivity {
         logoImgView = (RoundedImageView) findViewById(R.id.welcome_bottom_logo);
         timeTv = (TextView) findViewById(R.id.text_time);
         appInfoTv = (TextView) findViewById(R.id.welcome_bottom_logo_tips);
-        initData();
+        initViewData();
         showAdv();
     }
 
-    private void initData() {
+    protected void initIntentData() {
         Intent intent = getIntent();
         if (intent != null) {
             logoResId = intent.getIntExtra(INTENT_LOGO, -1);
             appInfo = intent.getStringExtra(INTENT_APP_INFO);
             activityName = intent.getStringExtra(INTENT_ACTIVITY_NAME);
-            tempDir = intent.getStringExtra(INTENT_TEMP_DIR);
+            params = intent.getBundleExtra(INTENT_PARAMS);
         }
         if (logoResId < 0) {
             logoResId = getLogoResId();
@@ -80,18 +80,20 @@ public class AdvSplashActivity extends AdvBaseActivity {
         if (TextUtils.isEmpty(activityName)) {
             activityName = getActivityName();
         }
-        if (TextUtils.isEmpty(tempDir)) {
-            tempDir = getTempDir();
+        if (params == null){
+            params = getParams();
         }
+    }
+
+    private void initViewData(){
         if (logoResId > 0) {
             logoImgView.setImageResource(logoResId);
         }
-
         appInfoTv.setText(appInfo);
     }
 
-    protected String getTempDir() {
-        return "";
+    @Override
+    protected void addPaddingAboveContentView() {//去除顶部纯色状态栏条
     }
 
     protected int getLogoResId() {
@@ -106,13 +108,12 @@ public class AdvSplashActivity extends AdvBaseActivity {
         return null;
     }
 
-    @Override
-    protected void addPaddingAboveContentView() {
+    protected Bundle getParams(){
+        return null;
     }
 
     private void showAdv() {
-        AdvUtil.getInstance().init(this, tempDir);
-        AdvUtil.getInstance().requestOpenAdv(this, new IRequestCallBack<AdvResponseBean.AdInfoBean>() {
+        AdvUtil.getInstance().showOpenAdv(this, new IRequestCallBack<AdvResponseBean.AdInfoBean>() {
             @Override
             public void onSuccess(String url, final AdvResponseBean.AdInfoBean data) {
                 if (AdvUtil.isOpenAdv())
@@ -154,6 +155,7 @@ public class AdvSplashActivity extends AdvBaseActivity {
                         Intent in = new Intent(AdvSplashActivity.this, AdvWebViewActivity.class);
                         in.putExtra(AdvWebViewActivity.INTENT_URL, data.getAd_material().getClick_url());
                         in.putExtra(AdvWebViewActivity.INTENT_ACTIVITY, activityName);
+                        in.putExtra(INTENT_PARAMS, params);
                         startActivity(in);
                         finish();
                     }
@@ -211,7 +213,9 @@ public class AdvSplashActivity extends AdvBaseActivity {
 
     private void goMain() {
         try {
-            startActivity(new Intent(AdvSplashActivity.this, Class.forName(activityName)));
+            Intent intent = new Intent(AdvSplashActivity.this, Class.forName(activityName));
+            intent.putExtra(INTENT_PARAMS, params);
+            startActivity(intent);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

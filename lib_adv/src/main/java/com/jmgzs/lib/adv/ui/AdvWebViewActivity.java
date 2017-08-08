@@ -32,6 +32,7 @@ public class AdvWebViewActivity extends AppCompatActivity {
     public static final String INTENT_URL = "url";
     public static final String INTENT_ACTIVITY = "activity";
     private String activityName;
+    private Bundle params;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +78,7 @@ public class AdvWebViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String url = intent.getStringExtra(INTENT_URL);
         activityName = intent.getStringExtra(INTENT_ACTIVITY);
+        params = intent.getBundleExtra(AdvSplashActivity.INTENT_PARAMS);
         L.e("广告详情的URL：" + url);
         wv.setVisibility(View.INVISIBLE);
         wv.loadUrl(url);
@@ -88,6 +90,7 @@ public class AdvWebViewActivity extends AppCompatActivity {
             Intent in;
             try {
                 in = new Intent(this, Class.forName(activityName));
+                in.putExtra(AdvSplashActivity.INTENT_PARAMS, params);
                 startActivity(in);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();

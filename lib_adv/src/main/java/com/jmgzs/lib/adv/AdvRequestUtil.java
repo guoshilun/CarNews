@@ -133,8 +133,8 @@ public class AdvRequestUtil {
         requestAdv(context, type, reqCount, tempDir, true, width, isIFrame, true);
     }
 
-    public static void requestAdvToCacheNoHtml(final Context context, final AdSlotType type, int reqCount, String tempDir) {
-        requestAdv(context, type, reqCount, tempDir, false, 0, false, false);
+    public static void requestAdvToCacheNoHtml(final Context context, final AdSlotType type, int reqCount) {
+        requestAdv(context, type, reqCount, null, false, 0, false, false);
     }
 
     public static void requestAdv(final Context context, final AdSlotType type, final int reqCount, final String tempDir, final boolean isHtml, final int width, final boolean isIFrame, final boolean isCache) {
